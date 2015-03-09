@@ -1,11 +1,8 @@
 #include "CCQGLWidget.h"
 #include "qevent.h"
 
-
-CCQGLWidget::CCQGLWidget(int width, int height, QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::DoubleBuffer), parent)
+CCQGLWidget::CCQGLWidget() : QGLWidget(QGLFormat(QGL::DoubleBuffer))
 {
-    resize(width, height);
 }
 
 CCQGLWidget::~CCQGLWidget()
@@ -52,9 +49,10 @@ void CCQGLWidget::paintEvent(QPaintEvent* event)
 
 void CCQGLWidget::resizeEvent(QResizeEvent* evnet)
 {
+	QGLWidget::resizeEvent(evnet);
 	const QSize& sz = evnet->size();
 	GLView* v = cocos2d::Director::getInstance()->getOpenGLView();
 	if (v)
-		v->setFrameSize(sz.width(), sz.height());
+		v->setFrameSize(frameSize().width(), frameSize().height());
 }
 

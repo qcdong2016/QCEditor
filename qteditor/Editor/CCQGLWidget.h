@@ -12,10 +12,8 @@ class CCQGLWidget : public QGLWidget
     Q_OBJECT
 
 public:
-    CCQGLWidget(){}
-    CCQGLWidget(int width, int height, QWidget *parent = 0);
+	CCQGLWidget();
     ~CCQGLWidget();
-
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);

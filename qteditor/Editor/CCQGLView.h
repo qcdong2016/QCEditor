@@ -5,8 +5,6 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-typedef void(*KEY_PTRFUN)(QKeyEvent *event);
-
 class CCQGLWidget;
 
 USING_NS_CC;
@@ -17,7 +15,6 @@ public:
     CCQGLView();
     virtual ~CCQGLView();
 
-    /* override functions */
 	virtual bool isOpenGLReady() override;
 	virtual void end() override;
 	virtual void swapBuffers() override;
@@ -27,7 +24,6 @@ public:
 
 	void setBgColor(Color4B &color);
 
-	/* get the shared main open gl window */
 	static CCQGLView* getInstance();
 
 	virtual void init();

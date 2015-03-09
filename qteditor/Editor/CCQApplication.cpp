@@ -27,13 +27,9 @@ CCQApplication::~CCQApplication()
 
 int CCQApplication::run()
 {
-	/* Qt Window, default design for 1080P monitor. */
-	float width = 640;
-	float height = 960;
-	CCQGLWidget* window = new CCQGLWidget(width, height);
+	CCQGLWidget* window = new CCQGLWidget();
 
 	window->setWindowFlags(window->windowFlags() & ~Qt::WindowMaximizeButtonHint);
-	window->setBaseSize(width, height);
 	window->setMinimumSize(500, 500);
 	window->setMaximumSize(1920, 1080);
 
@@ -43,11 +39,12 @@ int CCQApplication::run()
 
 	CCQGLView* view = CCQGLView::getInstance();
 	auto director = Director::getInstance();
+
 	window->makeCurrent();
 	view->init();
+
 	director->setOpenGLView(view);
-	view->setFrameSize(width, height);
-	//view->setDesignResolutionSize(width, height, ResolutionPolicy::EXACT_FIT);
+	view->setFrameSize(window->frameSize().width(), window->frameSize().height());
 
 	applicationDidFinishLaunching();
 

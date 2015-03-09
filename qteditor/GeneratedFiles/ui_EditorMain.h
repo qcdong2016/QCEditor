@@ -15,6 +15,7 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
@@ -25,9 +26,11 @@ QT_BEGIN_NAMESPACE
 class Ui_EditorMainClass
 {
 public:
-    QMenuBar *menuBar;
-    QToolBar *mainToolBar;
+    QAction *action_Quit;
     QWidget *centralWidget;
+    QMenuBar *menuBar;
+    QMenu *menuFile;
+    QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *EditorMainClass)
@@ -35,18 +38,27 @@ public:
         if (EditorMainClass->objectName().isEmpty())
             EditorMainClass->setObjectName(QStringLiteral("EditorMainClass"));
         EditorMainClass->resize(600, 400);
-        menuBar = new QMenuBar(EditorMainClass);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        EditorMainClass->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(EditorMainClass);
-        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        EditorMainClass->addToolBar(mainToolBar);
+        action_Quit = new QAction(EditorMainClass);
+        action_Quit->setObjectName(QStringLiteral("action_Quit"));
         centralWidget = new QWidget(EditorMainClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         EditorMainClass->setCentralWidget(centralWidget);
+        menuBar = new QMenuBar(EditorMainClass);
+        menuBar->setObjectName(QStringLiteral("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 600, 23));
+        menuFile = new QMenu(menuBar);
+        menuFile->setObjectName(QStringLiteral("menuFile"));
+        EditorMainClass->setMenuBar(menuBar);
+        mainToolBar = new QToolBar(EditorMainClass);
+        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
+        EditorMainClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(EditorMainClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         EditorMainClass->setStatusBar(statusBar);
+
+        menuBar->addAction(menuFile->menuAction());
+        menuFile->addSeparator();
+        menuFile->addAction(action_Quit);
 
         retranslateUi(EditorMainClass);
 
@@ -56,6 +68,8 @@ public:
     void retranslateUi(QMainWindow *EditorMainClass)
     {
         EditorMainClass->setWindowTitle(QApplication::translate("EditorMainClass", "EditorMain", 0));
+        action_Quit->setText(QApplication::translate("EditorMainClass", "&Quit", 0));
+        menuFile->setTitle(QApplication::translate("EditorMainClass", "File", 0));
     } // retranslateUi
 
 };

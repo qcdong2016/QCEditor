@@ -1,0 +1,9 @@
+/Debug.win32
+/cocos2d/cocos/2d/Debug.win32
+/cocos2d/cocos/editor-support/spine/proj.win32/Debug.win32
+/cocos2d/external/Box2D/proj.win32/Debug.win32
+/qteditor/Debug.win32
+/qteditor/GeneratedFiles
+/*.suo
+/*.sdf
+/*.obj

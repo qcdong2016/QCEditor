@@ -12,17 +12,14 @@ public:
 	CCQApplication(int argc, char *argv[]);
 	virtual ~CCQApplication();
 
-	/* Run the message loop. */
 	int run();
 
-	/* Get current application instance. */
 	static CCQApplication* getInstance();
 
-	/* override functions */
 	virtual void setAnimationInterval(double interval) override;
-	virtual bool applicationDidFinishLaunching();
-	virtual void applicationDidEnterBackground() {}
-	virtual void applicationWillEnterForeground() {}
+	virtual bool applicationDidFinishLaunching() override;
+	virtual void applicationDidEnterBackground() override {}
+	virtual void applicationWillEnterForeground() override {}
 
 protected:
 	float _qAnimationInterval;
