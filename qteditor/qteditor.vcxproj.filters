@@ -74,6 +74,9 @@
     <ClCompile Include="Editor\HelloWorldScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Editor\WindowBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">
@@ -100,6 +103,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Editor\HelloWorldScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\WindowBox.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
