@@ -45,7 +45,7 @@ int CCQApplication::run()
 
 	director->setOpenGLView(view);
 	view->setFrameSize(window->frameSize().width(), window->frameSize().height());
-
+	
 	applicationDidFinishLaunching();
 
     return CCQApplication::getInstance()->exec();

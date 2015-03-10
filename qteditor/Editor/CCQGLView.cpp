@@ -12,6 +12,7 @@ CCQGLView::CCQGLView()
     : _screenScaleFactor(1.0f)
 	, _lastWindowHeight(0.0f)
 	, _bgColor(0, 0, 0, 1)
+	, _box(nullptr)
 {
 }
 

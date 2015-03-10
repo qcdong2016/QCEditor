@@ -1,4 +1,7 @@
 #include "HelloWorldScene.h"
+#include "WindowBox.h"
+#include "CCQGLView.h"
+#include "ui/UIScale9Sprite.h"
 
 USING_NS_CC;
 
@@ -64,13 +67,37 @@ bool HelloWorld::init()
     this->addChild(label, 1);
 
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    auto sprite = cocos2d::ui::Scale9Sprite::create("HelloWorld.png");
 
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
+
+	WindowBox * b = new WindowBox(sprite, true);
+
+	CCQGLView::getInstance()->setBox(b);
+
+	class DrawBox : public cocos2d::Node
+	{
+	public:
+		virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags) {
+			box->draw(renderer, transform, flags);
+		}
+
+		WindowBox* box;
+	};
+
+	DrawBox* db = new DrawBox;
+	db->autorelease();
+	db->box = b;
+	db->setPositionX(sprite->getPositionX() - sprite->getContentSize().width / 2);
+	db->setPositionY(sprite->getPositionY() + sprite->getContentSize().height / 2);
+	db->setGlobalZOrder(99999);
+	db->setLocalZOrder(99999);
+
+	this->addChild(db);
     
     return true;
 }

@@ -4,6 +4,7 @@
 
 #include <QMouseEvent>
 #include <QWidget>
+#include "WindowBox.h"
 
 class CCQGLWidget;
 
@@ -27,10 +28,20 @@ public:
 	static CCQGLView* getInstance();
 
 	virtual void init();
+
+	void setBox(WindowBox* box) {
+		_box = box;
+	}
+
+	WindowBox* getBox() const {
+		return _box;
+	}
+
 private:
     float			_screenScaleFactor;
 	float			_lastWindowHeight;
 	Color4F			_bgColor;
+	WindowBox* _box;
 };
 
 
