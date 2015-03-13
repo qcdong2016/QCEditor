@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_EditorMain.h"
+#include "BoxList.h"
 
 class EditorMain : public QMainWindow
 {
@@ -15,6 +16,7 @@ protected:
 	virtual void closeEvent(QCloseEvent *) override;
 private:
 	Ui::EditorMainClass ui;
+	BoxList* _boxlist;
 };
 
 #endif // EDITORMAIN_H

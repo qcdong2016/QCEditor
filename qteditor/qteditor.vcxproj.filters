@@ -33,12 +33,18 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Source Files\CCQt">
+      <UniqueIdentifier>{b38296ae-6ff1-4942-80ca-7f2547d04005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QtUI">
+      <UniqueIdentifier>{aa0c2592-8c4e-412f-97cf-562df75d89bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{d306dd16-66cd-4cc6-b540-d5d7ab5c307a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditorMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_EditorMain.cpp">
@@ -49,15 +55,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_EditorMain.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\CCQApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\CCQGLView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\CCQGLWidget.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_CCQApplication.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -71,14 +68,35 @@
     <ClCompile Include="GeneratedFiles\Release\moc_CCQApplication.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\HelloWorldScene.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\Debug\moc_BoxList.cpp">
+      <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\WindowBox.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\Release\moc_BoxList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorMain.cpp">
+      <Filter>Source Files\QtUI</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxList.cpp">
+      <Filter>Source Files\QtUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\CCQApplication.cpp">
+      <Filter>Source Files\CCQt</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\CCQGLView.cpp">
+      <Filter>Source Files\CCQt</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\CCQGLWidget.cpp">
+      <Filter>Source Files\CCQt</Filter>
     </ClCompile>
     <ClCompile Include="Editor\Any.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\HelloWorldScene.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\WindowBox.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,28 +109,37 @@
     <CustomBuild Include="EditorMain.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="BoxList.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="BoxList.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="Editor\CCQApplication.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CCQt</Filter>
     </CustomBuild>
     <CustomBuild Include="Editor\CCQGLWidget.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CCQt</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_EditorMain.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_BoxList.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
     <ClInclude Include="Editor\CCQGLView.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\HelloWorldScene.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\WindowBox.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CCQt</Filter>
     </ClInclude>
     <ClInclude Include="Editor\Any.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\HelloWorldScene.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\WindowBox.h">
+      <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

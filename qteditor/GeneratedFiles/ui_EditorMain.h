@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDockWidget>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -32,12 +33,14 @@ public:
     QMenu *menuFile;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
+    QDockWidget *dockWidget_2;
+    QWidget *dockWidgetContents_2;
 
     void setupUi(QMainWindow *EditorMainClass)
     {
         if (EditorMainClass->objectName().isEmpty())
             EditorMainClass->setObjectName(QStringLiteral("EditorMainClass"));
-        EditorMainClass->resize(600, 400);
+        EditorMainClass->resize(533, 404);
         action_Quit = new QAction(EditorMainClass);
         action_Quit->setObjectName(QStringLiteral("action_Quit"));
         centralWidget = new QWidget(EditorMainClass);
@@ -45,7 +48,7 @@ public:
         EditorMainClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(EditorMainClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 600, 23));
+        menuBar->setGeometry(QRect(0, 0, 533, 23));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         EditorMainClass->setMenuBar(menuBar);
@@ -55,6 +58,12 @@ public:
         statusBar = new QStatusBar(EditorMainClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         EditorMainClass->setStatusBar(statusBar);
+        dockWidget_2 = new QDockWidget(EditorMainClass);
+        dockWidget_2->setObjectName(QStringLiteral("dockWidget_2"));
+        dockWidgetContents_2 = new QWidget();
+        dockWidgetContents_2->setObjectName(QStringLiteral("dockWidgetContents_2"));
+        dockWidget_2->setWidget(dockWidgetContents_2);
+        EditorMainClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_2);
 
         menuBar->addAction(menuFile->menuAction());
         menuFile->addSeparator();
