@@ -7,12 +7,13 @@
 CCQGLWidget::CCQGLWidget() 
 : QGLWidget(QGLFormat(QGL::DoubleBuffer))
 {
-
+	this->setMouseTracking(true);
 }
 
 CCQGLWidget::~CCQGLWidget()
 {
 }
+
 void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     QGLWidget::mouseMoveEvent(event);

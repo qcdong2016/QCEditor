@@ -82,7 +82,7 @@ private:
 	bool			_resizable;	
 
 	Node* _boxedWindow;
-	std::vector<Rect> _resizePoints;
+	std::vector<Vec3> _resizePoints;
 	CustomCommand _drawCmd;
 };
 

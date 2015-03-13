@@ -20,14 +20,14 @@ bool HelloWorld::init()
 	_root->setContentSize(Size(400, 400));
 	addChild(_root);
 
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	onResize(visibleSize.width, visibleSize.height);
-
 	_boxNode = new WindowBox(_root, true);
 	_boxNode->autorelease();
 	_boxNode->setGlobalZOrder(99999);
 	_boxNode->setLocalZOrder(99999);
 	addChild(_boxNode);
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	onResize(visibleSize.width, visibleSize.height);
 
 	CCQGLView::getInstance()->setBox(_boxNode);
 
@@ -37,4 +37,5 @@ bool HelloWorld::init()
 void HelloWorld::onResize(int width, int height)
 {
 	_root->setPosition(width / 2 - _root->getContentSize().width / 2, height / 2 - _root->getContentSize().height / 2);
+	_boxNode->Reset();
 }
