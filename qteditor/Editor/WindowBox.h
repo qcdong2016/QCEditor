@@ -53,9 +53,10 @@ public:
     }
 
     /** Checks if the mouse is within a resize point. If so, it returns the point's index (0-7).*/
-	int GetPointAtPosition(const Vec2& point) const;
+	int GetPointAtPosition(float x, float y) const;
 
-	void SetNewWindowArea(const Rect& newArea);
+	void updateWindowAreas(float left, float top, float right, float bottom);
+
 	void SetNewWindowPosition(const Vec2& newPosition);
 
     void Lock(bool lock = true)

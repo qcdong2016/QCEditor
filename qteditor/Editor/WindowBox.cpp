@@ -47,12 +47,12 @@ void WindowBox::Reset ()
 }
 
 //------------------------------------------------------------------------
-int WindowBox::GetPointAtPosition (const cocos2d::Point& aPoint) const
+int WindowBox::GetPointAtPosition(float x, float y) const
 {
     if (_locked || !_resizable)
         return RESIZE_POINT_NONE;
 
-	Vec3 mousePos = Vec3(aPoint.x, aPoint.y, 0);
+	Vec3 mousePos = Vec3(x, y, 0);
 
     for (int i = 0; i < NUM_RESIZE_POINTS; ++i) 
     {
@@ -65,16 +65,6 @@ int WindowBox::GetPointAtPosition (const cocos2d::Point& aPoint) const
     return RESIZE_POINT_NONE;
 }
 
-//------------------------------------------------------------------------
-void WindowBox::SetNewWindowArea(const cocos2d::Rect& newArea)
-{
-//     m_boxedWindow->setArea(newArea);
-// 
-//     // Update the resizer positions
-//     Reset();
-}
-
-//------------------------------------------------------------------------
 void WindowBox::SetNewWindowPosition(const cocos2d::Vec2& newPosition)
 {
     _boxedWindow->setPosition(newPosition);
@@ -84,17 +74,6 @@ void WindowBox::SetNewWindowPosition(const cocos2d::Vec2& newPosition)
 
 void WindowBox::onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 {
-// 	Director::getInstance()->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-// 	Director::getInstance()->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, transform);
-// 	
-// 	DrawPrimitives::drawRect(_resizePoints[0], _resizePoints[4]);
-// 	const Color4F color(1, 0, 0, 1);
-// 
-// 	for (int i = 0; i < NUM_RESIZE_POINTS; i++) {
-// 		DrawPrimitives::drawSolidCircle(_resizePoints[i], 6, 0, 10);
-// 	}
-// 	Director::getInstance()->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-
 	Vec2 pos2d[8];
 
 	for (int i = 0; i < NUM_RESIZE_POINTS; ++i)
@@ -119,4 +98,14 @@ void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 	_drawCmd.init(_globalZOrder, transform, flags);
 	_drawCmd.func = CC_CALLBACK_0(WindowBox::onDraw, this, renderer, _boxedWindow->getNodeToWorldTransform(), flags);
 	renderer->addCommand(&_drawCmd);
+}
+
+void WindowBox::updateWindowAreas(float left, float top, float right, float bottom)
+{
+	const Size& size = _boxedWindow->getContentSize();
+
+	float d = -left / (size.width * std::abs(_boxedWindow->getScaleX()));
+	_boxedWindow->setScaleX(_boxedWindow->getScaleX() + d);
+	qDebug("%f", d);
+	Reset();
 }

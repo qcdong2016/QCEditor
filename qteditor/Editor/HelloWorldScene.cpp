@@ -20,7 +20,10 @@ bool HelloWorld::init()
 	_root->setContentSize(Size(400, 400));
 	addChild(_root);
 
-	_boxNode = new WindowBox(_root, true);
+	Sprite* sp = Sprite::create("HelloWorld.png");
+	_root->addChild(sp);
+
+	_boxNode = new WindowBox(sp, true);
 	_boxNode->autorelease();
 	_boxNode->setGlobalZOrder(99999);
 	_boxNode->setLocalZOrder(99999);

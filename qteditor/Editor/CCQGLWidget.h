@@ -15,6 +15,8 @@ public:
 	CCQGLWidget();
     ~CCQGLWidget();
 
+public slots:
+	void cocos2dDraw();
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
@@ -26,6 +28,13 @@ protected:
 	virtual void paintEvent(QPaintEvent* event);
 	virtual void resizeEvent(QResizeEvent* evnet);
 
-private:
+
+	int _hoveredResizePoint;
+	bool _mousePressed;
+
+	float _lastx;
+	float _lasty;
+
+	QTimer* _timer;
 };
 
