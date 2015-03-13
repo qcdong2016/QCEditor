@@ -1,5 +1,5 @@
 #qtcreator
 
-<img src="preview.jpg">
+![preview][]
 
-
+[preview]: preview.jpg
