@@ -2,6 +2,7 @@
 #include "qevent.h"
 #include "qlogging.h"
 #include "CCQGLView.h"
+#include "HelloWorldScene.h"
 
 CCQGLWidget::CCQGLWidget() 
 : QGLWidget(QGLFormat(QGL::DoubleBuffer))
@@ -65,7 +66,10 @@ void CCQGLWidget::resizeEvent(QResizeEvent* evnet)
 	QGLWidget::resizeEvent(evnet);
 	const QSize& sz = evnet->size();
 	GLView* v = cocos2d::Director::getInstance()->getOpenGLView();
-	if (v)
+	if (v) {
 		v->setFrameSize(frameSize().width(), frameSize().height());
+		HelloWorld* hw = (HelloWorld*)Director::getInstance()->getRunningScene();
+		hw->onResize(sz.width(), sz.height());
+	}
 }
 

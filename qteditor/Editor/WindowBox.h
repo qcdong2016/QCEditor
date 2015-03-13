@@ -77,11 +77,12 @@ public:
 	void onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags);
 private:
 
-	Node* _boxedWindow;
-	std::vector<Rect> _resizePoints;
 
     bool			_locked;
 	bool			_resizable;	
+
+	Node* _boxedWindow;
+	std::vector<Rect> _resizePoints;
 	CustomCommand _drawCmd;
 };
 

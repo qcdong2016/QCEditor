@@ -69,7 +69,7 @@ bool CCQApplication::applicationDidFinishLaunching()
 	auto glview = CCQGLView::getInstance();
 	glview->setBgColor(Color4B(50, 50, 50, 255));
 
-	director->runWithScene(HelloWorld::createScene());
+	director->runWithScene(HelloWorld::create());
 	
 	return true;
 }

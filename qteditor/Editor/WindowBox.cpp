@@ -19,9 +19,9 @@ bool WindowBox::operator==(WindowBox& aBox)
 
 void WindowBox::Reset () 
 {
-	const Rect winRc = _boxedWindow->getBoundingBox();
-	const int height = winRc.size.height;
-	const int width = winRc.size.width;
+	const Size& size = _boxedWindow->getContentSize();
+	const int height = size.height;
+	const int width = size.width;
 
 	_resizePoints.clear();
 
