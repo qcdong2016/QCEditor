@@ -2,8 +2,9 @@
 #ifndef _WINDOW_BOX_H_
 #define _WINDOW_BOX_H_
 
-#include "2d\CCNode.h"
-#include "renderer\CCRenderer.h"
+#include "2d/CCNode.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCCustomCommand.h"
 
 USING_NS_CC;
 
@@ -34,28 +35,28 @@ USING_NS_CC;
 
 /** Class which wraps a selected Window. Provides for resizing and repositioning of that window,
 * besides it holds whether the window's properties may be updated (the 'locked' member.)*/
-class WindowBox
+class WindowBox : public Node
 {
 
 public:
 
-    WindowBox(cocos2d::Node* aWindow, bool aResizable = true);
+    WindowBox(Node* aWindow, bool aResizable = true);
 
 	// Operator to help STL::list::remove
 	bool operator==(WindowBox& aBox);
     
     void Reset();
 
-	cocos2d::Node* GetWindow()
+	Node* GetWindow()
     {
         return _boxedWindow;
     }
 
     /** Checks if the mouse is within a resize point. If so, it returns the point's index (0-7).*/
-	int GetPointAtPosition(const cocos2d::Vec2& point) const;
+	int GetPointAtPosition(const Vec2& point) const;
 
-	void SetNewWindowArea(const cocos2d::Rect& newArea);
-	void SetNewWindowPosition(const cocos2d::Vec2& newPosition);
+	void SetNewWindowArea(const Rect& newArea);
+	void SetNewWindowPosition(const Vec2& newPosition);
 
     void Lock(bool lock = true)
     {
@@ -72,14 +73,16 @@ public:
         return _resizable;
     }
 
-	void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
+	virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
+	void onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags);
 private:
 
-	cocos2d::Node* _boxedWindow;
+	Node* _boxedWindow;
 	std::vector<Rect> _resizePoints;
 
     bool			_locked;
 	bool			_resizable;	
+	CustomCommand _drawCmd;
 };
 
 #endif // _WINDOW_BOX_H_

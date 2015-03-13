@@ -1,5 +1,6 @@
 #include "WindowBox.h"
-#include "2d\CCDrawingPrimitives.h"
+#include "2d/CCDrawingPrimitives.h"
+#include "base/CCDirector.h"
 
 USING_NS_CC;
 
@@ -33,7 +34,8 @@ void WindowBox::Reset ()
 	_resizePoints.push_back(Rect(0, -height, 6, 6));
 	_resizePoints.push_back(Rect(0, -height / 2, 6, 6));
 
-	const Vec2 offset(3, 3);
+	const Vec2 offset(3, 3 - height);
+
 	for (size_t i = 0; i < _resizePoints.size(); i++) {
 		_resizePoints[i].origin -= offset;
 	}
@@ -60,7 +62,6 @@ int WindowBox::GetPointAtPosition (const cocos2d::Point& aPoint) const
 //------------------------------------------------------------------------
 void WindowBox::SetNewWindowArea(const cocos2d::Rect& newArea)
 {
-    // Apply it to the CEGUI window
 //     m_boxedWindow->setArea(newArea);
 // 
 //     // Update the resizer positions
@@ -70,14 +71,16 @@ void WindowBox::SetNewWindowArea(const cocos2d::Rect& newArea)
 //------------------------------------------------------------------------
 void WindowBox::SetNewWindowPosition(const cocos2d::Vec2& newPosition)
 {
-    // Apply it to the CEGUI window
     _boxedWindow->setPosition(newPosition);
     // Update the resizer positions
     Reset();
 }
 
-void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
+void WindowBox::onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 {
+	Director::getInstance()->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+	Director::getInstance()->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, transform);
+	
 	DrawPrimitives::drawRect(_resizePoints[0].origin + _resizePoints[0].size / 2, _resizePoints[4].origin + _resizePoints[4].size / 2);
 	const Color4F color(1, 0, 0, 1);
 
@@ -85,4 +88,11 @@ void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 		const Rect& rc = _resizePoints[i];
 		DrawPrimitives::drawSolidRect(rc.origin, rc.origin + rc.size, color);
 	}
+	Director::getInstance()->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+}
+void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
+{
+	_drawCmd.init(_globalZOrder, transform, flags);
+	_drawCmd.func = CC_CALLBACK_0(WindowBox::onDraw, this, renderer, _boxedWindow->getNodeToWorldTransform(), flags);
+	renderer->addCommand(&_drawCmd);
 }
