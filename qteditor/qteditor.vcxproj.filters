@@ -89,13 +89,13 @@
     <ClCompile Include="Editor\CCQGLWidget.cpp">
       <Filter>Source Files\CCQt</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\Any.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Editor\HelloWorldScene.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
     <ClCompile Include="Editor\WindowBox.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\PropertyDef.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
@@ -132,13 +132,13 @@
     <ClInclude Include="Editor\CCQGLView.h">
       <Filter>Source Files\CCQt</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\Any.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Editor\HelloWorldScene.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Editor\WindowBox.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\PropertyDef.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
