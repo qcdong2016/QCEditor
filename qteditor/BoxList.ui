@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>266</width>
-    <height>329</height>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,8 +26,20 @@
    <property name="rightMargin">
     <number>0</number>
    </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QTreeView" name="treeView"/>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
+    </widget>
    </item>
   </layout>
  </widget>

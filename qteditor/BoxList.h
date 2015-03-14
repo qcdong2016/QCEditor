@@ -13,6 +13,10 @@ public:
 	~BoxList();
 
 	void add();
+private slots:
+	void showMenuItem(QTreeWidgetItem * item, int column);
+	void showMenu(const QPoint& pos);
+	void doAddWidget();
 
 private:
 	Ui::Form ui;

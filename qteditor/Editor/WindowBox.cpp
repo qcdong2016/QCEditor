@@ -102,10 +102,10 @@ void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 
 void WindowBox::updateWindowAreas(float left, float top, float right, float bottom)
 {
-	const Size& size = _boxedWindow->getContentSize();
-
-	float d = -left / (size.width * std::abs(_boxedWindow->getScaleX()));
-	_boxedWindow->setScaleX(_boxedWindow->getScaleX() + d);
-	qDebug("%f", d);
+// 	const Size& size = _boxedWindow->getContentSize();
+// 
+// 	float d = -left / (size.width/2 * std::abs(_boxedWindow->getScaleX()));
+// 	_boxedWindow->setScaleX(_boxedWindow->getScaleX() + d);
+// 	qDebug("%f", d);
 	Reset();
 }

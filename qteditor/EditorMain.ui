@@ -41,11 +41,17 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="widgetDock">
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2"/>
+  </widget>
+  <widget class="QDockWidget" name="propDock">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3"/>
   </widget>
   <action name="action_Quit">
    <property name="text">

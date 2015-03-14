@@ -7,7 +7,7 @@ EditorMain::EditorMain(QWidget *parent)
 {
 	ui.setupUi(this);
 	_boxlist = new BoxList(NULL);
-	ui.dockWidget_2->setWidget(_boxlist);
+	ui.widgetDock->setWidget(_boxlist);
 }
 
 EditorMain::~EditorMain()

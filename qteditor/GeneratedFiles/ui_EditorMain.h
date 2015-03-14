@@ -33,8 +33,10 @@ public:
     QMenu *menuFile;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
-    QDockWidget *dockWidget_2;
+    QDockWidget *widgetDock;
     QWidget *dockWidgetContents_2;
+    QDockWidget *propDock;
+    QWidget *dockWidgetContents_3;
 
     void setupUi(QMainWindow *EditorMainClass)
     {
@@ -58,12 +60,18 @@ public:
         statusBar = new QStatusBar(EditorMainClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         EditorMainClass->setStatusBar(statusBar);
-        dockWidget_2 = new QDockWidget(EditorMainClass);
-        dockWidget_2->setObjectName(QStringLiteral("dockWidget_2"));
+        widgetDock = new QDockWidget(EditorMainClass);
+        widgetDock->setObjectName(QStringLiteral("widgetDock"));
         dockWidgetContents_2 = new QWidget();
         dockWidgetContents_2->setObjectName(QStringLiteral("dockWidgetContents_2"));
-        dockWidget_2->setWidget(dockWidgetContents_2);
-        EditorMainClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_2);
+        widgetDock->setWidget(dockWidgetContents_2);
+        EditorMainClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), widgetDock);
+        propDock = new QDockWidget(EditorMainClass);
+        propDock->setObjectName(QStringLiteral("propDock"));
+        dockWidgetContents_3 = new QWidget();
+        dockWidgetContents_3->setObjectName(QStringLiteral("dockWidgetContents_3"));
+        propDock->setWidget(dockWidgetContents_3);
+        EditorMainClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), propDock);
 
         menuBar->addAction(menuFile->menuAction());
         menuFile->addSeparator();

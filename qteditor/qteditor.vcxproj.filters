@@ -142,4 +142,60 @@
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="qtpropertybrowser\images\cursor-arrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-busy.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-closedhand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-cross.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-forbidden.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-hand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-hsplit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-ibeam.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-openhand.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-sizeall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-sizeb.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-sizef.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-sizeh.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-sizev.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-uparrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-vsplit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-wait.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qtpropertybrowser\images\cursor-whatsthis.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
