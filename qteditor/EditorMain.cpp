@@ -30,6 +30,12 @@ EditorMain::EditorMain(QWidget *parent)
 		AttributeInfo* info = iter->second;
 		QtVariantProperty *item = variantManager->addProperty(info->_defaultValue.type(), QLatin1String(info->_name.c_str()));
 		item->setValue(info->_defaultValue);
+		if (info->_setMinimum)
+		    item->setAttribute(QLatin1String("minimum"), info->_minimum);
+		if (info->_setMaximum)
+		    item->setAttribute(QLatin1String("maximum"), info->_maximum);
+		if (info->_setStep)
+			item->setAttribute(QLatin1String("singleStep"), info->_singleStep);
 
 		topItem->addSubProperty(item);
 	}
