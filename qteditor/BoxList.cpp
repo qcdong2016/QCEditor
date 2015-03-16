@@ -9,11 +9,8 @@ BoxList::BoxList(QWidget *parent)
 
 
 	connect(ui.treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showMenu(const QPoint&)));
-	connect(ui.treeWidget, SIGNAL(itemPressed(QTreeWidgetItem*, int)), this, SLOT(showMenuItem(QTreeWidgetItem*, int)));
 
-	QTreeWidgetItem *root = new QTreeWidgetItem(ui.treeWidget);
-	root->setText(0, "root");
-	ui.treeWidget->insertTopLevelItem(0, root);
+	add("root");
 }
 
 BoxList::~BoxList()
@@ -21,21 +18,21 @@ BoxList::~BoxList()
 
 }
 
-void BoxList::add()
+QTreeWidgetItem* BoxList::add(const QString& name, QTreeWidgetItem* parent)
 {
+	QTreeWidgetItem *item = new QTreeWidgetItem();
+	item->setCheckState(0, Qt::Checked);
+	item->setText(0, name);
+
+	if (parent == nullptr)
+		ui.treeWidget->insertTopLevelItem(0, item);
+	else
+		parent->addChild(item);
+
+	return item;
 }
 
 void BoxList::showMenu(const QPoint& pos)
-{
-	qDebug("hello");
-}
-
-void BoxList::doAddWidget()
-{
-	qDebug("hello");
-}
-
-void BoxList::showMenuItem(QTreeWidgetItem * item, int column)
 {
 	QMenu* menu = new QMenu();
 
@@ -43,5 +40,23 @@ void BoxList::showMenuItem(QTreeWidgetItem * item, int column)
 	connect(act, SIGNAL(triggered()), this, SLOT(doAddWidget()));
 	menu->addAction(act);
 
+	_currentWidget = ui.treeWidget->itemAt(pos);
+
 	menu->exec(QCursor::pos());
+}
+
+void BoxList::doAddWidget()
+{
+	QTreeWidgetItem* newItem = add("new", _currentWidget);
+
+	newItem->setSelected(true);
+
+	if (!_currentWidget)
+		return;
+
+	if (_currentWidget->childCount() == 1)
+		_currentWidget->setExpanded(true);
+
+	_currentWidget->setSelected(false);
+	_currentWidget = NULL;
 }

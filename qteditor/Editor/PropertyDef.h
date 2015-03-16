@@ -3,6 +3,7 @@
 
 #include "qvariant.h"
 #include "2d/CCNode.h"
+#include "qtpropertybrowser.h"
 
 typedef cocos2d::Node EditAble;
 
@@ -77,6 +78,8 @@ struct AttributeInfo
 
 	bool _setStep;
 	QVariant _singleStep;
+
+	QtProperty* _prop;
 };
 
 struct AttributeInfoMap

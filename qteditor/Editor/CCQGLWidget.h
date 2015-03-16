@@ -17,6 +17,10 @@ public:
 
 public slots:
 	void cocos2dDraw();
+
+signals:
+	void selectedBox();
+
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);

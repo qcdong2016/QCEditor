@@ -5,6 +5,7 @@
 #include "2d/CCNode.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCCustomCommand.h"
+#include "qobject.h"
 
 USING_NS_CC;
 
@@ -35,9 +36,9 @@ USING_NS_CC;
 
 /** Class which wraps a selected Window. Provides for resizing and repositioning of that window,
 * besides it holds whether the window's properties may be updated (the 'locked' member.)*/
-class WindowBox : public Node
+class WindowBox : public QObject, public Node
 {
-
+	Q_OBJECT
 public:
 
     WindowBox(Node* aWindow, bool aResizable = true);
@@ -77,6 +78,10 @@ public:
 
 	virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
 	void onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags);
+
+signals:
+	void onPositionChanged(const Vec2& vec);
+
 private:
 
 

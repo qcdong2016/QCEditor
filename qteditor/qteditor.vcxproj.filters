@@ -98,6 +98,12 @@
     <ClCompile Include="Editor\PropertyDef.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WindowBox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WindowBox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">
@@ -121,6 +127,9 @@
     <CustomBuild Include="Editor\CCQGLWidget.h">
       <Filter>Source Files\CCQt</Filter>
     </CustomBuild>
+    <CustomBuild Include="Editor\WindowBox.h">
+      <Filter>Source Files\Editor</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_EditorMain.h">
@@ -133,9 +142,6 @@
       <Filter>Source Files\CCQt</Filter>
     </ClInclude>
     <ClInclude Include="Editor\HelloWorldScene.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\WindowBox.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Editor\PropertyDef.h">

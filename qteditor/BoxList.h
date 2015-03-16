@@ -12,14 +12,14 @@ public:
 	BoxList(QWidget *parent = 0);
 	~BoxList();
 
-	void add();
-private slots:
-	void showMenuItem(QTreeWidgetItem * item, int column);
+	QTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
+	private slots:
 	void showMenu(const QPoint& pos);
 	void doAddWidget();
 
 private:
 	Ui::Form ui;
+	QTreeWidgetItem* _currentWidget;
 };
 
 #endif // BOXLIST_H

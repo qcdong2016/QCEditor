@@ -37,6 +37,8 @@ int CCQApplication::run()
 	w.setCentralWidget(window);
 	w.show();
 
+	connect(window, SIGNAL(selectedBox()), &w, SLOT(viewBoxAttr()));
+
 	CCQGLView* view = CCQGLView::getInstance();
 	auto director = Director::getInstance();
 

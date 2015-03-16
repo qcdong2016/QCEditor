@@ -5,7 +5,11 @@
 #include "ui_EditorMain.h"
 #include "BoxList.h"
 #include "Editor/PropertyDef.h"
+#include "math/Vec2.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 
+USING_NS_CC;
 class QtProperty;
 
 class EditorMain : public QMainWindow
@@ -18,12 +22,20 @@ public:
 
 private slots:
 	void valueChanged(QtProperty *, const QVariant &);
+	void boxPositionChanged(const Vec2& pos);
+
+	void viewBoxAttr();
+
 protected:
 	virtual void closeEvent(QCloseEvent *) override;
+
+
 private:
 	Ui::EditorMainClass ui;
 	BoxList* _boxlist;
 	AttributeInfoMap _attrMap;
+	QtVariantPropertyManager* _variantManager;
+	QtTreePropertyBrowser* _variantEditor;
 };
 
 #endif // EDITORMAIN_H

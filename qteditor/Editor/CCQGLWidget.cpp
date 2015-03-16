@@ -35,6 +35,9 @@ void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
 	float pixelDeltaX = x - _lastx;
 	float pixelDeltaY = y - _lasty;
 
+	if (_lastx == x && _lasty == y)
+		return;
+
 	_lastx = x;
 	_lasty = y;
 
@@ -113,6 +116,7 @@ void CCQGLWidget::mousePressEvent(QMouseEvent *event)
 	if (box->isPointInBoxRect(_lastx, _lasty))
 	{
 		_isMouseHoveredBox = true;
+		emit selectedBox();
 	}
 	else {
 		_mousePressed = true;
