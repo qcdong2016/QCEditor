@@ -87,9 +87,9 @@ void PropertyDef::cocos2d_Node_properties(AttributeInfoMap& map)
 	map.set(ATTR("Visible", getVisible, setVisible, bool, true));
 	map.set(ATTR("Scale X", getScaleX, setScaleX, float, 1));
 	map.set(ATTR("Scale Y", getScaleY, setScaleY, float, 1));
-	map.set(ATTR("Opacity", getOpacity, setOpacity, int, 255));
-	map.set(ATTR("Position", getPos, setPos, QPointF, QPointF(0, 0)));
-	map.set(ATTR("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5)));
+	map.set(new AttributeInfo("Opacity", new PropImpl<int>(getOpacity, setOpacity), 255, 0, 255));
+	map.set(new AttributeInfo("Position", new PropImpl<QPointF>(getPos, setPos), QPointF(0, 0)));
+	map.set(new AttributeInfo("Anchor Pos", new PropImpl<QPointF>(getAnchorPoint, setAnchorPoint), QPointF(0.5, 0.5), QPointF(0, 0), QPointF(1, 1), QPointF(0.1, 0.1)));
 
 	map.set(ATTR("Tag", getTag, setTag, int, 0));
 	map.set(ATTR("Name", getName, setName, QString, QString()));

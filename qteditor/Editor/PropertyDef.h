@@ -13,14 +13,40 @@ public:
 	virtual void set(EditAble* classPtr, const QVariant& src) = 0;
 };
 
-/// Description of an automatically serializable variable.
 struct AttributeInfo
 {
-
 	AttributeInfo(const char* name, Prop* accessor, const QVariant& defaultValue)
-	: _accessor(accessor)
-	, _name(name)
-	, _defaultValue(defaultValue)
+		: _accessor(accessor)
+		, _name(name)
+		, _defaultValue(defaultValue)
+		, _setMinimum(false)
+		, _setMaximum(false)
+		, _setStep(false)
+	{
+	}
+
+	AttributeInfo(const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& minimum, const QVariant& maximum)
+		: _accessor(accessor)
+		, _name(name)
+		, _defaultValue(defaultValue)
+		, _setMinimum(true)
+		, _setMaximum(true)
+		, _setStep(false)
+		, _minimum(minimum)
+		, _maximum(maximum)
+	{
+	}
+
+	AttributeInfo(const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& minimum, const QVariant& maximum, const QVariant& step)
+		: _accessor(accessor)
+		, _name(name)
+		, _defaultValue(defaultValue)
+		, _setMinimum(true)
+		, _setMaximum(true)
+		, _minimum(minimum)
+		, _maximum(maximum)
+		, _setStep(true)
+		, _singleStep(step)
 	{
 	}
 
@@ -32,6 +58,14 @@ struct AttributeInfo
 	QVariant _defaultValue;
 	Prop* _accessor;
 	std::string _name;
+
+	bool _setMinimum;
+	bool _setMaximum;
+	QVariant _minimum;
+	QVariant _maximum;
+
+	bool _setStep;
+	QVariant _singleStep;
 };
 
 struct AttributeInfoMap
