@@ -54,6 +54,7 @@ public:
 
     /** Checks if the mouse is within a resize point. If so, it returns the point's index (0-7).*/
 	int GetPointAtPosition(float x, float y) const;
+	bool isPointInBoxRect(float x, float y) const;
 
 	void updateWindowAreas(float left, float top, float right, float bottom);
 

@@ -50,6 +50,17 @@ struct AttributeInfo
 	{
 	}
 
+	AttributeInfo(const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& step)
+		: _accessor(accessor)
+		, _name(name)
+		, _defaultValue(defaultValue)
+		, _setMinimum(false)
+		, _setMaximum(false)
+		, _setStep(true)
+		, _singleStep(step)
+	{
+	}
+
 	~AttributeInfo() {
 		if (_accessor)
 			delete _accessor;

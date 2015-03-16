@@ -58,7 +58,7 @@ int WindowBox::GetPointAtPosition(float x, float y) const
     {
 		if (_resizePoints[i].distance(mousePos) <= 6)//
         {
-            return i ;
+            return i;
         }    
     }
 
@@ -107,5 +107,18 @@ void WindowBox::updateWindowAreas(float left, float top, float right, float bott
 // 	float d = -left / (size.width/2 * std::abs(_boxedWindow->getScaleX()));
 // 	_boxedWindow->setScaleX(_boxedWindow->getScaleX() + d);
 // 	qDebug("%f", d);
+
+	_boxedWindow->setPositionX(_boxedWindow->getPositionX() + left);
+	_boxedWindow->setPositionY(_boxedWindow->getPositionY() + top);
+
 	Reset();
+}
+
+bool WindowBox::isPointInBoxRect(float x, float y) const
+{
+	const Vec2& pos = _boxedWindow->convertToNodeSpace(Vec2(x, y));
+	const Size& size = _boxedWindow->getContentSize();
+	Rect rect(0, 0, size.width, size.height);
+
+	return rect.containsPoint(pos);
 }

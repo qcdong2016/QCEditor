@@ -30,6 +30,7 @@ protected:
 
 
 	int _hoveredResizePoint;
+	bool _isMouseHoveredBox;
 	bool _mousePressed;
 
 	float _lastx;

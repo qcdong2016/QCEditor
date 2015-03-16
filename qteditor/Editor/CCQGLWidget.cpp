@@ -10,6 +10,7 @@ CCQGLWidget::CCQGLWidget()
 , _lastx(0)
 , _lasty(0)
 , _mousePressed(false)
+, _isMouseHoveredBox(false)
 {
 	this->setMouseTracking(true);
 
@@ -31,13 +32,20 @@ void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
 
 	WindowBox* box = CCQGLView::getInstance()->getBox();
 
+	float pixelDeltaX = x - _lastx;
+	float pixelDeltaY = y - _lasty;
+
+	_lastx = x;
+	_lasty = y;
+
+	if (_isMouseHoveredBox) {
+		box->updateWindowAreas(pixelDeltaX, pixelDeltaY, pixelDeltaX, pixelDeltaY);
+		return;
+	}
+
 	if (_mousePressed)
 	{
-		float pixelDeltaX = x - _lastx;
-		float pixelDeltaY = y - _lasty;
 
-		_lastx = x;
-		_lasty = y;
 
 		if (_hoveredResizePoint != RESIZE_POINT_NONE)
 		{
@@ -85,7 +93,12 @@ void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
 	{
 		qDebug("!!");
 		_hoveredResizePoint = box->GetPointAtPosition(x, y);
-		//todo: update mouse status;
+
+		if (_hoveredResizePoint != -1)
+		{
+			//todo: update mouse status;
+		}
+		
 	}
 }
 
@@ -94,13 +107,23 @@ void CCQGLWidget::mousePressEvent(QMouseEvent *event)
     QGLWidget::mousePressEvent(event);
 	_lasty = frameSize().height() - event->y();
 	_lastx = event->x();
-	_mousePressed = true;
+
+	WindowBox* box = CCQGLView::getInstance()->getBox();
+
+	if (box->isPointInBoxRect(_lastx, _lasty))
+	{
+		_isMouseHoveredBox = true;
+	}
+	else {
+		_mousePressed = true;
+	}
 }
 
 void CCQGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     QGLWidget::mouseReleaseEvent(event);
 	_mousePressed = false;
+	_isMouseHoveredBox = false;
 }
 
 void CCQGLWidget::wheelEvent(QWheelEvent *event)
