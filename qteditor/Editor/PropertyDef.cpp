@@ -40,6 +40,23 @@ static void setOpacity(EditAble* node, const int& value) { node->setOpacity((GLu
 static bool getVisible(const EditAble* node) { return node->isVisible(); }
 static void setVisible(EditAble* node, const bool& value) { node->setVisible(value); }
 
+static int getLocalZOrder(const EditAble* node) { return node->getLocalZOrder(); }
+static void setLocalZOrder(EditAble* node, const int& value) { node->setLocalZOrder(value); }
+
+static int getGlobalZOrder(const EditAble* node) { return node->getGlobalZOrder(); }
+static void setGlobalZOrder(EditAble* node, const int& value) { node->setGlobalZOrder(value); }
+
+static float getScaleX(const EditAble* node) { return node->getScaleX(); }
+static void setScaleX(EditAble* node, const float& value) { node->setScaleX(value); }
+static float getScaleY(const EditAble* node) { return node->getScaleY(); }
+static void setScaleY(EditAble* node, const float& value) { node->setScaleY(value); }
+
+static int getTag(const EditAble* node) { return node->getTag(); }
+static void setTag(EditAble* node, const int& value) { node->setTag(value); }
+
+static QString getName(const EditAble* node) { return node->getName().c_str(); }
+static void setName(EditAble* node, const QString& value) { node->setName(std::string(value.toUtf8().constData())); }
+
 static QPointF getPos(const EditAble* node) {
 	QPointF spos;
 	spos.setX(node->getPositionX());
@@ -65,8 +82,16 @@ static void setAnchorPoint(EditAble* node, const QPointF& pos) {
 
 void PropertyDef::cocos2d_Node_properties(AttributeInfoMap& map)
 {
+	map.set(ATTR("Local Z Order", getLocalZOrder, setLocalZOrder, int, 0));
+	map.set(ATTR("Global Z Order", getGlobalZOrder, setGlobalZOrder, int, 0));
 	map.set(ATTR("Visible", getVisible, setVisible, bool, true));
+	map.set(ATTR("Scale X", getScaleX, setScaleX, float, 1));
+	map.set(ATTR("Scale Y", getScaleY, setScaleY, float, 1));
 	map.set(ATTR("Opacity", getOpacity, setOpacity, int, 255));
 	map.set(ATTR("Position", getPos, setPos, QPointF, QPointF(0, 0)));
 	map.set(ATTR("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5)));
+
+	map.set(ATTR("Tag", getTag, setTag, int, 0));
+	map.set(ATTR("Name", getName, setName, QString, QString()));
+
 }
