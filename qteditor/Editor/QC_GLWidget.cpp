@@ -1,36 +1,34 @@
-#include "CCQGLWidget.h"
+#include "QC_GLWidget.h"
 #include "qevent.h"
 #include "qlogging.h"
-#include "CCQGLView.h"
+#include "QC_GLView.h"
 #include "HelloWorldScene.h"
 #include "qtimer.h"
 
-CCQGLWidget::CCQGLWidget() 
-: QGLWidget(QGLFormat(QGL::DoubleBuffer))
+QCGLWidget::QCGLWidget(QWidget* parent /* = nullptr */)
+: QGLWidget(QGLFormat(QGL::DoubleBuffer), parent)
 , _lastx(0)
 , _lasty(0)
 , _mousePressed(false)
 , _isMouseHoveredBox(false)
+, _timer(nullptr)
 {
 	this->setMouseTracking(true);
 
-	_timer = new QTimer(this);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(cocos2dDraw()));
-	_timer->start(0.1);
 }
 
-CCQGLWidget::~CCQGLWidget()
+QCGLWidget::~QCGLWidget()
 {
 }
 
-void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
+void QCGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     QGLWidget::mouseMoveEvent(event);
 
 	int x = event->x();
 	int y = frameSize().height() - event->y();
 
-	WindowBox* box = CCQGLView::getInstance()->getBox();
+	WindowBox* box = QCGLView::getInstance()->getBox();
 
 	float pixelDeltaX = x - _lastx;
 	float pixelDeltaY = y - _lasty;
@@ -105,13 +103,13 @@ void CCQGLWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 }
 
-void CCQGLWidget::mousePressEvent(QMouseEvent *event)
+void QCGLWidget::mousePressEvent(QMouseEvent *event)
 {
     QGLWidget::mousePressEvent(event);
 	_lasty = frameSize().height() - event->y();
 	_lastx = event->x();
 
-	WindowBox* box = CCQGLView::getInstance()->getBox();
+	WindowBox* box = QCGLView::getInstance()->getBox();
 
 	if (box->isPointInBoxRect(_lastx, _lasty))
 	{
@@ -123,34 +121,34 @@ void CCQGLWidget::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void CCQGLWidget::mouseReleaseEvent(QMouseEvent *event)
+void QCGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     QGLWidget::mouseReleaseEvent(event);
 	_mousePressed = false;
 	_isMouseHoveredBox = false;
 }
 
-void CCQGLWidget::wheelEvent(QWheelEvent *event)
+void QCGLWidget::wheelEvent(QWheelEvent *event)
 {
 	QGLWidget::wheelEvent(event);
 }
 
-void CCQGLWidget::keyPressEvent(QKeyEvent *event)
+void QCGLWidget::keyPressEvent(QKeyEvent *event)
 {
 	QGLWidget::keyPressEvent(event);
 }
 
-void CCQGLWidget::keyReleaseEvent(QKeyEvent *event)
+void QCGLWidget::keyReleaseEvent(QKeyEvent *event)
 {
 	QGLWidget::keyReleaseEvent(event);
 }
 
-void CCQGLWidget::paintEvent(QPaintEvent* event)
+void QCGLWidget::paintEvent(QPaintEvent* event)
 {
 	QGLWidget::paintEvent(event);
 }
 
-void CCQGLWidget::resizeEvent(QResizeEvent* evnet)
+void QCGLWidget::resizeEvent(QResizeEvent* evnet)
 {
 	QGLWidget::resizeEvent(evnet);
 	const QSize& sz = evnet->size();
@@ -162,10 +160,23 @@ void CCQGLWidget::resizeEvent(QResizeEvent* evnet)
 	}
 }
 
-void CCQGLWidget::cocos2dDraw()
+void QCGLWidget::cocos2dDraw()
 {
 	makeCurrent();
 	cocos2d::Director::getInstance()->mainLoop();
 	swapBuffers();
+}
+
+void QCGLWidget::startCocos2d(int fps)
+{
+	_timer = new QTimer(this);
+	connect(_timer, SIGNAL(timeout()), this, SLOT(cocos2dDraw()));
+
+	int msec = 1.0 / ((float)fps) * 1000.0;
+
+	Director::getInstance()->setAnimationInterval(fps);
+	Director::getInstance()->runWithScene(HelloWorld::create());
+
+	_timer->start(msec);
 }
 

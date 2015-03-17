@@ -5,7 +5,7 @@
 #include "qtvariantproperty.h"
 #include "Editor/PropertyDef.h"
 #include "qtpropertybrowser.h"
-#include "Editor/CCQGLView.h"
+#include "Editor/QC_GLView.h"
 
 EditorMain::EditorMain(QWidget *parent)
 	: QMainWindow(parent)
@@ -45,7 +45,7 @@ void EditorMain::valueChanged(QtProperty* prop, const QVariant& value)
 	if (iter != _attrMap.infoMap.end())
 	{
 		AttributeInfo* info = iter->second;
-		CCQGLView* view = (CCQGLView*)Director::getInstance()->getOpenGLView();
+		QCGLView* view = (QCGLView*)Director::getInstance()->getOpenGLView();
 		if (view && view->getBox())
 			info->_accessor->set(view->getBox()->GetWindow(), value);
 	}
@@ -65,7 +65,7 @@ void EditorMain::viewBoxAttr()
 	PropertyDef::cocos2d_Node_properties(_attrMap);
 
 
-	CCQGLView* view = (CCQGLView*)Director::getInstance()->getOpenGLView();
+	QCGLView* view = (QCGLView*)Director::getInstance()->getOpenGLView();
 	connect(view->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
 	Node* node = view->getBox()->GetWindow();
 

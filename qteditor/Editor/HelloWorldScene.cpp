@@ -1,6 +1,6 @@
 #include "HelloWorldScene.h"
 #include "WindowBox.h"
-#include "CCQGLView.h"
+#include "QC_GLView.h"
 #include "ui/UIScale9Sprite.h"
 
 USING_NS_CC;
@@ -32,7 +32,7 @@ bool HelloWorld::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	onResize(visibleSize.width, visibleSize.height);
 
-	CCQGLView::getInstance()->setBox(_boxNode);
+	QCGLView::getInstance()->setBox(_boxNode);
 
     return true;
 }

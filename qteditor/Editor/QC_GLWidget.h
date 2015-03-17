@@ -7,16 +7,17 @@ class QTimer;
 
 USING_NS_CC;
 
-class CCQGLWidget : public QGLWidget
+class QCGLWidget : public QGLWidget
 {
     Q_OBJECT
 
 public:
-	CCQGLWidget();
-    ~CCQGLWidget();
+	QCGLWidget(QWidget* parent = nullptr);
+    ~QCGLWidget();
 
 public slots:
 	void cocos2dDraw();
+	void startCocos2d(int fps);
 
 signals:
 	void selectedBox();

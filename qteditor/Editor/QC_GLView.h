@@ -6,15 +6,15 @@
 #include <QWidget>
 #include "WindowBox.h"
 
-class CCQGLWidget;
+class QCGLWidget;
 
 USING_NS_CC;
 
-class CCQGLView : public GLViewImpl
+class QCGLView : public GLViewImpl
 {
 public:
-    CCQGLView();
-    virtual ~CCQGLView();
+    QCGLView();
+    virtual ~QCGLView();
 
 	virtual bool isOpenGLReady() override;
 	virtual void end() override;
@@ -25,7 +25,7 @@ public:
 
 	void setBgColor(Color4B &color);
 
-	static CCQGLView* getInstance();
+	static QCGLView* getInstance();
 
 	virtual void init();
 
