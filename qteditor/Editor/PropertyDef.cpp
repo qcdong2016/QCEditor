@@ -102,6 +102,5 @@ void PropertyDef::cocos2d_Node_properties(AttributeInfoMap& map)
 	map.set(ATTR("Tag", getTag, setTag, int, 0));
 	map.set(ATTR("Name", getName, setName, QString, QString()));
 
-	//fuck,qpoint can't using Single Step.
 	map.set(ATTRMMS("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5), QPointF(0, 0), QPointF(1, 1), QPointF(0.1, 0.1)));
 }
