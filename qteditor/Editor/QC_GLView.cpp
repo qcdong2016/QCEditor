@@ -12,7 +12,6 @@ QCGLView::QCGLView()
     : _screenScaleFactor(1.0f)
 	, _lastWindowHeight(0.0f)
 	, _bgColor(0, 0, 0, 1)
-	, _box(nullptr)
 {
 }
 
@@ -73,5 +72,6 @@ void QCGLView::init()
 {
 	bool ret = initGlew();
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	setBgColor(Color4B(50, 50, 50, 255));
 }
 

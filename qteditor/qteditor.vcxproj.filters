@@ -68,9 +68,6 @@
     <ClCompile Include="BoxList.cpp">
       <Filter>Source Files\QtUI</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\HelloWorldScene.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Editor\WindowBox.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
@@ -137,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_BoxList.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\HelloWorldScene.h">
-      <Filter>Source Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Editor\PropertyDef.h">
       <Filter>Source Files\Editor</Filter>

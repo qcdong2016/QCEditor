@@ -6,6 +6,7 @@
 #include "Editor/PropertyDef.h"
 #include "qtpropertybrowser.h"
 #include "Editor/QC_GLView.h"
+#include "Editor/QC_GLWidget.h"
 
 EditorMain::EditorMain(QWidget *parent)
 	: QMainWindow(parent)
@@ -41,13 +42,12 @@ void EditorMain::closeEvent(QCloseEvent *)
 void EditorMain::valueChanged(QtProperty* prop, const QVariant& value)
 {
 	QString name = prop->propertyName();
+	//slowly
 	auto& iter = _attrMap.infoMap.find(std::string(name.toLocal8Bit()));
 	if (iter != _attrMap.infoMap.end())
 	{
 		AttributeInfo* info = iter->second;
-		QCGLView* view = (QCGLView*)Director::getInstance()->getOpenGLView();
-		if (view && view->getBox())
-			info->_accessor->set(view->getBox()->GetWindow(), value);
+		info->_accessor->set(_glwindow->getBox()->GetWindow(), value);
 	}
 }
 
@@ -63,11 +63,8 @@ void EditorMain::viewBoxAttr()
 		QLatin1String("Node Property"));
 
 	PropertyDef::cocos2d_Node_properties(_attrMap);
-
-
-	QCGLView* view = (QCGLView*)Director::getInstance()->getOpenGLView();
-	connect(view->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
-	Node* node = view->getBox()->GetWindow();
+	//
+	Node* node = _glwindow->getBox()->GetWindow();
 
 	for (auto& iter = _attrMap.infoMap.begin(); iter != _attrMap.infoMap.end(); iter++)
 	{
@@ -93,4 +90,29 @@ void EditorMain::viewBoxAttr()
 
 	_variantEditor->clear();
 	_variantEditor->addProperty(topItem);
+}
+
+void EditorMain::onStart()
+{
+	_glwindow = new QCGLWidget(this);
+
+	_glwindow->setWindowFlags(_glwindow->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	_glwindow->setMinimumSize(500, 500);
+
+	setCentralWidget(_glwindow);
+
+	QCGLView* view = QCGLView::getInstance();
+
+	_glwindow->makeCurrent();
+	view->init();
+
+	auto director = Director::getInstance();
+
+	director->setOpenGLView(view);
+	view->setFrameSize(_glwindow->frameSize().width(), _glwindow->frameSize().height());
+
+	_glwindow->startCocos2d();
+
+	connect(_glwindow, SIGNAL(selectedBox()), this, SLOT(viewBoxAttr()));
+	connect(_glwindow->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
 }

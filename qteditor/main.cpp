@@ -4,7 +4,12 @@
 
 int main(int argc, char *argv[])
 {
-	ACApplication a(argc, argv);
+	QCApplication a(argc, argv);
 
-	return a.run();
+	EditorMain mainWindow;
+
+	mainWindow.onStart();
+	mainWindow.show();
+
+	return a.exec();
 }

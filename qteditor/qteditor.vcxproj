@@ -147,7 +147,6 @@
   <ItemGroup>
     <ClCompile Include="BoxList.cpp" />
     <ClCompile Include="EditorMain.cpp" />
-    <ClCompile Include="Editor\HelloWorldScene.cpp" />
     <ClCompile Include="Editor\PropertyDef.cpp" />
     <ClCompile Include="Editor\QC_Application.cpp" />
     <ClCompile Include="Editor\QC_GLView.cpp" />
@@ -264,7 +263,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-Id:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
-    <ClInclude Include="Editor\HelloWorldScene.h" />
     <ClInclude Include="Editor\PropertyDef.h" />
     <CustomBuild Include="Editor\WindowBox.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

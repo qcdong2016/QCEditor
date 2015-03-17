@@ -2,9 +2,9 @@
 
 #include "cocos2d.h"
 #include <QtOpenGL/QGLWidget>
+#include "WindowBox.h"
 
 class QTimer;
-
 USING_NS_CC;
 
 class QCGLWidget : public QGLWidget
@@ -15,12 +15,15 @@ public:
 	QCGLWidget(QWidget* parent = nullptr);
     ~QCGLWidget();
 
+	WindowBox* getBox() { return _boxesNode; }
+
 public slots:
 	void cocos2dDraw();
-	void startCocos2d(int fps);
+	void startCocos2d();
 
 signals:
 	void selectedBox();
+
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
@@ -42,5 +45,10 @@ protected:
 	float _lasty;
 
 	QTimer* _timer;
+
+	Node* _rootNode;
+	WindowBox* _boxesNode;
+
+	Scene* _scene;
 };
 

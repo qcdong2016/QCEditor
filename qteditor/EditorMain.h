@@ -11,6 +11,7 @@
 
 USING_NS_CC;
 class QtProperty;
+class QCGLWidget;
 
 class EditorMain : public QMainWindow
 {
@@ -23,8 +24,11 @@ public:
 private slots:
 	void valueChanged(QtProperty *, const QVariant &);
 	void boxPositionChanged(const Vec2& pos);
-
 	void viewBoxAttr();
+
+
+public:
+	void onStart();
 
 protected:
 	virtual void closeEvent(QCloseEvent *) override;
@@ -33,6 +37,8 @@ protected:
 private:
 	Ui::EditorMainClass ui;
 	BoxList* _boxlist;
+	QCGLWidget* _glwindow;
+
 	AttributeInfoMap _attrMap;
 	QtVariantPropertyManager* _variantManager;
 	QtTreePropertyBrowser* _variantEditor;

@@ -1,8 +1,7 @@
 #include "QC_GLWidget.h"
+#include "QC_GLView.h"
 #include "qevent.h"
 #include "qlogging.h"
-#include "QC_GLView.h"
-#include "HelloWorldScene.h"
 #include "qtimer.h"
 
 QCGLWidget::QCGLWidget(QWidget* parent /* = nullptr */)
@@ -28,8 +27,6 @@ void QCGLWidget::mouseMoveEvent(QMouseEvent *event)
 	int x = event->x();
 	int y = frameSize().height() - event->y();
 
-	WindowBox* box = QCGLView::getInstance()->getBox();
-
 	float pixelDeltaX = x - _lastx;
 	float pixelDeltaY = y - _lasty;
 
@@ -40,7 +37,8 @@ void QCGLWidget::mouseMoveEvent(QMouseEvent *event)
 	_lasty = y;
 
 	if (_isMouseHoveredBox) {
-		box->updateWindowAreas(pixelDeltaX, pixelDeltaY, pixelDeltaX, pixelDeltaY);
+		qDebug("mm%f,%f", _lasty, _lastx);
+		_boxesNode->updateWindowAreas(pixelDeltaX, pixelDeltaY, pixelDeltaX, pixelDeltaY);
 		return;
 	}
 
@@ -55,35 +53,35 @@ void QCGLWidget::mouseMoveEvent(QMouseEvent *event)
 			{
 			case RESIZE_POINT_WN:
 				// Upper left
-				box->updateWindowAreas(pixelDeltaX, pixelDeltaY, 0.0f, 0.0f);
+				_boxesNode->updateWindowAreas(pixelDeltaX, pixelDeltaY, 0.0f, 0.0f);
 				break;
 			case RESIZE_POINT_N:
 				// Upper middle
-				box->updateWindowAreas(0.0f, pixelDeltaY, 0.0f, 0.0f);
+				_boxesNode->updateWindowAreas(0.0f, pixelDeltaY, 0.0f, 0.0f);
 				break;
 			case RESIZE_POINT_NE:
 				// Upper right
-				box->updateWindowAreas(0.0f, pixelDeltaY, pixelDeltaX, 0.0f);
+				_boxesNode->updateWindowAreas(0.0f, pixelDeltaY, pixelDeltaX, 0.0f);
 				break;
 			case RESIZE_POINT_E:
 				// Middle right
-				box->updateWindowAreas(0.0f, 0.0f, pixelDeltaX, 0.0f);
+				_boxesNode->updateWindowAreas(0.0f, 0.0f, pixelDeltaX, 0.0f);
 				break;
 			case RESIZE_POINT_ES:
 				// Bottom right
-				box->updateWindowAreas(0.0f, 0.0f, pixelDeltaX, pixelDeltaY);
+				_boxesNode->updateWindowAreas(0.0f, 0.0f, pixelDeltaX, pixelDeltaY);
 				break;
 			case RESIZE_POINT_S:
 				// Bottom middle
-				box->updateWindowAreas(0.0f, 0.0f, 0.0f, pixelDeltaY);
+				_boxesNode->updateWindowAreas(0.0f, 0.0f, 0.0f, pixelDeltaY);
 				break;
 			case RESIZE_POINT_SW:
 				// Bottom left
-				box->updateWindowAreas(pixelDeltaX, 0.0f, 0.0f, pixelDeltaY);
+				_boxesNode->updateWindowAreas(pixelDeltaX, 0.0f, 0.0f, pixelDeltaY);
 				break;
 			case RESIZE_POINT_W:
 				// Middle left
-				box->updateWindowAreas(pixelDeltaX, 0.0f, 0.0f, 0.0f);
+				_boxesNode->updateWindowAreas(pixelDeltaX, 0.0f, 0.0f, 0.0f);
 				break;
 			default:
 				break;
@@ -92,8 +90,7 @@ void QCGLWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 	else 
 	{
-		qDebug("!!");
-		_hoveredResizePoint = box->GetPointAtPosition(x, y);
+		_hoveredResizePoint = _boxesNode->getPointAtPosition(x, y);
 
 		if (_hoveredResizePoint != -1)
 		{
@@ -109,9 +106,7 @@ void QCGLWidget::mousePressEvent(QMouseEvent *event)
 	_lasty = frameSize().height() - event->y();
 	_lastx = event->x();
 
-	WindowBox* box = QCGLView::getInstance()->getBox();
-
-	if (box->isPointInBoxRect(_lastx, _lasty))
+	if (_boxesNode->isPointInBoxRect(_lastx, _lasty))
 	{
 		_isMouseHoveredBox = true;
 		emit selectedBox();
@@ -151,13 +146,14 @@ void QCGLWidget::paintEvent(QPaintEvent* event)
 void QCGLWidget::resizeEvent(QResizeEvent* evnet)
 {
 	QGLWidget::resizeEvent(evnet);
-	const QSize& sz = evnet->size();
+
 	GLView* v = cocos2d::Director::getInstance()->getOpenGLView();
-	if (v) {
+	if (v)
 		v->setFrameSize(frameSize().width(), frameSize().height());
-		HelloWorld* hw = (HelloWorld*)Director::getInstance()->getRunningScene();
-		hw->onResize(sz.width(), sz.height());
-	}
+
+	const Size& sz = _rootNode->getContentSize();
+	_rootNode->setPosition(frameSize().width() / 2 - sz.width / 2, frameSize().height() / 2 - sz.height / 2);
+	_boxesNode->Reset();
 }
 
 void QCGLWidget::cocos2dDraw()
@@ -167,16 +163,36 @@ void QCGLWidget::cocos2dDraw()
 	swapBuffers();
 }
 
-void QCGLWidget::startCocos2d(int fps)
+void QCGLWidget::startCocos2d()
 {
 	_timer = new QTimer(this);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(cocos2dDraw()));
 
-	int msec = 1.0 / ((float)fps) * 1000.0;
+	Director::getInstance()->setAnimationInterval(60);
 
-	Director::getInstance()->setAnimationInterval(fps);
-	Director::getInstance()->runWithScene(HelloWorld::create());
+	_scene = Scene::create();
 
-	_timer->start(msec);
+	_rootNode = Node::create();
+	_rootNode->setContentSize(Size(400, 400));
+
+	_scene->addChild(_rootNode);
+
+	//remove me
+	Sprite* sp = Sprite::create("HelloWorld.png");
+	_rootNode->addChild(sp);
+
+	_boxesNode = new WindowBox(sp, true);
+	_boxesNode->autorelease();
+	_boxesNode->setGlobalZOrder(99999);
+	_boxesNode->setLocalZOrder(99999);
+	_scene->addChild(_boxesNode);
+
+	const Size& sz = _rootNode->getContentSize();
+	_rootNode->setPosition(frameSize().width() / 2 - sz.width / 2, frameSize().height() / 2 - sz.height / 2);
+	_boxesNode->Reset();
+
+	Director::getInstance()->runWithScene(_scene);
+
+	_timer->start(1);
 }
 
