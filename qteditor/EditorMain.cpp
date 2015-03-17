@@ -43,17 +43,17 @@ void EditorMain::valueChanged(QtProperty* prop, const QVariant& value)
 {
 	QString name = prop->propertyName();
 	//slowly
-	auto& iter = _attrMap.infoMap.find(std::string(name.toLocal8Bit()));
-	if (iter != _attrMap.infoMap.end())
+	AttributeInfo* info = _attrMap.find(std::string(name.toLocal8Bit()));
+	
+	if (info)
 	{
-		AttributeInfo* info = iter->second;
 		info->_accessor->set(_glwindow->getBox()->GetWindow(), value);
 	}
 }
 
 void EditorMain::boxPositionChanged(const Vec2& pos)
 {
-	_variantManager->setValue(_attrMap.get("Position")->_prop, QPoint(pos.x, pos.y));
+	_variantManager->setValue(_attrMap.find("Position")->_prop, QPoint(pos.x, pos.y));
 }
 
 void EditorMain::viewBoxAttr()
@@ -66,9 +66,14 @@ void EditorMain::viewBoxAttr()
 	//
 	Node* node = _glwindow->getBox()->GetWindow();
 
-	for (auto& iter = _attrMap.infoMap.begin(); iter != _attrMap.infoMap.end(); iter++)
+	//re-write
+	AttributeInfoGroup* nodeGp = _attrMap.groupMap["Node"];
+
+	for (auto& iter : nodeGp->infoMap)
 	{
-		AttributeInfo* info = iter->second;
+		AttributeInfo* info = iter.second;
+		if (!iter.second) break;//why
+
 		QtVariantProperty *item = _variantManager->addProperty(info->_defaultValue.type(), QLatin1String(info->_name.c_str()));
 
 		QVariant value;

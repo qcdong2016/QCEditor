@@ -41,6 +41,8 @@ public:
 #define ATTRMMS(name, getFunction, setFunction, typeName, defaultValue, mini, maxi, step) \
 	new AttributeInfo(name, new PropImpl<typeName >(getFunction, setFunction), defaultValue, mini, maxi, step)
 
+#define BEGANGROUP(name) new AttributeInfoGroup(name)
+
 static int getOpacity(const EditAble* node) { return node->getOpacity(); }
 static void setOpacity(EditAble* node, const int& value) { node->setOpacity((GLubyte)value); }
 static bool getVisible(const EditAble* node) { return node->isVisible(); }
@@ -91,16 +93,19 @@ static void setAnchorPoint(EditAble* node, const QPointF& pos) {
 
 void PropertyDef::cocos2d_Node_properties(AttributeInfoMap& map)
 {
-	map.set(ATTR("Local Z Order", getLocalZOrder, setLocalZOrder, int, 0));
-	map.set(ATTR("Global Z Order", getGlobalZOrder, setGlobalZOrder, int, 0));
-	map.set(ATTR("Visible", getVisible, setVisible, bool, true));
-	map.set(ATTRSTEP("Scale X", getScaleX, setScaleX, float, 1.0, 0.1));//don't using 1.0f,
-	map.set(ATTRSTEP("Scale Y", getScaleY, setScaleY, float, 1.0, 0.1));
-	map.set(ATTR("Rotation", getRotation, setRotation, float, 0));
-	map.set(ATTR("Position", getPos, setPos, QPointF, QPointF(0, 0)));
+	map << BEGANGROUP("Node")
+		<< ATTR("Local Z Order", getLocalZOrder, setLocalZOrder, int, 0)
+		<< ATTR("Global Z Order", getGlobalZOrder, setGlobalZOrder, int, 0)
+		<< ATTR("Visible", getVisible, setVisible, bool, true)
+		<< ATTRSTEP("Scale X", getScaleX, setScaleX, float, 1.0, 0.1)//don't using 1.0f,
+		<< ATTRSTEP("Scale Y", getScaleY, setScaleY, float, 1.0, 0.1)
+		<< ATTR("Rotation", getRotation, setRotation, float, 0)
+		<< ATTR("Position", getPos, setPos, QPointF, QPointF(0, 0))
 
-	map.set(ATTR("Tag", getTag, setTag, int, 0));
-	map.set(ATTR("Name", getName, setName, QString, QString()));
+		<< ATTR("Tag", getTag, setTag, int, 0)
+		<< ATTR("Name", getName, setName, QString, QString())
 
-	map.set(ATTRMMS("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5), QPointF(0, 0), QPointF(1, 1), QPointF(0.1, 0.1)));
+		<< ATTRMMS("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5), QPointF(0, 0), QPointF(1, 1), QPointF(0.1, 0.1))
+
+		;
 }

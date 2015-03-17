@@ -82,27 +82,64 @@ struct AttributeInfo
 	QtProperty* _prop;
 };
 
-struct AttributeInfoMap
+struct AttributeInfoGroup
 {
-	void set(AttributeInfo* info)
-	{
-		infoMap[info->_name] = info;
-	}
+	std::string name;
+	std::map<std::string, AttributeInfo* > infoMap;
 
-	AttributeInfo* get(const std::string& key)
+	AttributeInfoGroup(const std::string& name_) : name(name_) {}
+
+	AttributeInfo* find(const std::string& key)
 	{
 		return infoMap[key];
 	}
 
-	~AttributeInfoMap() 
+	AttributeInfoGroup& operator<<(AttributeInfo* info)
+	{
+		infoMap[info->_name] = info;
+		return *this;
+	}
+
+	~AttributeInfoGroup()
 	{
 		for (auto& iter = infoMap.begin(); iter != infoMap.end(); iter++)
 		{
 			delete iter->second;
 		}
 	}
+};
 
-	std::map<std::string, AttributeInfo* > infoMap;
+struct AttributeInfoMap
+{
+	AttributeInfoMap& operator<<(AttributeInfoGroup* group)
+	{
+		current = group;
+		groupMap[group->name] = group;
+		return *this;
+	}
+
+	AttributeInfoMap& operator<<(AttributeInfo* info)
+	{
+		*current << info;
+		return *this;
+	}
+
+	AttributeInfo* find(const std::string& key)
+	{
+		//re-write
+		return groupMap["Node"]->find(key);
+	}
+
+	~AttributeInfoMap() 
+	{
+		for (auto& iter = groupMap.begin(); iter != groupMap.end(); iter++)
+		{
+			delete iter->second;
+		}
+	}
+
+	AttributeInfoGroup* current;
+	std::map<std::string, AttributeInfoGroup* > groupMap;
 };
 
 
