@@ -29,20 +29,20 @@ void PropertyDef::cocos2d_Node_properties(AttributeInfoMap& map)
 		;
 }
 ```
+
 ![attr][]
 
 
 ##编译过程
->* VS2013 + Qt 5.4.1 + QtCreator
->* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
->* 然后打开工程修改Qt版本为你本机版本
->* 编译运行
+* VS2013 + Qt 5.4.1 + QtCreator
+* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
+* 然后打开工程修改Qt版本为你本机版本
+* 编译运行
 
 ##项目地址
 
-oschina  [http://git.oschina.net/qcdong/QCEditor](http://git.oschina.net/qcdong/QCEditor)
-
-github   [https://github.com/CaptainCN/QCEditor](https://github.com/CaptainCN/QCEditor)
+* oschina  [http://git.oschina.net/qcdong/QCEditor](http://git.oschina.net/qcdong/QCEditor)
+* github   [https://github.com/CaptainCN/QCEditor](https://github.com/CaptainCN/QCEditor)
 
 
 ##其他
