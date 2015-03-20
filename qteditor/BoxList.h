@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include "ui_BoxList.h"
+#include "2d/CCNode.h"
 
-class SceneCtrl;
+USING_NS_CC;
 
 class BoxList : public QWidget
 {
@@ -15,17 +16,19 @@ public:
 	~BoxList();
 
 	QTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
-	private slots:
+
+private slots:
 	void showMenu(const QPoint& pos);
 	void doAddWidget();
 
 public slots:
-	void updateList();
+	void updateList(Node* root);
+signals:
+	void onAddNewItem(Node* parent);
 
 private:
 	Ui::Form ui;
 	QTreeWidgetItem* _currentWidget;
-	SceneCtrl* _sceneCtrl;
 	int _index;
 };
 

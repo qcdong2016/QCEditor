@@ -25,9 +25,11 @@ public:
 	bool init(float frameWidth, float frameHeight);
 	static SceneCtrl* create(float frameWidth, float frameHeight);
 
+public slots:
+	void onAddNewItem(Node* parent);
+
 signals:
 	void selectedBox();
-
 private:
 
 

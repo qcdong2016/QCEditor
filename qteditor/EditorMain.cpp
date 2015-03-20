@@ -120,5 +120,8 @@ void EditorMain::onStart()
 	_sceneCtrl = _glwindow->createCocos2dSceneCtrl();
 
 	connect(_sceneCtrl, SIGNAL(selectedBox()), this, SLOT(viewBoxAttr()));
+	connect(_boxlist, SIGNAL(onAddNewItem(Node*)), _sceneCtrl, SLOT(onAddNewItem(Node*)));
 	connect(_sceneCtrl->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
+
+	_boxlist->updateList(_sceneCtrl->getUiRoot());
 }

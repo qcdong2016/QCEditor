@@ -152,3 +152,8 @@ SceneCtrl::SceneCtrl()
 
 }
 
+void SceneCtrl::onAddNewItem(Node* parent)
+{
+	qDebug("1%d", 1);
+}
+

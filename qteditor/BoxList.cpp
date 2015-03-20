@@ -1,7 +1,8 @@
 #include "BoxList.h"
 #include "qmenu.h"
 #include "qtreewidget.h"
-#include "Editor/SceneCtrl.h"
+
+Q_DECLARE_METATYPE(Node*);
 
 BoxList::BoxList(QWidget *parent)
 	: QWidget(parent)
@@ -56,12 +57,20 @@ void BoxList::doAddWidget()
 		_currentWidget->setExpanded(true);
 
 	_currentWidget->setSelected(false);
+
+	QVariant data = _currentWidget->data(0, Qt::UserRole);
+	Node* parent = (Node*)data.value<void*>();
+	
+	emit onAddNewItem(parent);
+
 	_currentWidget = NULL;
 }
 
-void BoxList::updateList()
+void BoxList::updateList(Node* root)
 {
-	Node* root = _sceneCtrl->getUiRoot();
-
-	add("root");
+	QTreeWidgetItem *item = add("root");
+	item->setData(0, Qt::UserRole, QVariant::fromValue(root));
+	
+	
+	//for each child
 }
