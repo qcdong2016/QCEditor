@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "ui_BoxList.h"
 
+class SceneCtrl;
+
 class BoxList : public QWidget
 {
 	Q_OBJECT
@@ -17,9 +19,14 @@ public:
 	void showMenu(const QPoint& pos);
 	void doAddWidget();
 
+public slots:
+	void updateList();
+
 private:
 	Ui::Form ui;
 	QTreeWidgetItem* _currentWidget;
+	SceneCtrl* _sceneCtrl;
+	int _index;
 };
 
 #endif // BOXLIST_H

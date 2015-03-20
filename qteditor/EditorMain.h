@@ -12,6 +12,7 @@
 USING_NS_CC;
 class QtProperty;
 class QCGLWidget;
+class SceneCtrl;
 
 class EditorMain : public QMainWindow
 {
@@ -38,6 +39,7 @@ private:
 	Ui::EditorMainClass ui;
 	BoxList* _boxlist;
 	QCGLWidget* _glwindow;
+	SceneCtrl* _sceneCtrl;
 
 	AttributeInfoMap _attrMap;
 	QtVariantPropertyManager* _variantManager;

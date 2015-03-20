@@ -101,6 +101,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_QC_GLWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Editor\SceneCtrl.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SceneCtrl.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SceneCtrl.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">
@@ -126,6 +135,9 @@
     </CustomBuild>
     <CustomBuild Include="Editor\QC_GLWidget.h">
       <Filter>Source Files\QtCocos2d</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Editor\SceneCtrl.h">
+      <Filter>Source Files\Editor</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

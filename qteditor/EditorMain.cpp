@@ -1,12 +1,13 @@
 #include "EditorMain.h"
 #include "cocos2d/cocos/base/CCDirector.h"
-#include "BoxList.h"
 #include "qttreepropertybrowser.h"
 #include "qtvariantproperty.h"
-#include "Editor/PropertyDef.h"
 #include "qtpropertybrowser.h"
+#include "Editor/PropertyDef.h"
 #include "Editor/QC_GLView.h"
 #include "Editor/QC_GLWidget.h"
+#include "Editor/SceneCtrl.h"
+#include "BoxList.h"
 
 EditorMain::EditorMain(QWidget *parent)
 	: QMainWindow(parent)
@@ -47,7 +48,7 @@ void EditorMain::valueChanged(QtProperty* prop, const QVariant& value)
 	
 	if (info)
 	{
-		info->_accessor->set(_glwindow->getBox()->GetWindow(), value);
+		info->_accessor->set(_sceneCtrl->getBox()->GetWindow(), value);
 	}
 }
 
@@ -64,7 +65,7 @@ void EditorMain::viewBoxAttr()
 
 	PropertyDef::cocos2d_Node_properties(_attrMap);
 	//
-	Node* node = _glwindow->getBox()->GetWindow();
+	Node* node = _sceneCtrl->getBox()->GetWindow();
 
 	//re-write
 	AttributeInfoGroup* nodeGp = _attrMap.groupMap["Node"];
@@ -116,8 +117,8 @@ void EditorMain::onStart()
 	director->setOpenGLView(view);
 	view->setFrameSize(_glwindow->frameSize().width(), _glwindow->frameSize().height());
 
-	_glwindow->startCocos2d();
+	_sceneCtrl = _glwindow->createCocos2dSceneCtrl();
 
-	connect(_glwindow, SIGNAL(selectedBox()), this, SLOT(viewBoxAttr()));
-	connect(_glwindow->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
+	connect(_sceneCtrl, SIGNAL(selectedBox()), this, SLOT(viewBoxAttr()));
+	connect(_sceneCtrl->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
 }

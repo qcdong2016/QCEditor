@@ -1,0 +1,46 @@
+#ifndef _SCENECTRL_H_
+#define _SCENECTRL_H_
+
+#include "qobject.h"
+#include "2d/CCScene.h"
+
+USING_NS_CC;
+class WindowBox;
+
+class SceneCtrl : public QObject, public Scene
+{
+	Q_OBJECT
+
+public:
+	SceneCtrl();
+
+	void mouseMoveEvent(float x, float y);
+	void mousePressEvent(float x, float y);
+	void mouseReleaseEvent(float x, float y);
+
+	Node* getUiRoot();
+	WindowBox* getBox() { return _boxesNode; }
+
+	void onResize(float frameWidth, float frameHeight);
+	bool init(float frameWidth, float frameHeight);
+	static SceneCtrl* create(float frameWidth, float frameHeight);
+
+signals:
+	void selectedBox();
+
+private:
+
+
+	int _hoveredResizePoint;
+	bool _isMouseHoveredBox;
+	bool _mousePressed;
+
+	float _lastx;
+	float _lasty;
+
+	Node* _rootNode;
+	WindowBox* _boxesNode;
+	SceneCtrl* _sceneCtrl;
+};
+
+#endif//_SCENECTRL_H_

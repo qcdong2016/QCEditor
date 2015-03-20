@@ -1,16 +1,14 @@
 #include "BoxList.h"
 #include "qmenu.h"
 #include "qtreewidget.h"
+#include "Editor/SceneCtrl.h"
 
 BoxList::BoxList(QWidget *parent)
 	: QWidget(parent)
+	, _index(0)
 {
 	ui.setupUi(this);
-
-
 	connect(ui.treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showMenu(const QPoint&)));
-
-	add("root");
 }
 
 BoxList::~BoxList()
@@ -47,7 +45,7 @@ void BoxList::showMenu(const QPoint& pos)
 
 void BoxList::doAddWidget()
 {
-	QTreeWidgetItem* newItem = add("new", _currentWidget);
+	QTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
 
 	newItem->setSelected(true);
 
@@ -59,4 +57,11 @@ void BoxList::doAddWidget()
 
 	_currentWidget->setSelected(false);
 	_currentWidget = NULL;
+}
+
+void BoxList::updateList()
+{
+	Node* root = _sceneCtrl->getUiRoot();
+
+	add("root");
 }
