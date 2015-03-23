@@ -7,6 +7,13 @@
 
 USING_NS_CC;
 
+class MyTreeWidgetItem : public QTreeWidgetItem
+{
+public:
+	Node* node;
+};
+
+
 class BoxList : public QWidget
 {
 	Q_OBJECT
@@ -15,20 +22,21 @@ public:
 	BoxList(QWidget *parent = 0);
 	~BoxList();
 
-	QTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
+	MyTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
 
 private slots:
 	void showMenu(const QPoint& pos);
 	void doAddWidget();
-
+	void selectedNode(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
 public slots:
 	void updateList(Node* root);
+
 signals:
-	void onAddNewItem(Node* parent);
+	void onSelectNode(Node* node);
 
 private:
 	Ui::Form ui;
-	QTreeWidgetItem* _currentWidget;
+	MyTreeWidgetItem* _currentWidget;
 	int _index;
 };
 

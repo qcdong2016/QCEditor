@@ -1,5 +1,5 @@
 #include "SceneCtrl.h"
-#include "2d\CCSprite.h"
+#include "2d/CCSprite.h"
 #include "WindowBox.h"
 
 Node* SceneCtrl::getUiRoot()
@@ -15,11 +15,7 @@ bool SceneCtrl::init(float frameWidth, float frameHeight)
 	_rootNode->setContentSize(Size(400, 400));
 	addChild(_rootNode);
 
-	//remove me
-	Sprite* sp = Sprite::create("HelloWorld.png");
-	_rootNode->addChild(sp);
-
-	_boxesNode = new WindowBox(sp, true);
+	_boxesNode = new WindowBox(nullptr, true);
 	_boxesNode->autorelease();
 	_boxesNode->setGlobalZOrder(99999);
 	_boxesNode->setLocalZOrder(99999);
@@ -149,11 +145,20 @@ SceneCtrl::SceneCtrl()
 , _mousePressed(false)
 , _isMouseHoveredBox(false)
 {
-
+	Global::sceneCtrl = this;
 }
 
-void SceneCtrl::onAddNewItem(Node* parent)
+Node* SceneCtrl::createNode(const NewItemData& data)
 {
-	qDebug("1%d", 1);
+	Sprite* sp = Sprite::create("image.png");
+	sp->setName(std::string(data.name.toUtf8()));
+	data.parent->addChild(sp);
+
+	return sp;
+}
+
+void SceneCtrl::setCurrentNode(Node* node)
+{
+	_boxesNode->setCurrentNode(node);
 }
 

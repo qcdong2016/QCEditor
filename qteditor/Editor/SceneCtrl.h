@@ -3,9 +3,11 @@
 
 #include "qobject.h"
 #include "2d/CCScene.h"
+#include "Common.h"
 
 USING_NS_CC;
 class WindowBox;
+class NewItemData;
 
 class SceneCtrl : public QObject, public Scene
 {
@@ -25,11 +27,15 @@ public:
 	bool init(float frameWidth, float frameHeight);
 	static SceneCtrl* create(float frameWidth, float frameHeight);
 
-public slots:
-	void onAddNewItem(Node* parent);
+	Node* createNode(const NewItemData& data);
 
 signals:
 	void selectedBox();
+
+public slots:
+	void setCurrentNode(Node*);
+
+
 private:
 
 

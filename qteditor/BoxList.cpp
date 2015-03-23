@@ -1,6 +1,7 @@
 #include "BoxList.h"
 #include "qmenu.h"
 #include "qtreewidget.h"
+#include "Editor\Common.h"
 
 Q_DECLARE_METATYPE(Node*);
 
@@ -8,8 +9,11 @@ BoxList::BoxList(QWidget *parent)
 	: QWidget(parent)
 	, _index(0)
 {
+	Global::boxList = this;
+
 	ui.setupUi(this);
 	connect(ui.treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showMenu(const QPoint&)));
+	connect(ui.treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(selectedNode(QTreeWidgetItem*, QTreeWidgetItem*)));
 }
 
 BoxList::~BoxList()
@@ -17,9 +21,15 @@ BoxList::~BoxList()
 
 }
 
-QTreeWidgetItem* BoxList::add(const QString& name, QTreeWidgetItem* parent)
+void BoxList::selectedNode(QTreeWidgetItem* curr, QTreeWidgetItem* prev)
 {
-	QTreeWidgetItem *item = new QTreeWidgetItem();
+	MyTreeWidgetItem* myitem = (MyTreeWidgetItem*)curr;
+	emit onSelectNode(myitem->node);
+}
+
+MyTreeWidgetItem* BoxList::add(const QString& name, QTreeWidgetItem* parent)
+{
+	MyTreeWidgetItem *item = new MyTreeWidgetItem();
 	item->setCheckState(0, Qt::Checked);
 	item->setText(0, name);
 
@@ -39,14 +49,14 @@ void BoxList::showMenu(const QPoint& pos)
 	connect(act, SIGNAL(triggered()), this, SLOT(doAddWidget()));
 	menu->addAction(act);
 
-	_currentWidget = ui.treeWidget->itemAt(pos);
+	_currentWidget = (MyTreeWidgetItem*) ui.treeWidget->itemAt(pos);
 
 	menu->exec(QCursor::pos());
 }
 
 void BoxList::doAddWidget()
 {
-	QTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
+	MyTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
 
 	newItem->setSelected(true);
 
@@ -58,19 +68,20 @@ void BoxList::doAddWidget()
 
 	_currentWidget->setSelected(false);
 
-	QVariant data = _currentWidget->data(0, Qt::UserRole);
-	Node* parent = (Node*)data.value<void*>();
-	
-	emit onAddNewItem(parent);
+	NewItemData itmData;
+	itmData.parent = _currentWidget->node;
+	itmData.type = NewItemData::TSprite;
+
+	newItem->node = Global::sceneCtrl->createNode(itmData);
+	emit onSelectNode(newItem->node);//
 
 	_currentWidget = NULL;
 }
 
 void BoxList::updateList(Node* root)
 {
-	QTreeWidgetItem *item = add("root");
-	item->setData(0, Qt::UserRole, QVariant::fromValue(root));
-	
+	MyTreeWidgetItem *item = add("root");
+	item->node = root;
 	
 	//for each child
 }

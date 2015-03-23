@@ -5,17 +5,17 @@
 
 USING_NS_CC;
 
-WindowBox::WindowBox(cocos2d::Node* aWindow, bool aResizable/* = true*/) :
-_boxedWindow(aWindow),
-_resizable(aResizable),
-_locked(false)
+WindowBox::WindowBox(cocos2d::Node* aWindow, bool aResizable/* = true*/)
+: _boxedNode(aWindow)
+, _resizable(aResizable)
+, _locked(false)
 {
     Reset ();
 }
 
 bool WindowBox::operator==(WindowBox& aBox)
 {
-	return (_boxedWindow == aBox._boxedWindow);
+	return (_boxedNode == aBox._boxedNode);
 }
 
 void WindowBox::Reset () 
@@ -67,7 +67,7 @@ int WindowBox::getPointAtPosition(float x, float y) const
 
 void WindowBox::setNewWindowPosition(const cocos2d::Vec2& newPosition)
 {
-    _boxedWindow->setPosition(newPosition);
+    _boxedNode->setPosition(newPosition);
     Reset();
 }
 
@@ -94,7 +94,7 @@ void WindowBox::onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags
 	Director::getInstance()->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 	Director::getInstance()->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, transform);
 	
-	const Size& size = _boxedWindow->getContentSize();
+	const Size& size = _boxedNode->getContentSize();
 
 	DrawPrimitives::drawRect(Vec2(0,0), size);
 // 	const Color4F color(1, 0, 0, 1);
@@ -107,26 +107,40 @@ void WindowBox::onDraw(Renderer *renderer, const Mat4& transform, uint32_t flags
 
 void WindowBox::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
 {
-	_drawCmd.init(_globalZOrder, transform, flags);
-	_drawCmd.func = CC_CALLBACK_0(WindowBox::onDraw, this, renderer, _boxedWindow->getNodeToWorldTransform(), flags);
-	renderer->addCommand(&_drawCmd);
+	if (_boxedNode) {
+		_drawCmd.init(_globalZOrder, transform, flags);
+		_drawCmd.func = CC_CALLBACK_0(WindowBox::onDraw, this, renderer, _boxedNode->getNodeToWorldTransform(), flags);
+		renderer->addCommand(&_drawCmd);
+	}
 }
 
 void WindowBox::updateWindowAreas(float left, float top, float right, float bottom)
 {
-	_boxedWindow->setPositionX(_boxedWindow->getPositionX() + left);
-	_boxedWindow->setPositionY(_boxedWindow->getPositionY() + top);
+	if (_boxedNode) {
 
-	Reset();//very slowly when move the box
+		_boxedNode->setPositionX(_boxedNode->getPositionX() + left);
+		_boxedNode->setPositionY(_boxedNode->getPositionY() + top);
 
-	emit onPositionChanged(_boxedWindow->getPosition());
+		Reset();//very slowly when move the box
+
+		emit onPositionChanged(_boxedNode->getPosition());
+	}
 }
 
 bool WindowBox::isPointInBoxRect(float x, float y) const
 {
-	const Vec2& pos = _boxedWindow->convertToNodeSpace(Vec2(x, y));
-	const Size& size = _boxedWindow->getContentSize();
+	if (!_boxedNode)
+		return false;
+
+	const Vec2& pos = _boxedNode->convertToNodeSpace(Vec2(x, y));
+	const Size& size = _boxedNode->getContentSize();
 	Rect rect(0, 0, size.width, size.height);
 
 	return rect.containsPoint(pos);
+}
+
+void WindowBox::setCurrentNode(Node* node)
+{
+	_boxedNode = node;
+	Reset();
 }

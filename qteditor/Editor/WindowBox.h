@@ -9,10 +9,8 @@
 
 USING_NS_CC;
 
-/** The resize box exists of 8 points.*/
 #define NUM_RESIZE_POINTS 8
 
-/** Locations of the points.*/
 #define RESIZE_POINT_WN 0   // West-North
 #define RESIZE_POINT_N  1   // North
 #define RESIZE_POINT_NE 2   // North-East
@@ -22,38 +20,33 @@ USING_NS_CC;
 #define RESIZE_POINT_SW 6   // South-West
 #define RESIZE_POINT_W  7   // West
 
-/** The resize box has 4 cardinal directions.*/
 #define NUM_RESIZE_DIRS 4
 
-/** Locations of the directions.*/
 #define RESIZE_DIR_N  0   // North
 #define RESIZE_DIR_E  1   // East
 #define RESIZE_DIR_S  2   // South
 #define RESIZE_DIR_W  3   // West
 
-/** Value indicating that the mouse is not hovering on a resize point.*/
 #define RESIZE_POINT_NONE -1
 
-/** Class which wraps a selected Window. Provides for resizing and repositioning of that window,
-* besides it holds whether the window's properties may be updated (the 'locked' member.)*/
+
 class WindowBox : public QObject, public Node
 {
 	Q_OBJECT
 public:
 
     WindowBox(Node* aWindow, bool aResizable = true);
-
-	// Operator to help STL::list::remove
 	bool operator==(WindowBox& aBox);
+
+	void setCurrentNode(Node* node);
     
     void Reset();
 
 	Node* GetWindow()
     {
-        return _boxedWindow;
+        return _boxedNode;
     }
 
-    /** Checks if the mouse is within a resize point. If so, it returns the point's index (0-7).*/
 	int getPointAtPosition(float x, float y) const;
 	bool isPointInBoxRect(float x, float y) const;
 
@@ -88,7 +81,7 @@ private:
     bool			_locked;
 	bool			_resizable;	
 
-	Node* _boxedWindow;
+	Node* _boxedNode;
 	std::vector<Vec3> _resizePoints;
 	CustomCommand _drawCmd;
 };
