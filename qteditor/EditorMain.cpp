@@ -36,66 +36,28 @@ EditorMain::~EditorMain()
 
 void EditorMain::closeEvent(QCloseEvent *)
 {
+	PropertyDef::clear();
 	cocos2d::Director::getInstance()->end();
 	qApp->quit();
 }
 
 void EditorMain::valueChanged(QtProperty* prop, const QVariant& value)
 {
-	QString name = prop->propertyName();
-	//slowly
-	AttributeInfo* info = _attrMap.find(std::string(name.toLocal8Bit()));
-	
-	if (info)
-	{
-		info->_accessor->set(_sceneCtrl->getBox()->GetWindow(), value);
-	}
+	PropertyDef::setProperty(_sceneCtrl->getBox()->getNode(), prop, value);
 }
 
 void EditorMain::boxPositionChanged(const Vec2& pos)
 {
-	_variantManager->setValue(_attrMap.find("Position")->_prop, QPoint(pos.x, pos.y));
+	PropertyDef::setPosition(_sceneCtrl->getBox()->getNode(), QPoint(pos.x, pos.y));
 }
 
 void EditorMain::viewBoxAttr()
 {
-
-	QtProperty *topItem = _variantManager->addProperty(QtVariantPropertyManager::groupTypeId(),
-		QLatin1String("Node Property"));
-
-	PropertyDef::cocos2d_Node_properties(_attrMap);
-	//
-	Node* node = _sceneCtrl->getBox()->GetWindow();
-
-	//re-write
-	AttributeInfoGroup* nodeGp = _attrMap.groupMap["Node"];
-
-	for (auto& iter : nodeGp->infoMap)
-	{
-		AttributeInfo* info = iter.second;
-		if (!iter.second) break;//why
-
-		QtVariantProperty *item = _variantManager->addProperty(info->_defaultValue.type(), QLatin1String(info->_name.c_str()));
-
-		QVariant value;
-		info->_accessor->get(node, value);
-
-		item->setValue(value);
-
-		info->_prop = item;
-
-		if (info->_setMinimum)
-			item->setAttribute(QLatin1String("minimum"), info->_minimum);
-		if (info->_setMaximum)
-			item->setAttribute(QLatin1String("maximum"), info->_maximum);
-		if (info->_setStep)
-			item->setAttribute(QLatin1String("singleStep"), info->_singleStep);
-
-		topItem->addSubProperty(item);
-	}
-
 	_variantEditor->clear();
-	_variantEditor->addProperty(topItem);
+	PropertyDef::clear();
+
+	Node* node = _sceneCtrl->getBox()->getNode();
+	PropertyDef::setupProperties(node, _variantEditor, _variantManager);
 }
 
 void EditorMain::onStart()

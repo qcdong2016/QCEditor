@@ -42,7 +42,7 @@ public:
     
     void Reset();
 
-	Node* GetWindow()
+	Node* getNode()
     {
         return _boxedNode;
     }

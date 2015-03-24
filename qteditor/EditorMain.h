@@ -41,7 +41,6 @@ private:
 	QCGLWidget* _glwindow;
 	SceneCtrl* _sceneCtrl;
 
-	AttributeInfoMap _attrMap;
 	QtVariantPropertyManager* _variantManager;
 	QtTreePropertyBrowser* _variantEditor;
 };
