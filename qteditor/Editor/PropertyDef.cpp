@@ -5,82 +5,142 @@
 #include "GL/glew.h"
 #include "qpoint.h"
 #include "qttreepropertybrowser.h"
+#include "StringUtil.h"
+#include "math/Vec2.h"
+#include <string>
 
 USING_NS_CC;
 
-template<typename ValueType>
-class PropImpl : public Prop
+template<typename T>
+static inline QVariant toQVariant(T v)
 {
-public:
-	typedef ValueType(*getFunctionPtr)(const Node*);
-	typedef void(*setFunctionPtr)(Node*, const ValueType&);
+	return QVariant(v);
+}
 
-	PropImpl(getFunctionPtr getF, setFunctionPtr setF)
-		: getFunction_(getF)
-		, setFunction_(setF)
-	{}
-	virtual void get(const Node* classPtr, QVariant& dest) const
-	{
-		dest = getFunction_(classPtr);
-	}
+static inline QVariant toQVariant(const Vec2& v)
+{
+	return QVariant(QPointF(v.x, v.y));
+}
 
-	virtual void set(Node* classPtr, const QVariant& src)
-	{
-		setFunction_(classPtr, src.value<ValueType>());
-	}
+static inline QVariant toQVariant(const Size& v)
+{
+	return QVariant(QSizeF(v.width, v.height));
+}
 
-	getFunctionPtr getFunction_;
-	setFunctionPtr setFunction_;
+static inline QVariant toQVariant(const std::string& v)
+{
+	return QVariant(QString(v.c_str()));
+}
+
+template<typename T>
+static inline T toCCValue(const QVariant& value)
+{
+	return value.value<T>();
+}
+template<>
+static inline std::string toCCValue(const QVariant& value)
+{
+	QString str = value.toString();
+	return std::string(str.toUtf8(), str.length());
+}
+
+template<>
+static inline Vec2 toCCValue(const QVariant& value)
+{
+	QPointF p = value.toPointF();
+	return Vec2(p.x(), p.y());
+}
+
+template<>
+static inline Size toCCValue(const QVariant& value)
+{
+	QSizeF s = value.toSizeF();
+	return Size(s.width(), s.height());
+}
+
+template<typename T> struct AttributeTrait
+{
+	/// Get function return type.
+	typedef const T& ReturnType;
+	/// Set function parameter type.
+	typedef const T& ParameterType;
 };
 
-static int getOpacity(const Node* node) { return node->getOpacity(); }
-static void setOpacity(Node* node, const int& value) { node->setOpacity((GLubyte)value); }
-static bool getVisible(const Node* node) { return node->isVisible(); }
-static void setVisible(Node* node, const bool& value) { node->setVisible(value); }
+template<> struct AttributeTrait<int>
+{
+	typedef int ReturnType;
+	typedef int ParameterType;
+};
 
-static int getLocalZOrder(const Node* node) { return node->getLocalZOrder(); }
-static void setLocalZOrder(Node* node, const int& value) { node->setLocalZOrder(value); }
+template<> struct AttributeTrait<bool>
+{
+	typedef bool ReturnType;
+	typedef bool ParameterType;
+};
 
-static int getGlobalZOrder(const Node* node) { return node->getGlobalZOrder(); }
-static void setGlobalZOrder(Node* node, const int& value) { node->setGlobalZOrder(value); }
+template<> struct AttributeTrait<float>
+{
+	typedef float ReturnType;
+	typedef float ParameterType;
+};
 
-static float getScaleX(const Node* node) { return node->getScaleX(); }
-static void setScaleX(Node* node, const float& value) { node->setScaleX(value); }
-static float getScaleY(const Node* node) { return node->getScaleY(); }
-static void setScaleY(Node* node, const float& value) { node->setScaleY(value); }
+template<typename T> struct MixedAttributeTrait
+{
+	typedef T ReturnType;
+	typedef const T& ParameterType;
+};
 
-static float getRotation(const Node* node) { return node->getRotation(); }
-static void setRotation(Node* node, const float& value) { node->setRotation(value); }
 
-static int getTag(const Node* node) { return node->getTag(); }
-static void setTag(Node* node, const int& value) { node->setTag(value); }
+/// Template implementation of the attribute accessor invoke helper class.
+template <typename T, typename U, typename Trait> class AttributeAccessorImpl : public Prop
+{
+public:
+	typedef typename Trait::ReturnType(T::*getFunctionPtr)() const;
+	typedef void (T::*setFunctionPtr)(typename Trait::ParameterType);
+	typedef QVariant (*fromStringFunctionPtr)(const std::string&);
 
-static QString getName(const Node* node) { return node->getName().c_str(); }
-static void setName(Node* node, const QString& value) { node->setName(std::string(value.toUtf8().constData())); }
+	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
+	{
+		_getFunc = getFunction;
+		_setFunc = setFunction;
+	}
 
-static QPointF getPos(const Node* node) {
-	QPointF spos;
-	spos.setX(node->getPositionX());
-	spos.setY(node->getPositionY());
+	void setFunction(fromStringFunctionPtr setFunction)
+	{
+	}
 
-	return spos;
-}
+	/// Invoke getter function.
+	virtual void get(const Node* ptr, QVariant& dest) const
+	{
+		assert(ptr);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = (classPtr->*_getFunc)();
+		toQVariant(value);
+	}
 
-static void setPos(Node* node, const QPointF& pos) {
-	node->setPosition(pos.x(), pos.y());
-}
+	/// Invoke setter function.
+	virtual void set(Node* ptr, const QVariant& value)
+	{
+		assert(ptr);
+		T* classPtr = static_cast<T*>(ptr);
+		(classPtr->*_setFunc)(toCCValue<U>(value));
+	}
 
-static QPointF getAnchorPoint(const Node* node) {
-	QPointF spos;
-	Vec2 ach = node->getAnchorPoint();
+	virtual std::string save(const QVariant& value)
+	{
+		return StringUtil::toString(value);
+	}
 
-	return QPointF(ach.x, ach.y);
-}
+	virtual QVariant read(const std::string& str)
+	{
+		return QVariant();
+	}
 
-static void setAnchorPoint(Node* node, const QPointF& pos) {
-	node->setAnchorPoint(Vec2(pos.x(), pos.y()));
-}
-
+	/// Class-specific pointer to getter function.
+	getFunctionPtr _getFunc;
+	/// Class-specific pointer to setter function.
+	setFunctionPtr _setFunc;
+};
 
 class Builder
 {
@@ -178,6 +238,18 @@ public:
 		return item;
 	}
 
+	virtual QtProperty* get(const QString& name)
+	{
+		for (auto iter = _map.begin(); iter != _map.end(); ++iter)
+		{
+			QtProperty* p = iter->first;
+
+			if (p->propertyName() == name)
+				return p;
+		}
+		return nullptr;
+	}
+
 	Node* _node;
 	QtTreePropertyBrowser* _browser;
 	QtVariantProperty* _current;
@@ -188,32 +260,44 @@ public:
 static Builder s_builder;
 static QtVariantProperty* s_position_prop;
 
+#define ATTR_(trait, name, get, set, typeName, defaultValue) {\
+	auto accessor = new AttributeAccessorImpl<Node, typeName, trait<typeName> >(); \
+	accessor->setFunction(get, set); \
+	b.add(name, accessor, toQVariant(defaultValue)); }
+
+#define ATTR(name, get, set, typeName, defaultValue) ATTR_(AttributeTrait, name, get, set, typeName, defaultValue)
+#define ATTRMixed(name, get, set, typeName, defaultValue) ATTR_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
+
+#define ATTRSTEP(name, get, set, typeName, defaultValue, step) {\
+	auto accessor = new AttributeAccessorImpl<Node, typeName, AttributeTrait<typeName> >(); \
+	accessor->setFunction(get, set); \
+	b.add(name, accessor, toQVariant(defaultValue), toQVariant(step)); }
+
+#define ATTRMMS(name, get, set, typeName, defaultValue, mini, maxi, step) {\
+	auto accessor = new AttributeAccessorImpl<Node, typeName, AttributeTrait<typeName> >(); \
+	accessor->setFunction(get, set); \
+	b.add(name, accessor, toQVariant(defaultValue), toQVariant(mini), toQVariant(maxi), toQVariant(step)); }
+
+
 void PropertyDef::setupProperties(Node* node, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
 {
 	Builder& b = s_builder;
 	b.set(node, browser, mgr);
 
-#define ATTR(name, getFunction, setFunction, typeName, defaultValue) \
-	b.add(name, new PropImpl<typeName >(getFunction, setFunction), defaultValue)
-
-#define ATTRSTEP(name, getFunction, setFunction, typeName, defaultValue, step) \
-	b.add(name, new PropImpl<typeName >(getFunction, setFunction), defaultValue, step)
-
-#define ATTRMMS(name, getFunction, setFunction, typeName, defaultValue, mini, maxi, step) \
-	b.add(name, new PropImpl<typeName >(getFunction, setFunction), defaultValue, mini, maxi, step)
-
 	b.beginGroup("Node Property");
-		ATTR("Local Z Order", getLocalZOrder, setLocalZOrder, int, 0);
-		ATTR("Global Z Order", getGlobalZOrder, setGlobalZOrder, int, 0);
-		ATTR("Visible", getVisible, setVisible, bool, true);
-		ATTRSTEP("Scale X", getScaleX, setScaleX, float, 1.0, 0.1);//don't using 1.0f,
-		ATTRSTEP("Scale Y", getScaleY, setScaleY, float, 1.0, 0.1);
-		ATTR("Rotation", getRotation, setRotation, float, 0);
-		s_position_prop = ATTR("Position", getPos, setPos, QPointF, QPointF(0, 0));
-		ATTR("Tag", getTag, setTag, int, 0);
-		ATTR("Name", getName, setName, QString, QString());
-		ATTRMMS("Anchor Pos", getAnchorPoint, setAnchorPoint, QPointF, QPointF(0.5, 0.5), QPointF(0, 0), QPointF(1, 1), QPointF(0.1, 0.1));
+		ATTR("Local Z Order", &Node::getLocalZOrder, &Node::setLocalZOrder, int, 0);
+		ATTR("Global Z Order", &Node::getGlobalZOrder, &Node::setGlobalZOrder, float, 0.0);
+		ATTR("Visible", &Node::isVisible, &Node::setVisible, bool, true);
+		ATTRSTEP("Scale X", &Node::getScaleX, &Node::setScaleX, float, 1.0, 0.1);//don't using 1.0f,
+		ATTRSTEP("Scale Y", &Node::getScaleY, &Node::setScaleY, float, 1.0, 0.1);
+		ATTR("Rotation", &Node::getRotation, &Node::setRotation, float, 0);
+		ATTR("Position", &Node::getPosition, &Node::setPosition, Vec2, Vec2(0, 0));
+		ATTR("Tag", &Node::getTag, &Node::setTag, int, 0);
+		ATTRMixed("Name", &Node::getName, &Node::setName, std::string, std::string());
+		ATTRMMS("Anchor Pos", &Node::getAnchorPoint, &Node::setAnchorPoint, Vec2, Vec2(0.5, 0.5), Vec2(0, 0), Vec2(1, 1), Vec2(0.1, 0.1));
 	b.endGroup();
+
+	s_position_prop = (QtVariantProperty*)b.get("Position");
 }
 
 void PropertyDef::setProperty(Node* node, QtProperty* prop, const QVariant& value)

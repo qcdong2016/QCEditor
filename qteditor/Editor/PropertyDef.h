@@ -14,6 +14,9 @@ class Prop
 public:
 	virtual void get(const Node* classPtr, QVariant& dest) const = 0;
 	virtual void set(Node* classPtr, const QVariant& src) = 0;
+	
+	virtual std::string save(const QVariant& value) = 0;
+	virtual QVariant read(const std::string& str) = 0;
 };
 
 
