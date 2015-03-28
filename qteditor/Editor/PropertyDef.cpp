@@ -8,139 +8,9 @@
 #include "StringUtil.h"
 #include "math/Vec2.h"
 #include <string>
+#include "AttributeAccessor.h"
 
 USING_NS_CC;
-
-template<typename T>
-static inline QVariant toQVariant(T v)
-{
-	return QVariant(v);
-}
-
-static inline QVariant toQVariant(const Vec2& v)
-{
-	return QVariant(QPointF(v.x, v.y));
-}
-
-static inline QVariant toQVariant(const Size& v)
-{
-	return QVariant(QSizeF(v.width, v.height));
-}
-
-static inline QVariant toQVariant(const std::string& v)
-{
-	return QVariant(QString(v.c_str()));
-}
-
-template<typename T>
-static inline T toCCValue(const QVariant& value)
-{
-	return value.value<T>();
-}
-template<>
-static inline std::string toCCValue(const QVariant& value)
-{
-	QString str = value.toString();
-	return std::string(str.toUtf8(), str.length());
-}
-
-template<>
-static inline Vec2 toCCValue(const QVariant& value)
-{
-	QPointF p = value.toPointF();
-	return Vec2(p.x(), p.y());
-}
-
-template<>
-static inline Size toCCValue(const QVariant& value)
-{
-	QSizeF s = value.toSizeF();
-	return Size(s.width(), s.height());
-}
-
-template<typename T> struct AttributeTrait
-{
-	/// Get function return type.
-	typedef const T& ReturnType;
-	/// Set function parameter type.
-	typedef const T& ParameterType;
-};
-
-template<> struct AttributeTrait<int>
-{
-	typedef int ReturnType;
-	typedef int ParameterType;
-};
-
-template<> struct AttributeTrait<bool>
-{
-	typedef bool ReturnType;
-	typedef bool ParameterType;
-};
-
-template<> struct AttributeTrait<float>
-{
-	typedef float ReturnType;
-	typedef float ParameterType;
-};
-
-template<typename T> struct MixedAttributeTrait
-{
-	typedef T ReturnType;
-	typedef const T& ParameterType;
-};
-
-
-/// Template implementation of the attribute accessor invoke helper class.
-template <typename T, typename U, typename Trait> class AttributeAccessorImpl : public Prop
-{
-public:
-	typedef typename Trait::ReturnType(T::*getFunctionPtr)() const;
-	typedef void (T::*setFunctionPtr)(typename Trait::ParameterType);
-	typedef QVariant (*fromStringFunctionPtr)(const std::string&);
-
-	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
-	{
-		_getFunc = getFunction;
-		_setFunc = setFunction;
-	}
-
-	void setFunction(fromStringFunctionPtr setFunction)
-	{
-	}
-
-	/// Invoke getter function.
-	virtual void get(const Node* ptr, QVariant& dest) const
-	{
-		assert(ptr);
-		const T* classPtr = static_cast<const T*>(ptr);
-		U value = (classPtr->*_getFunc)();
-		toQVariant(value);
-	}
-
-	/// Invoke setter function.
-	virtual void set(Node* ptr, const QVariant& value)
-	{
-		assert(ptr);
-		T* classPtr = static_cast<T*>(ptr);
-		(classPtr->*_setFunc)(toCCValue<U>(value));
-	}
-
-	virtual std::string save(const QVariant& value)
-	{
-		return StringUtil::toString(value);
-	}
-
-	virtual QVariant read(const std::string& str)
-	{
-		return QVariant();
-	}
-
-	/// Class-specific pointer to getter function.
-	getFunctionPtr _getFunc;
-	/// Class-specific pointer to setter function.
-	setFunctionPtr _setFunc;
-};
 
 class Builder
 {
@@ -167,12 +37,12 @@ public:
 		auto& iter = _map.find(p);
 		if (iter != _map.end())
 		{
-			Prop* pr = iter->second;
+			AttributeAccessor* pr = iter->second;
 			pr->set(node, v);
 		}
 	}
 
-	Prop* get(QtProperty* p)
+	AttributeAccessor* get(QtProperty* p)
 	{
 		auto& iter = _map.find(p);
 		if (iter != _map.end())
@@ -191,15 +61,19 @@ public:
 		_browser->addProperty(_current);
 	}
 
-	virtual QtVariantProperty* add(const char* name, Prop* accessor, const QVariant& defaultValue)
+	virtual QtVariantProperty* add(const char* name, AttributeAccessor* accessor, const Variant& defaultValue)
 	{
-		QtVariantProperty *item = _mgr->addProperty(defaultValue.type(), QLatin1String(name));
+		QString dfname = defaultValue.value<QVariant>().typeName();
+		QtVariantProperty *item = _mgr->addProperty(defaultValue.value<QVariant>().type(), QLatin1String(name));
 
 		_map[item] = accessor;
 
-		QVariant value;
+		Variant value;
 		accessor->get(_node, value);
-		item->setValue(value);
+		QVariant v = value.value<QVariant>();
+		QString tpname = v.typeName();
+
+		item->setValue(v);
 
 		_current->addSubProperty(item);
 
@@ -207,34 +81,29 @@ public:
 	}
 
 	virtual QtVariantProperty* add(
-		const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& minimum, const QVariant& maximum)
+		const char* name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum)
 	{
 		QtVariantProperty *item = add(name, accessor, defaultValue);
 
-		item->setAttribute(QLatin1String("minimum"), minimum);
-		item->setAttribute(QLatin1String("maximum"), maximum);
-
-		QVariant value;
-		accessor->get(_node, value);
-
-		item->setValue(value);
+		item->setAttribute(QLatin1String("minimum"), minimum.value<QVariant>());
+		item->setAttribute(QLatin1String("maximum"), maximum.value<QVariant>());
 
 		return item;
 	}
 
 	virtual QtVariantProperty* add(
-		const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& minimum, const QVariant& maximum, const QVariant& step)
+		const char* name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
 	{
 		QtVariantProperty *item = add(name, accessor, defaultValue, minimum, maximum);
 
-		item->setAttribute(QLatin1String("singleStep"), step);
+		item->setAttribute(QLatin1String("singleStep"), step.value<QVariant>());
 		return item;
 	}
 
-	virtual QtVariantProperty* add(const char* name, Prop* accessor, const QVariant& defaultValue, const QVariant& step)
+	virtual QtVariantProperty* add(const char* name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& step)
 	{
 		QtVariantProperty *item = add(name, accessor, defaultValue);
-		item->setAttribute(QLatin1String("singleStep"), step);
+		item->setAttribute(QLatin1String("singleStep"), step.value<QVariant>());
 		return item;
 	}
 
@@ -254,7 +123,7 @@ public:
 	QtTreePropertyBrowser* _browser;
 	QtVariantProperty* _current;
 	QtVariantPropertyManager* _mgr;
-	std::map<QtProperty*, Prop*> _map;
+	std::map<QtProperty*, AttributeAccessor*> _map;
 };
 
 static Builder s_builder;
@@ -263,7 +132,7 @@ static QtVariantProperty* s_position_prop;
 #define ATTR_(trait, name, get, set, typeName, defaultValue) {\
 	auto accessor = new AttributeAccessorImpl<Node, typeName, trait<typeName> >(); \
 	accessor->setFunction(get, set); \
-	b.add(name, accessor, toQVariant(defaultValue)); }
+	b.add(name, accessor, defaultValue); }
 
 #define ATTR(name, get, set, typeName, defaultValue) ATTR_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed(name, get, set, typeName, defaultValue) ATTR_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
@@ -271,12 +140,12 @@ static QtVariantProperty* s_position_prop;
 #define ATTRSTEP(name, get, set, typeName, defaultValue, step) {\
 	auto accessor = new AttributeAccessorImpl<Node, typeName, AttributeTrait<typeName> >(); \
 	accessor->setFunction(get, set); \
-	b.add(name, accessor, toQVariant(defaultValue), toQVariant(step)); }
+	b.add(name, accessor, defaultValue, step); }
 
 #define ATTRMMS(name, get, set, typeName, defaultValue, mini, maxi, step) {\
 	auto accessor = new AttributeAccessorImpl<Node, typeName, AttributeTrait<typeName> >(); \
 	accessor->setFunction(get, set); \
-	b.add(name, accessor, toQVariant(defaultValue), toQVariant(mini), toQVariant(maxi), toQVariant(step)); }
+	b.add(name, accessor, defaultValue, mini, maxi, step); }
 
 
 void PropertyDef::setupProperties(Node* node, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
@@ -286,7 +155,7 @@ void PropertyDef::setupProperties(Node* node, QtTreePropertyBrowser* browser, Qt
 
 	b.beginGroup("Node Property");
 		ATTR("Local Z Order", &Node::getLocalZOrder, &Node::setLocalZOrder, int, 0);
-		ATTR("Global Z Order", &Node::getGlobalZOrder, &Node::setGlobalZOrder, float, 0.0);
+		ATTR("Global Z Order", &Node::getGlobalZOrder, &Node::setGlobalZOrder, float, 0.0f);
 		ATTR("Visible", &Node::isVisible, &Node::setVisible, bool, true);
 		ATTRSTEP("Scale X", &Node::getScaleX, &Node::setScaleX, float, 1.0, 0.1);//don't using 1.0f,
 		ATTRSTEP("Scale Y", &Node::getScaleY, &Node::setScaleY, float, 1.0, 0.1);
