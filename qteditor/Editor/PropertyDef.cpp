@@ -42,9 +42,9 @@ public:
 			return nullptr;
 	}
 
-	virtual void beginGroup(const char* name)
+	virtual void beginGroup(const std::string& name)
 	{
-		_current = _mgr->addProperty(QtVariantPropertyManager::groupTypeId(), QLatin1String(name));
+		_current = _mgr->addProperty(QtVariantPropertyManager::groupTypeId(), QLatin1String(name.c_str()));
 	}
 
 	virtual void endGroup()
@@ -100,21 +100,30 @@ public:
 static Builder s_builder;
 static QtVariantProperty* s_position_prop = nullptr;
 
-void PropertyDef::setupProperties(Node* node, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
+void PropertyDef::setupProperties(const std::string& typeName, Node* instance, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
 {
 	Builder& b = s_builder;
-	b.set(node, browser, mgr);
+	b.set(instance, browser, mgr);
 
-	b.beginGroup("Node");//re-write
+	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
+	
+	AAManager::GroupMap::const_iterator iter;
 
-	const AAManager::AAInfoMap& map = AAManager::getInstance().getMap();
-	AAManager::AAInfoMap::const_iterator iter;
-	for (iter = map.begin(); iter != map.end(); iter++)
+	iter = map.find(typeName);
+	if (iter != map.end())
 	{
-		AttributeAccessorInfo* info = iter->second;
-		b.add(info->accessor->getName(), info->accessor, info->defaultValue, info->mini, info->maxi, info->singleStep);
+		ObjectMethodInfo* info = iter->second;
+		b.beginGroup(iter->first);
+
+		ObjectMethodInfo::AAInfoList::iterator iter;
+
+		for (iter = info->infolist.begin(); iter != info->infolist.end(); iter++)
+		{
+			AAInfo* aainfo = *iter;
+			b.add(aainfo->accessor->getName(), aainfo->accessor, aainfo->defaultValue, aainfo->mini, aainfo->maxi, aainfo->singleStep);
+		}
+		b.endGroup();
 	}
-	b.endGroup();
 
 	s_position_prop = (QtVariantProperty*)b.get("Position");
 }

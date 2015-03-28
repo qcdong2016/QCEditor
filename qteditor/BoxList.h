@@ -23,10 +23,9 @@ public:
 	~BoxList();
 
 	MyTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
-
 private slots:
 	void showMenu(const QPoint& pos);
-	void doAddWidget();
+	void doAddWidget(QAction* act);
 	void selectedNode(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
 public slots:
 	void updateList(Node* root);

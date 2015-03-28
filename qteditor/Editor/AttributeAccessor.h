@@ -53,8 +53,8 @@ template<typename T> struct MixedAttributeTrait
 };
 
 
-/// Template implementation of the attribute accessor invoke helper class.
-template <typename T, typename U, typename Trait> class AttributeAccessorImpl : public AttributeAccessor
+template <typename T, typename U, typename Trait> 
+class AttributeAccessorImpl : public AttributeAccessor
 {
 public:
 
@@ -106,8 +106,56 @@ public:
 };
 
 
+template <typename T, typename U, typename Trait> 
+class AttributeAccessorHelper : public AttributeAccessor
+{
+public:
 
-struct AttributeAccessorInfo
+	typedef typename Trait::ReturnType(*getFunctionPtr)(const T*);
+	typedef void(*setFunctionPtr)(T*, typename Trait::ParameterType);
+
+	AttributeAccessorHelper(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction)
+		: AttributeAccessor(name)
+		, _getFunc(getFunction)
+		, _setFunc(setFunction)
+	{}
+
+	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
+	{
+		_getFunc = getFunction;
+		_setFunc = setFunction;
+	}
+
+	/// Invoke getter function.
+	virtual void get(const Node* ptr, Variant& dest) const
+	{
+		assert(ptr);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = _getFunc(classPtr);
+		dest = value;
+	}
+
+	/// Invoke setter function.
+	virtual void set(Node* ptr, const Variant& value)
+	{
+		assert(ptr);
+		T* classPtr = static_cast<T*>(ptr);
+		_setFunc(classPtr, value.value<U>());
+	}
+
+	virtual void save(const Variant& value, std::string& out)
+	{
+	}
+
+	virtual void read(const std::string& str, Variant& out)
+	{
+	}
+
+	getFunctionPtr _getFunc;
+	setFunctionPtr _setFunc;
+};
+
+struct AAInfo
 {
 	AttributeAccessor* accessor;
 	Variant maxi;
@@ -115,8 +163,19 @@ struct AttributeAccessorInfo
 	Variant singleStep;
 	Variant defaultValue;
 
-	AttributeAccessorInfo(AttributeAccessor* accessor_, Variant def) : accessor(accessor_), defaultValue(def) {}
-	~AttributeAccessorInfo() { delete accessor; }
+	//lazy group
+	std::string groupname;
+	bool isGroup() { return groupname.length() != 0; }
+	AAInfo(const std::string& name) : groupname(name) {}
+	AAInfo(AttributeAccessor* accessor_, Variant def, Variant mx = Variant(), Variant mi = Variant(), Variant step = Variant())
+		: accessor(accessor_)
+		, defaultValue(def)
+		, mini(mi)
+		, maxi(mx)
+		, singleStep(step)
+	{}
+
+	~AAInfo() { delete accessor; }
 
 	void setValue(const Variant& mx, const Variant& mi, const Variant& step)
 	{
@@ -124,24 +183,62 @@ struct AttributeAccessorInfo
 	}
 };
 
+struct Constructor
+{
+	virtual Node* operator()() = 0;
+};
+
+template<typename T>
+struct StaticConstructor : public Constructor
+{
+	typedef T* (*createFunctionPtr)();
+	StaticConstructor(createFunctionPtr func) : ctor(func) {}
+
+	virtual Node* operator()()
+	{
+		return ctor();
+	}
+
+	createFunctionPtr ctor;
+};
+
+struct ObjectMethodInfo
+{
+	typedef std::list<AAInfo*> AAInfoList;
+	void add(AAInfo* info) { infolist.push_back(info); }
+
+	AAInfoList infolist;
+	std::string name;
+
+	Constructor* ctor;
+
+	ObjectMethodInfo(const std::string& nm, Constructor* ctr) : name(nm), ctor(ctr) {}
+
+
+	~ObjectMethodInfo()
+	{
+		delete ctor;
+		//todo remove list elements;
+	}
+};
+
 class AAManager
 {
 public:
-	typedef std::map<std::string, AttributeAccessorInfo*> AAInfoMap;
 	AAManager();
 	~AAManager();
 
 	static const AAManager& getInstance();
 
+	typedef std::map<std::string, ObjectMethodInfo*> GroupMap;
 
-	const AAInfoMap& getMap() const { return _map; }
+	const GroupMap& getGroups() const { return _groups; }
+
 private:
+	GroupMap _groups;
 
 	void releaseAll();
 	void initAll();
-
-
-	AAInfoMap _map;
 
 	static AAManager _instance;
 };

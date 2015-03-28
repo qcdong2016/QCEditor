@@ -12,7 +12,7 @@ USING_NS_CC;
 class PropertyDef
 {
 public:
-	static void setupProperties(Node* node, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr);
+	static void setupProperties(const std::string& typeName, Node* instance, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr);
 	static void setPosition(Node* node, const QPoint& pos);
 	static void setProperty(Node* node, QtProperty* prop, const QVariant& value);
 };

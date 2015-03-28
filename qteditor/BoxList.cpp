@@ -1,7 +1,10 @@
 #include "BoxList.h"
 #include "qmenu.h"
 #include "qtreewidget.h"
-#include "Editor\Common.h"
+#include "Editor/Common.h"
+#include "Editor/AttributeAccessor.h"
+#include "qobjectdefs.h"
+#include "qcoreevent.h"
 
 Q_DECLARE_METATYPE(Node*);
 
@@ -45,16 +48,23 @@ void BoxList::showMenu(const QPoint& pos)
 {
 	QMenu* menu = new QMenu();
 
-	QAction* act = new QAction(tr("&Add"), menu);
-	connect(act, SIGNAL(triggered()), this, SLOT(doAddWidget()));
-	menu->addAction(act);
+	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
 
+	for (auto iter : map)
+	{
+		std::string name = iter.first;
+
+		QAction* act = new QAction(name.c_str(), menu);
+		//connect(act, SIGNAL(triggered()), this, SLOT(doAddWidget()));
+		menu->addAction(act);
+	}
+	connect(menu, SIGNAL(triggered(QAction *)), this, SLOT(doAddWidget(QAction *)));
 	_currentWidget = (MyTreeWidgetItem*) ui.treeWidget->itemAt(pos);
 
 	menu->exec(QCursor::pos());
 }
 
-void BoxList::doAddWidget()
+void BoxList::doAddWidget(QAction* act)
 {
 	MyTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
 
@@ -68,11 +78,11 @@ void BoxList::doAddWidget()
 
 	_currentWidget->setSelected(false);
 
-	NewItemData itmData;
-	itmData.parent = _currentWidget->node;
-	itmData.type = NewItemData::TSprite;
+	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
+	ObjectMethodInfo* info = map.at(std::string(act->text().toUtf8()));
 
-	newItem->node = Global::sceneCtrl->createNode(itmData);
+	newItem->node = info->ctor->operator()();
+	_currentWidget->node->addChild(newItem->node);
 	emit onSelectNode(newItem->node);//
 
 	_currentWidget = NULL;
