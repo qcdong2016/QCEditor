@@ -165,6 +165,6 @@ std::string SceneCtrl::getNodeType(Node* node)
 	if (iter != _nodeTypeMapping.end())
 		return iter->second;
 
-	return "";
+	return "Node";
 }
 

@@ -55,7 +55,8 @@ void EditorMain::viewBoxAttr()
 	_variantEditor->clear();
 
 	Node* node = _sceneCtrl->getBox()->getNode();
-	PropertyDef::setupProperties("Node", node, _variantEditor, _variantManager);
+
+	PropertyDef::setupProperties(_sceneCtrl->getNodeType(node), node, _variantEditor, _variantManager);
 }
 
 void EditorMain::onStart()

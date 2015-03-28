@@ -80,7 +80,7 @@ void BoxList::doAddWidget(QAction* act)
 	_currentWidget->setSelected(false);
 
 	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
-	ObjectMethodInfo* info = map.at(typeName);
+	AccessorGroup* info = map.at(typeName);
 
 	newItem->node = info->ctor->operator()();
 	_currentWidget->node->addChild(newItem->node);

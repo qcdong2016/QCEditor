@@ -132,7 +132,7 @@ public:
 	template<>
 	Variant& operator=<QString>(const QString& v)
 	{
-		*this = v.toUtf8();
+		*this = std::string(v.toUtf8());
 		return *this;
 	}
 

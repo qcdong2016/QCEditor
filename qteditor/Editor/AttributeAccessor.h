@@ -202,24 +202,22 @@ struct StaticConstructor : public Constructor
 	createFunctionPtr ctor;
 };
 
-struct ObjectMethodInfo
+struct AccessorGroup
 {
 	typedef std::list<AAInfo*> AAInfoList;
 	void add(AAInfo* info) { infolist.push_back(info); }
 
-	AAInfoList infolist;
-	std::string name;
-
-	Constructor* ctor;
-
-	ObjectMethodInfo(const std::string& nm, Constructor* ctr) : name(nm), ctor(ctr) {}
-
-
-	~ObjectMethodInfo()
+	AccessorGroup(const std::string& nm, Constructor* ctr) : name(nm), ctor(ctr), parent(nullptr) {}
+	~AccessorGroup()
 	{
 		delete ctor;
 		//todo remove list elements;
 	}
+
+	AAInfoList infolist;
+	std::string name;
+	Constructor* ctor;
+	AccessorGroup* parent;
 };
 
 class AAManager
@@ -230,9 +228,12 @@ public:
 
 	static const AAManager& getInstance();
 
-	typedef std::map<std::string, ObjectMethodInfo*> GroupMap;
+	typedef std::map<std::string, AccessorGroup*> GroupMap;
 
 	const GroupMap& getGroups() const { return _groups; }
+
+	AccessorGroup* getGroup(const std::string& name) const;
+ 
 
 private:
 	GroupMap _groups;

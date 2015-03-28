@@ -100,6 +100,24 @@ public:
 static Builder s_builder;
 static QtVariantProperty* s_position_prop = nullptr;
 
+static void addAccessorGroup(AccessorGroup* ag)
+{
+	s_builder.beginGroup(ag->name);
+
+	AccessorGroup::AAInfoList::iterator iter;
+
+	for (iter = ag->infolist.begin(); iter != ag->infolist.end(); iter++)
+	{
+		AAInfo* aainfo = *iter;
+		s_builder.add(aainfo->accessor->getName(), 
+			aainfo->accessor, aainfo->defaultValue, aainfo->mini, aainfo->maxi, aainfo->singleStep);
+	}
+	s_builder.endGroup();
+
+	if (ag->parent != nullptr)
+		addAccessorGroup(ag->parent);
+}
+
 void PropertyDef::setupProperties(const std::string& typeName, Node* instance, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
 {
 	Builder& b = s_builder;
@@ -112,17 +130,7 @@ void PropertyDef::setupProperties(const std::string& typeName, Node* instance, Q
 	iter = map.find(typeName);
 	if (iter != map.end())
 	{
-		ObjectMethodInfo* info = iter->second;
-		b.beginGroup(iter->first);
-
-		ObjectMethodInfo::AAInfoList::iterator iter;
-
-		for (iter = info->infolist.begin(); iter != info->infolist.end(); iter++)
-		{
-			AAInfo* aainfo = *iter;
-			b.add(aainfo->accessor->getName(), aainfo->accessor, aainfo->defaultValue, aainfo->mini, aainfo->maxi, aainfo->singleStep);
-		}
-		b.endGroup();
+		addAccessorGroup(iter->second);
 	}
 
 	s_position_prop = (QtVariantProperty*)b.get("Position");
