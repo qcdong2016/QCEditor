@@ -2,6 +2,7 @@
 #include "2d/CCNode.h"
 #include "2d/CCSprite.h"
 #include "2d/CCParticleSystem.h"
+#include "2d/CCParticleSystemQuad.h"
 
 AAManager AAManager::_instance;
 
@@ -40,9 +41,11 @@ static Sprite* defaultSpriteCtor()
 	return sp;
 }
 
-static ParticleSystem* defaultParticleSystem()
+static ParticleSystemQuad* defaultParticleSystem()
 {
-	return ParticleSystem::create("default_particle.plist");
+	ParticleSystemQuad* psq = ParticleSystemQuad::create("default_particle.plist");
+	psq->setContentSize(Size(100, 100));
+	return psq;
 }
 
 #define ATTR_(trait, name, get, set, typeName, defaultValue) \
@@ -91,7 +94,7 @@ void AAManager::initAll()
 	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, std::string, std::string());
 	EndGroup();
 
-	StartGroup(ParticleSystem, defaultParticleSystem);
+	StartGroup(ParticleSystemQuad, defaultParticleSystem);
 	Require(Node);
 	//todo
 	EndGroup();

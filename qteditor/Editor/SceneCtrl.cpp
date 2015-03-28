@@ -148,17 +148,23 @@ SceneCtrl::SceneCtrl()
 	Global::sceneCtrl = this;
 }
 
-Node* SceneCtrl::createNode(const NewItemData& data)
-{
-	Sprite* sp = Sprite::create("image.png");
-	sp->setName(std::string(data.name.toUtf8()));
-	data.parent->addChild(sp);
-
-	return sp;
-}
-
 void SceneCtrl::setCurrentNode(Node* node)
 {
 	_boxesNode->setCurrentNode(node);
+}
+
+void SceneCtrl::registerNode(NodeInfo* info)
+{
+	_nodeTypeMapping[info->node] = info->typeName;
+}
+
+std::string SceneCtrl::getNodeType(Node* node)
+{
+	auto iter = _nodeTypeMapping.find(node);
+
+	if (iter != _nodeTypeMapping.end())
+		return iter->second;
+
+	return "";
 }
 

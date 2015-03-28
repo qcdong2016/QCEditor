@@ -8,6 +8,7 @@
 USING_NS_CC;
 class WindowBox;
 class NewItemData;
+class NodeInfo;
 
 class SceneCtrl : public QObject, public Scene
 {
@@ -27,14 +28,14 @@ public:
 	bool init(float frameWidth, float frameHeight);
 	static SceneCtrl* create(float frameWidth, float frameHeight);
 
-	Node* createNode(const NewItemData& data);
+	std::string getNodeType(Node* node);
 
 signals:
 	void selectedBox();
 
 public slots:
 	void setCurrentNode(Node*);
-
+	void registerNode(NodeInfo* info);
 
 private:
 
@@ -48,7 +49,7 @@ private:
 
 	Node* _rootNode;
 	WindowBox* _boxesNode;
-	SceneCtrl* _sceneCtrl;
+	std::map<Node*, std::string> _nodeTypeMapping;
 };
 
 #endif//_SCENECTRL_H_

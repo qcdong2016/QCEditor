@@ -6,20 +6,15 @@
 #include "SceneCtrl.h"
 #include "BoxList.h"
 #include "EditorMain.h"
+#include <string>
 
 USING_NS_CC;
 
-class NewItemData
+class NodeInfo
 {
 public:
-	enum ItemType
-	{
-		TNode, TSprite, TLayer, TNothing
-	};
-
-	Node* parent;
-	ItemType type;
-	QString name;
+	Node* node;
+	std::string typeName;
 };
 
 

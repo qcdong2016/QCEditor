@@ -7,6 +7,8 @@
 
 USING_NS_CC;
 
+class NodeInfo;
+
 class MyTreeWidgetItem : public QTreeWidgetItem
 {
 public:
@@ -32,6 +34,7 @@ public slots:
 
 signals:
 	void onSelectNode(Node* node);
+	void newNode(NodeInfo* info);
 
 private:
 	Ui::Form ui;

@@ -66,6 +66,7 @@ void BoxList::showMenu(const QPoint& pos)
 
 void BoxList::doAddWidget(QAction* act)
 {
+	std::string typeName = std::string(act->text().toUtf8());
 	MyTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
 
 	newItem->setSelected(true);
@@ -79,10 +80,16 @@ void BoxList::doAddWidget(QAction* act)
 	_currentWidget->setSelected(false);
 
 	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
-	ObjectMethodInfo* info = map.at(std::string(act->text().toUtf8()));
+	ObjectMethodInfo* info = map.at(typeName);
 
 	newItem->node = info->ctor->operator()();
 	_currentWidget->node->addChild(newItem->node);
+
+	NodeInfo nodeinfo;
+	nodeinfo.node = newItem->node;
+	nodeinfo.typeName = typeName;
+
+	emit newNode(&nodeinfo);
 	emit onSelectNode(newItem->node);//
 
 	_currentWidget = NULL;
