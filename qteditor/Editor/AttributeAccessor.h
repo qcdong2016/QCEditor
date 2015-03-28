@@ -2,15 +2,22 @@
 #define _ATTRIBUTEACCESSOR_H_
 
 #include "Varinat.h"
+#include <string>
 
 class AttributeAccessor
 {
 public:
+	AttributeAccessor(const std::string& name) : _name(name) {}
+
 	virtual void get(const Node* classPtr, Variant& dest) const = 0;
 	virtual void set(Node* classPtr, const Variant& src) = 0;
 
 	virtual void save(const Variant& value, std::string& out) = 0;
 	virtual void read(const std::string& str, Variant& out) = 0;
+
+	virtual const std::string& getName() { return _name; }
+private:
+	std::string _name;
 };
 
 template<typename T> struct AttributeTrait
@@ -50,8 +57,16 @@ template<typename T> struct MixedAttributeTrait
 template <typename T, typename U, typename Trait> class AttributeAccessorImpl : public AttributeAccessor
 {
 public:
+
 	typedef typename Trait::ReturnType(T::*getFunctionPtr)() const;
 	typedef void (T::*setFunctionPtr)(typename Trait::ParameterType);
+
+
+	AttributeAccessorImpl(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction)
+		: AttributeAccessor(name)
+		, _getFunc(getFunction)
+		, _setFunc(setFunction)
+	{}
 
 	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
 	{
@@ -88,6 +103,47 @@ public:
 	getFunctionPtr _getFunc;
 	/// Class-specific pointer to setter function.
 	setFunctionPtr _setFunc;
+};
+
+
+
+struct AttributeAccessorInfo
+{
+	AttributeAccessor* accessor;
+	Variant maxi;
+	Variant mini;
+	Variant singleStep;
+	Variant defaultValue;
+
+	AttributeAccessorInfo(AttributeAccessor* accessor_, Variant def) : accessor(accessor_), defaultValue(def) {}
+	~AttributeAccessorInfo() { delete accessor; }
+
+	void setValue(const Variant& mx, const Variant& mi, const Variant& step)
+	{
+		maxi = mx; mini = mi; singleStep = step;
+	}
+};
+
+class AAManager
+{
+public:
+	typedef std::map<std::string, AttributeAccessorInfo*> AAInfoMap;
+	AAManager();
+	~AAManager();
+
+	static const AAManager& getInstance();
+
+
+	const AAInfoMap& getMap() const { return _map; }
+private:
+
+	void releaseAll();
+	void initAll();
+
+
+	AAInfoMap _map;
+
+	static AAManager _instance;
 };
 
 #endif//_ATTRIBUTEACCESSOR_H_

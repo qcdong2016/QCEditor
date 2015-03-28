@@ -15,8 +15,6 @@ public:
 	static void setupProperties(Node* node, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr);
 	static void setPosition(Node* node, const QPoint& pos);
 	static void setProperty(Node* node, QtProperty* prop, const QVariant& value);
-
-	static void clear();
 };
 
 

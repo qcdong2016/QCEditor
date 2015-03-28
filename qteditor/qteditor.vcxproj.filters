@@ -113,6 +113,12 @@
     <ClCompile Include="Editor\Common.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Editor\Any.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\AttributeAccessor.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">
@@ -157,6 +163,15 @@
       <Filter>Source Files\QtCocos2d</Filter>
     </ClInclude>
     <ClInclude Include="Editor\Common.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\Any.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\Varinat.h">
+      <Filter>Source Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\AttributeAccessor.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>

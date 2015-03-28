@@ -36,7 +36,6 @@ EditorMain::~EditorMain()
 
 void EditorMain::closeEvent(QCloseEvent *)
 {
-	PropertyDef::clear();
 	cocos2d::Director::getInstance()->end();
 	qApp->quit();
 }
@@ -54,7 +53,6 @@ void EditorMain::boxPositionChanged(const Vec2& pos)
 void EditorMain::viewBoxAttr()
 {
 	_variantEditor->clear();
-	PropertyDef::clear();
 
 	Node* node = _sceneCtrl->getBox()->getNode();
 	PropertyDef::setupProperties(node, _variantEditor, _variantManager);

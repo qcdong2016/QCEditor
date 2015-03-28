@@ -35,6 +35,8 @@ public:
 	Variant(const QString& v) { *this = v; }
 	Variant(const QVariant& v) { *this = v; }
 
+	bool isNull() const { return _type == TNull; }
+
 private:
 
 	template<typename valuetype>

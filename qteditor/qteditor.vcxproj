@@ -147,6 +147,8 @@
   <ItemGroup>
     <ClCompile Include="BoxList.cpp" />
     <ClCompile Include="EditorMain.cpp" />
+    <ClCompile Include="Editor\Any.cpp" />
+    <ClCompile Include="Editor\AttributeAccessor.cpp" />
     <ClCompile Include="Editor\Common.cpp" />
     <ClCompile Include="Editor\PropertyDef.cpp" />
     <ClCompile Include="Editor\QC_Application.cpp" />
@@ -273,6 +275,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-Id:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
+    <ClInclude Include="Editor\Any.h" />
+    <ClInclude Include="Editor\AttributeAccessor.h" />
     <ClInclude Include="Editor\Common.h" />
     <ClInclude Include="Editor\PropertyDef.h" />
     <CustomBuild Include="Editor\WindowBox.h">
@@ -348,6 +352,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-Id:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
+    <ClInclude Include="Editor\Varinat.h" />
     <ClInclude Include="GeneratedFiles\ui_BoxList.h" />
     <ClInclude Include="GeneratedFiles\ui_EditorMain.h" />
   </ItemGroup>

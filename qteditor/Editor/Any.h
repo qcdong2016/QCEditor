@@ -2,6 +2,7 @@
 #define _ANY_H_
 
 #include <typeinfo>
+#include "qlogging.h"
 
 class Any
 {
