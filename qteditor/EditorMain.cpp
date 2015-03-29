@@ -19,9 +19,6 @@ EditorMain::EditorMain(QWidget *parent)
 	_variantManager = new QtVariantPropertyManager();
 	QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory();
 
-	connect(_variantManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-		this, SLOT(valueChanged(QtProperty *, const QVariant &)));
-
 	_variantEditor = new QtTreePropertyBrowser();
 	_variantEditor->setFactoryForManager(_variantManager, variantFactory);
 	_variantEditor->setPropertiesWithoutValueMarked(true);
@@ -50,13 +47,14 @@ void EditorMain::boxPositionChanged(const Vec2& pos)
 	PropertyDef::setPosition(_sceneCtrl->getBox()->getNode(), QPoint(pos.x, pos.y));
 }
 
-void EditorMain::viewBoxAttr()
+void EditorMain::viewBoxAttr(Node* node)
 {
-	_variantEditor->clear();
-
-	Node* node = _sceneCtrl->getBox()->getNode();
+	//avoid while(1)
+	disconnect(_variantManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)), this, SLOT(valueChanged(QtProperty *, const QVariant &)));
 
 	PropertyDef::setupProperties(_sceneCtrl->getNodeType(node), node, _variantEditor, _variantManager);
+
+	connect(_variantManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)), this, SLOT(valueChanged(QtProperty *, const QVariant &)));
 }
 
 void EditorMain::onStart()
@@ -80,9 +78,9 @@ void EditorMain::onStart()
 
 	_sceneCtrl = _glwindow->createCocos2dSceneCtrl();
 
-	connect(_sceneCtrl, SIGNAL(selectedBox()), this, SLOT(viewBoxAttr()));
+	connect(_boxlist, SIGNAL(onSelectNode(Node*)), this, SLOT(viewBoxAttr(Node*)));
+	connect(_boxlist, SIGNAL(onSelectNode(Node*)), _sceneCtrl, SLOT(setCurrentNode(Node*)));
 	connect(_boxlist, SIGNAL(newNode(NodeInfo*)), _sceneCtrl, SLOT(registerNode(NodeInfo*)));
 	connect(_sceneCtrl->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
-	connect(_boxlist, SIGNAL(onSelectNode(Node*)), _sceneCtrl, SLOT(setCurrentNode(Node*)));
 	_boxlist->updateList(_sceneCtrl->getUiRoot());
 }

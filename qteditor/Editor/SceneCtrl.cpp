@@ -1,6 +1,7 @@
 #include "SceneCtrl.h"
 #include "2d/CCSprite.h"
 #include "WindowBox.h"
+#include "EditorNode.h"
 
 Node* SceneCtrl::getUiRoot()
 {
@@ -11,7 +12,7 @@ bool SceneCtrl::init(float frameWidth, float frameHeight)
 {
 	Node::init();
 
-	_rootNode = Node::create();
+	_rootNode = EditorNode::create();
 	_rootNode->setContentSize(Size(400, 400));
 	addChild(_rootNode);
 

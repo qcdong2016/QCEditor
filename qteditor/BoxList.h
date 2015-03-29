@@ -40,6 +40,7 @@ private:
 	Ui::Form ui;
 	MyTreeWidgetItem* _currentWidget;
 	int _index;
+	Node* _root;
 };
 
 #endif // BOXLIST_H

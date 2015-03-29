@@ -25,7 +25,7 @@ public:
 private slots:
 	void valueChanged(QtProperty *, const QVariant &);
 	void boxPositionChanged(const Vec2& pos);
-	void viewBoxAttr();
+	void viewBoxAttr(Node*);
 
 
 public:

@@ -150,6 +150,8 @@
     <ClCompile Include="Editor\Any.cpp" />
     <ClCompile Include="Editor\AttributeAccessor.cpp" />
     <ClCompile Include="Editor\Common.cpp" />
+    <ClCompile Include="Editor\DefaultValue.cpp" />
+    <ClCompile Include="Editor\EditorNode.cpp" />
     <ClCompile Include="Editor\PropertyDef.cpp" />
     <ClCompile Include="Editor\QC_Application.cpp" />
     <ClCompile Include="Editor\QC_GLView.cpp" />
@@ -278,6 +280,8 @@
     <ClInclude Include="Editor\Any.h" />
     <ClInclude Include="Editor\AttributeAccessor.h" />
     <ClInclude Include="Editor\Common.h" />
+    <ClInclude Include="Editor\DefaultValue.h" />
+    <ClInclude Include="Editor\EditorNode.h" />
     <ClInclude Include="Editor\PropertyDef.h" />
     <CustomBuild Include="Editor\WindowBox.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

@@ -3,6 +3,7 @@
 #include "2d/CCSprite.h"
 #include "2d/CCParticleSystem.h"
 #include "2d/CCParticleSystemQuad.h"
+#include "DefaultValue.h"
 
 AAManager AAManager::_instance;
 
@@ -39,26 +40,6 @@ AccessorGroup* AAManager::getGroup(const std::string& name) const
 static std::string getSpriteTextureName(const Sprite*) { return "image.png"; }//lazy
 static void setSpriteTextureName(Sprite* sp, const std::string& name) { sp->setTexture(name); }
 
-static Node* defaultNodeCtor() 
-{
-	Node* node = Node::create();
-	node->setContentSize(Size(100, 100));
-	return node;
-}
-
-static Sprite* defaultSpriteCtor()
-{
-	Sprite* sp = Sprite::create("image.png");
-	return sp;
-}
-
-static ParticleSystemQuad* defaultParticleSystem()
-{
-	ParticleSystemQuad* psq = ParticleSystemQuad::create("default_particle.plist");
-	psq->setContentSize(Size(100, 100));
-	return psq;
-}
-
 #define ATTR_(trait, name, get, set, typeName, defaultValue) \
 	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, trait<typeName> >(name, get, set), defaultValue)) \
 
@@ -88,7 +69,7 @@ void AAManager::initAll()
 {
 	AccessorGroup* currentGroup;
 
-	StartGroup(Node, defaultNodeCtor);
+	StartGroup(Node, DefaultValue::defaultNodeCtor);
 	ATTR("Local Z Order", &Node::getLocalZOrder, &Node::setLocalZOrder, int, 0);
 	ATTR("Global Z Order", &Node::getGlobalZOrder, &Node::setGlobalZOrder, float, 0.0f);
 	ATTR("Visible", &Node::isVisible, &Node::setVisible, bool, true);
@@ -101,12 +82,12 @@ void AAManager::initAll()
 	ATTRMMS("Anchor Pos", &Node::getAnchorPoint, &Node::setAnchorPoint, Vec2, Vec2(0, 0), Vec2(0, 0), Vec2(1, 1), Vec2(0.1, 0.1));
 	EndGroup();
 
-	StartGroup(Sprite, defaultSpriteCtor);
+	StartGroup(Sprite, DefaultValue::defaultSpriteCtor);
 	Require(Node);
 	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, std::string, std::string());
 	EndGroup();
 
-	StartGroup(ParticleSystemQuad, defaultParticleSystem);
+	StartGroup(ParticleSystemQuad, DefaultValue::defaultParticleSystem);
 	Require(Node);
 
 	ATTR("Duration", &ParticleSystem::getDuration, &ParticleSystem::setDuration, float, 0);

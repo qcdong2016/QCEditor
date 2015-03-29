@@ -67,23 +67,19 @@ void BoxList::showMenu(const QPoint& pos)
 void BoxList::doAddWidget(QAction* act)
 {
 	std::string typeName = std::string(act->text().toUtf8());
-	MyTreeWidgetItem* newItem = add("new" + QString::number(_index), _currentWidget);
+	MyTreeWidgetItem* newItem = add("new" + act->text() + QString::number(_index++), _currentWidget);
 
 	newItem->setSelected(true);
 
-	if (!_currentWidget)
-		return;
-
-	if (_currentWidget->childCount() == 1)
-		_currentWidget->setExpanded(true);
-
-	_currentWidget->setSelected(false);
+	Node* parent = _root;
+	if (_currentWidget)
+		parent = _currentWidget->node;
 
 	const AAManager::GroupMap& map = AAManager::getInstance().getGroups();
 	AccessorGroup* info = map.at(typeName);
 
 	newItem->node = info->ctor->operator()();
-	_currentWidget->node->addChild(newItem->node);
+	parent->addChild(newItem->node);
 
 	NodeInfo nodeinfo;
 	nodeinfo.node = newItem->node;
@@ -92,13 +88,18 @@ void BoxList::doAddWidget(QAction* act)
 	emit newNode(&nodeinfo);
 	emit onSelectNode(newItem->node);//
 
-	_currentWidget = NULL;
+	if (_currentWidget)
+	{
+		if (_currentWidget->childCount() == 1)
+			_currentWidget->setExpanded(true);
+
+		_currentWidget->setSelected(false);
+		_currentWidget = NULL;
+	}
 }
 
 void BoxList::updateList(Node* root)
 {
-	MyTreeWidgetItem *item = add("root");
-	item->node = root;
-	
+	_root = root;
 	//for each child
 }

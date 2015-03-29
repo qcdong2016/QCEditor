@@ -45,6 +45,7 @@ public:
 	virtual void beginGroup(const std::string& name)
 	{
 		_current = _mgr->addProperty(QtVariantPropertyManager::groupTypeId(), QLatin1String(name.c_str()));
+		_rootProps[name] = _current;
 	}
 
 	virtual void endGroup()
@@ -52,14 +53,8 @@ public:
 		_browser->addProperty(_current);
 	}
 
-	virtual QtVariantProperty* add(
-		const std::string& name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
+	virtual void updateValue(QtVariantProperty* item, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
 	{
-		QString dfname = defaultValue.value<QVariant>().typeName();
-		QtVariantProperty *item = _mgr->addProperty(defaultValue.value<QVariant>().type(), QLatin1String(name.c_str()));
-
-		_map[item] = accessor;
-
 		Variant value;
 		accessor->get(_node, value);
 		QVariant v = value.value<QVariant>();
@@ -74,7 +69,18 @@ public:
 		if (!step.isNull())
 			item->setAttribute(QLatin1String("singleStep"), step.value<QVariant>());
 
+	}
+
+	virtual QtVariantProperty* add(
+		const std::string& name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
+	{
+		QString dfname = defaultValue.value<QVariant>().typeName();
+		QtVariantProperty *item = _mgr->addProperty(defaultValue.value<QVariant>().type(), QLatin1String(name.c_str()));
+
+		_map[item] = accessor;
+		updateValue(item, accessor, defaultValue, minimum, maximum, step);
 		_current->addSubProperty(item);
+
 		return item;
 	}
 
@@ -90,11 +96,23 @@ public:
 		return nullptr;
 	}
 
+	virtual QtVariantProperty* isIn(const std::string& name)
+	{
+		auto iter = _rootProps.find(name);
+		if (iter != _rootProps.end())
+		{
+			return iter->second;
+		}
+
+		return nullptr;
+	}
+
 	Node* _node;
 	QtTreePropertyBrowser* _browser;
 	QtVariantProperty* _current;
 	QtVariantPropertyManager* _mgr;
 	std::map<QtProperty*, AttributeAccessor*> _map;
+	std::map<std::string, QtVariantProperty*> _rootProps;
 };
 
 static Builder s_builder;
@@ -102,6 +120,9 @@ static QtVariantProperty* s_position_prop = nullptr;
 
 static void addAccessorGroup(AccessorGroup* ag)
 {
+	QtVariantProperty* old = s_builder.isIn(ag->name);
+	//if old valid, update it, not re-create
+
 	s_builder.beginGroup(ag->name);
 
 	AccessorGroup::AAInfoList::iterator iter;
@@ -109,7 +130,7 @@ static void addAccessorGroup(AccessorGroup* ag)
 	for (iter = ag->infolist.begin(); iter != ag->infolist.end(); iter++)
 	{
 		AAInfo* aainfo = *iter;
-		s_builder.add(aainfo->accessor->getName(), 
+		s_builder.add(aainfo->accessor->getName(),
 			aainfo->accessor, aainfo->defaultValue, aainfo->mini, aainfo->maxi, aainfo->singleStep);
 	}
 	s_builder.endGroup();
@@ -120,6 +141,8 @@ static void addAccessorGroup(AccessorGroup* ag)
 
 void PropertyDef::setupProperties(const std::string& typeName, Node* instance, QtTreePropertyBrowser* browser, QtVariantPropertyManager* mgr)
 {
+	browser->clear();//re-write
+
 	Builder& b = s_builder;
 	b.set(instance, browser, mgr);
 
