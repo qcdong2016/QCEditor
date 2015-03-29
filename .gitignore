@@ -27,7 +27,7 @@
 *.pidb
 *.log
 *.scc
-
+.*
 *.user
 
 # Visual C++ cache files
@@ -41,3 +41,6 @@ ipch/
 /qteditor/qtpropertybrowser/build-buildlib-Desktop_Qt_5_4_1_MSVC2013_32bit-Debug
 /qteditor/qtpropertybrowser/lib
 /qteditor/qtpropertybrowser/lib
+/qteditor/qtpropertybrowser/buildlib/release
+/qteditor/build-qtpropertybrowser-Desktop_Qt_5_4_1_MSVC2013_32bit-Debug
+/qteditor/qtpropertybrowser/buildlib
