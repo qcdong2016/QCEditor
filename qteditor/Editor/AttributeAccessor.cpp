@@ -125,6 +125,11 @@ void AAManager::initAll()
 	ATTR("End Spin", &ParticleSystem::getEndSpin, &ParticleSystem::setEndSpin, float, 0);
 	ATTR("End Spin Var", &ParticleSystem::getEndSpinVar, &ParticleSystem::setEndSpinVar, float, 0);
 
+	ATTR("Start Color", &ParticleSystem::getStartColor, &ParticleSystem::setStartColor, Color4F, Color4F::WHITE);
+	ATTR("Start Color Var", &ParticleSystem::getStartColorVar, &ParticleSystem::setStartColorVar, Color4F, Color4F::WHITE);
+	ATTR("End Color", &ParticleSystem::getEndColor, &ParticleSystem::setEndColor, Color4F, Color4F::WHITE);
+	ATTR("End Color Var", &ParticleSystem::getEndColorVar, &ParticleSystem::setEndColorVar, Color4F, Color4F::WHITE);
+
 	ATTR("Emission Rate", &ParticleSystem::getEmissionRate, &ParticleSystem::setEmissionRate, float, 0);
 	ATTR("Total Particles", &ParticleSystem::getTotalParticles, &ParticleSystem::setTotalParticles, int, 0);
 	ATTR("Opacity Modify RGB", &ParticleSystem::isOpacityModifyRGB, &ParticleSystem::setOpacityModifyRGB, bool, false);

@@ -7,6 +7,8 @@
 #include "qvariant.h"
 #include "qsize.h"
 #include "qpoint.h"
+#include "qcolor.h"
+#include "base/ccTypes.h"
 USING_NS_CC;
 
 //all number in Variant was a double
@@ -18,7 +20,7 @@ public:
 
 	enum Type
 	{
-		TNull,TBool,TInt,TFloat,TDouble,TVec2,TSize,TString
+		TNull,TBool,TInt,TFloat,TDouble,TVec2,TSize,TString,TColor
 	};
 	Variant() : _type(TNull) {}
 
@@ -29,11 +31,14 @@ public:
 	Variant(const Vec2& v) { *this = v; }
 	Variant(const Size& v) { *this = v; }
 	Variant(const std::string& v) { *this = v; }
+	Variant(const Color4F& v) { *this = v; }
+	//Variant(const Color3B& v) { *this = v; }
 
 	Variant(const QSizeF& v) { *this = v; }
 	Variant(const QPointF& v) { *this = v; }
 	Variant(const QString& v) { *this = v; }
 	Variant(const QVariant& v) { *this = v; }
+	Variant(const QColor& v) { *this = v; }
 
 	bool isNull() const { return _type == TNull; }
 
@@ -84,6 +89,10 @@ public:
 		else if (_type == TSize) {
 			Size v = value<Size>();
 			return QVariant(QSizeF(v.width, v.height));
+		} 
+		else if (_type == TColor) {
+			Color4F v = value<Color4F>();
+			return QVariant(QColor(v.r * 255.0, v.g * 255.0, v.b * 255.0, v.a * 255.0));
 		}
 
 		return QVariant();
@@ -130,6 +139,14 @@ public:
 	}
 
 	template<>
+	Variant& operator=<Color4F>(const Color4F& v)
+	{
+		_type = TColor;
+		_content = v;
+		return *this;
+	}
+
+	template<>
 	Variant& operator=<QString>(const QString& v)
 	{
 		*this = std::string(v.toUtf8());
@@ -168,6 +185,14 @@ public:
 	}
 
 	template<>
+	Variant& operator=<QColor>(const QColor& v)
+	{
+		_type = TColor;
+		_content = Color4F(v.redF(), v.greenF(), v.blueF(), v.alphaF());
+		return *this;
+	}
+
+	template<>
 	Variant& operator=<QVariant>(const QVariant& v)
 	{
 		if (v.type() == QVariant::SizeF)
@@ -182,6 +207,8 @@ public:
 			*this = v.toDouble();
 		else if (v.type() == QVariant::String)
 			*this = v.toString();
+		else if (v.type() == QVariant::Color)
+			*this = v.value<QColor>();
 		else
 			qDebug("Variant not support %s", v.typeName());
 		return *this;
