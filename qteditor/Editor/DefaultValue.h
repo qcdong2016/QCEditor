@@ -1,14 +1,22 @@
 #ifndef _DEFAULT_VALUE_H_
 #define _DEFAULT_VALUE_H_
 
-#include "2d/CCNode.h"
-#include "2d/CCSprite.h"
-#include "2d/CCParticleSystemQuad.h"
-USING_NS_CC;
+namespace cocos2d
+{
+	class Node;
+	class LabelTTF;
+	class LabelBMFont;
+	class Sprite;
+	class ParticleSystemQuad;
+}
+
+using namespace cocos2d;
 
 namespace DefaultValue
 {
 	Node* defaultNodeCtor();
+	LabelBMFont* defaultBMFont();
+	LabelTTF* defaultLabelTTF();
 	Sprite* defaultSpriteCtor();
 	ParticleSystemQuad* defaultParticleSystem();
 }

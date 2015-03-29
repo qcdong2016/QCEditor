@@ -4,6 +4,8 @@
 #include "2d/CCParticleSystem.h"
 #include "2d/CCParticleSystemQuad.h"
 #include "DefaultValue.h"
+#include "2d/CCLabelTTF.h"
+#include "2d/CCLabelBMFont.h"
 
 AAManager AAManager::_instance;
 
@@ -40,6 +42,9 @@ AccessorGroup* AAManager::getGroup(const std::string& name) const
 static std::string getSpriteTextureName(const Sprite*) { return "image.png"; }//lazy
 static void setSpriteTextureName(Sprite* sp, const std::string& name) { sp->setTexture(name); }
 
+static std::string getFntFile(const LabelBMFont* label) { return label->getFntFile(); }
+static void setFntFile(LabelBMFont* label, const std::string& file) { label->setFntFile(file); }
+
 #define ATTR_(trait, name, get, set, typeName, defaultValue) \
 	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, trait<typeName> >(name, get, set), defaultValue)) \
 
@@ -59,7 +64,7 @@ static void setSpriteTextureName(Sprite* sp, const std::string& name) { sp->setT
 #define EndGroup() }
 
 #define ATTR1_(trait, name, get, set, typeName, defaultValue) \
-	currentGroup->add(new AAInfo(new AttributeAccessorHelper<Sprite, typeName, trait<typeName> >(name, get, set), defaultValue))
+	currentGroup->add(new AAInfo(new AttributeAccessorHelper<TYPE, typeName, trait<typeName> >(name, get, set), defaultValue))
 #define ATTR1(name, get, set, typeName, defaultValue) ATTR1_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed1(name, get, set, typeName, defaultValue) ATTR1_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
 
@@ -85,6 +90,20 @@ void AAManager::initAll()
 	StartGroup(Sprite, DefaultValue::defaultSpriteCtor);
 	Require(Node);
 	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, std::string, std::string());
+	EndGroup();
+
+	StartGroup(LabelBMFont, DefaultValue::defaultBMFont);
+	Require(Node);
+	ATTR("String", &LabelBMFont::getString, &LabelBMFont::setString, std::string, std::string());
+	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, std::string, std::string());
+	EndGroup();
+
+	StartGroup(LabelTTF, DefaultValue::defaultLabelTTF);
+	Require(Node);
+	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, std::string, std::string());
+	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, std::string, std::string());
+	ATTR("Font Size", &LabelTTF::getFontSize, &LabelTTF::setFontSize, float, 20);
+	ATTR("Dimensions", &LabelTTF::getDimensions, &LabelTTF::setDimensions, Size, Size(0,0));
 	EndGroup();
 
 	StartGroup(ParticleSystemQuad, DefaultValue::defaultParticleSystem);

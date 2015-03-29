@@ -1,6 +1,12 @@
 #include "DefaultValue.h"
 #include "EditorNode.h"
 
+#include "2d/CCNode.h"
+#include "2d/CCSprite.h"
+#include "2d/CCParticleSystemQuad.h"
+#include "2d/CCLabelBMFont.h"
+#include "2d/CCLabelTTF.h"
+
 Node* DefaultValue::defaultNodeCtor()
 {
 #ifdef QT_GUI_LIB//lazy
@@ -23,4 +29,14 @@ ParticleSystemQuad* DefaultValue::defaultParticleSystem()
 	ParticleSystemQuad* psq = ParticleSystemQuad::create("default_particle.plist");
 	psq->setContentSize(Size(100, 100));
 	return psq;
+}
+
+LabelBMFont* DefaultValue::defaultBMFont()
+{
+	return LabelBMFont::create("123", "helvetica-32.fnt");
+}
+
+LabelTTF* DefaultValue::defaultLabelTTF()
+{
+	return LabelTTF::create("123", "Marker Felt.ttf", 20);
 }
