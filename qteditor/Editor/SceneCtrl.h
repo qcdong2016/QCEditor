@@ -36,7 +36,8 @@ signals:
 public slots:
 	void setCurrentNode(Node*);
 	void registerNode(NodeInfo* info);
-	void doSave(const QString& name);
+	void doSave(const QString& fileName);
+	void doLoad(const QString& fileName);
 
 private:
 

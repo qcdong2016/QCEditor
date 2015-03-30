@@ -2,9 +2,7 @@
 #include "2d/CCSprite.h"
 #include "WindowBox.h"
 #include "EditorNode.h"
-#include "rapidxml-1.13/rapidxml_print.hpp"
-#include "Common.h"
-#include "AttributeAccessor.h"
+#include "Serializer.h"
 
 Node* SceneCtrl::getUiRoot()
 {
@@ -172,71 +170,19 @@ std::string SceneCtrl::getNodeType(Node* node)
 	return "Node";
 }
 
-#include <iostream>
-#include <fstream>
 
-
-static void saveNode(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, Node* node)
+void SceneCtrl::doSave(const QString& fileName)
 {
-	const std::string& type = Global::sceneCtrl->getNodeType(node);
-	rapidxml::xml_node<>* xmlnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string(type.c_str()));
-	parent->append_node(xmlnode);
-
-	AccessorGroup* gp = AAManager::getInstance().getGroup(type);
-
-	for (AccessorGroup::AAInfoList::iterator iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
-	{
-		AAInfo* info = *iter;
-		AttributeAccessor* aa = info->accessor;
-		Variant v;
-		aa->get(node, v);
-		if (v == info->defaultValue)
-			continue;
-
-		std::string s;
-		aa->save(v, s);
-
-		rapidxml::xml_node<>* attrnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Property"));
-		rapidxml::xml_attribute<>* attrname = doc.allocate_attribute("name", doc.allocate_string(aa->getName().c_str()));
-		rapidxml::xml_attribute<>* attrvalue = doc.allocate_attribute("value", doc.allocate_string(s.c_str()));
-		attrnode->append_attribute(attrname);
-		attrnode->append_attribute(attrvalue);
-		xmlnode->append_node(attrnode);
-	}
-
-	Vector<Node*> childs = node->getChildren();
-
-	for (int i = 0; i < childs.size(); i++)
-	{
-		Node* child = childs.at(i);
-		saveNode(doc, xmlnode, child);
-	}
-
+	Serializer::save(getUiRoot(), std::string(fileName.toUtf8()));
 }
 
-
-static void doSave(const std::string& name, Node* root)
+void SceneCtrl::doLoad(const QString& fileName)
 {
-	rapidxml::xml_document<> doc;
+	Node* newroot = Serializer::read(std::string(fileName.toUtf8()));
+	_rootNode->removeFromParent();
+	_rootNode = newroot;
+	addChild(newroot);
 
-	rapidxml::xml_node<>* rot = doc.allocate_node(rapidxml::node_pi, doc.allocate_string("xml version='1.0' encoding='utf-8'"));
-	doc.append_node(rot);
-
-	rapidxml::xml_node<>* xmlroot = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Root"));
-	rapidxml::xml_node<>* uiroot = doc.allocate_node(rapidxml::node_element, doc.allocate_string("UI"));
-	xmlroot->append_node(uiroot);
-	saveNode(doc, uiroot, root);
-	doc.append_node(xmlroot);
-
-	std::string text;
-	rapidxml::print(std::back_inserter(text), doc, 0);
-	qDebug("%s", text.c_str());
-	std::ofstream out(name);
-	out << doc;
-}
-
-void SceneCtrl::doSave(const QString& name)
-{
-	::doSave(std::string(name.toUtf8()), getUiRoot());
+	_boxesNode->setCurrentNode(_rootNode);
 }
 

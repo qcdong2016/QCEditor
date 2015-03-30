@@ -61,20 +61,16 @@ public:
 	typedef typename Trait::ReturnType(T::*getFunctionPtr)() const;
 	typedef void (T::*setFunctionPtr)(typename Trait::ParameterType);
 	typedef void(*toStringFuncPtr)(const U&, std::string&);
+	typedef U(*formStringFuncPtr)(const std::string&);
 
-	AttributeAccessorImpl(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
+	AttributeAccessorImpl(const std::string& name,
+		getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF, formStringFuncPtr fromStrF)
 		: AttributeAccessor(name)
 		, _getFunc(getFunction)
 		, _setFunc(setFunction)
 		, _toStringFunc(toStrF)
+		, _fromStringFunc(fromStrF)
 	{}
-
-	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
-	{
-		_getFunc = getFunction;
-		_setFunc = setFunction;
-		_toStringFunc = toStrF;
-	}
 
 	/// Invoke getter function.
 	virtual void get(const Node* ptr, Variant& dest) const
@@ -100,13 +96,13 @@ public:
 
 	virtual void read(const std::string& str, Variant& out)
 	{
+		out = _fromStringFunc(str);
 	}
 
-	/// Class-specific pointer to getter function.
 	getFunctionPtr _getFunc;
-	/// Class-specific pointer to setter function.
 	setFunctionPtr _setFunc;
 	toStringFuncPtr _toStringFunc;
+	formStringFuncPtr _fromStringFunc;
 };
 
 
@@ -118,20 +114,16 @@ public:
 	typedef typename Trait::ReturnType(*getFunctionPtr)(const T*);
 	typedef void(*setFunctionPtr)(T*, typename Trait::ParameterType);
 	typedef void(*toStringFuncPtr)(const U&, std::string&);
+	typedef U(*formStringFuncPtr)(const std::string&);
 
-	AttributeAccessorHelper(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
+	AttributeAccessorHelper(const std::string& name, 
+		getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF, formStringFuncPtr fromStrF)
 		: AttributeAccessor(name)
 		, _getFunc(getFunction)
 		, _setFunc(setFunction)
 		, _toStringFunc(toStrF)
+		, _fromStringFunc(fromStrF)
 	{}
-
-	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
-	{
-		_getFunc = getFunction;
-		_setFunc = setFunction;
-		_toStringFunc = toStrF;
-	}
 
 	/// Invoke getter function.
 	virtual void get(const Node* ptr, Variant& dest) const
@@ -157,11 +149,13 @@ public:
 
 	virtual void read(const std::string& str, Variant& out)
 	{
+		out = _fromStringFunc(str);
 	}
 
 	getFunctionPtr _getFunc;
 	setFunctionPtr _setFunc;
 	toStringFuncPtr _toStringFunc;
+	formStringFuncPtr _fromStringFunc;
 };
 
 struct AAInfo
@@ -221,6 +215,17 @@ struct AccessorGroup
 	{
 		delete ctor;
 		//todo remove list elements;
+	}
+
+	AttributeAccessor* get(const std::string& name)
+	{
+		for (auto* info : infolist)
+		{
+			if (info->accessor->getName() == name)
+				return info->accessor;
+		}
+
+		return nullptr;
 	}
 
 	AAInfoList infolist;

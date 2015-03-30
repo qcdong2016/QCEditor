@@ -27,6 +27,7 @@ private slots:
 	void boxPositionChanged(const Vec2& pos);
 	void viewBoxAttr(Node*);
 	void save();
+	void load();
 
 public:
 	void onStart();
@@ -48,6 +49,7 @@ private:
 
 
 	QAction* _saveAction;
+	QAction* _loadAction;
 };
 
 #endif // EDITORMAIN_H

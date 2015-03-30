@@ -1,3 +1,4 @@
+
 #include "EditorMain.h"
 #include "cocos2d/cocos/base/CCDirector.h"
 #include "qttreepropertybrowser.h"
@@ -92,16 +93,27 @@ void EditorMain::createActions()
 {
 	_saveAction = new QAction("&Save", this);
 	_saveAction->setShortcut(QKeySequence::Save);
-	ui.menuFile->addAction(_saveAction);
+	ui.menuFile->insertAction(ui.action_Quit, _saveAction);
 	connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
+
+	_loadAction = new QAction("&Load", this);
+	_loadAction->setShortcut(QKeySequence::Open);
+	ui.menuFile->insertAction(ui.action_Quit, _loadAction);
+	connect(_loadAction, SIGNAL(triggered()), this, SLOT(load()));
 }
 
 void EditorMain::save()
 {
-	QString fileName = QFileDialog::getSaveFileName(this,
-		tr("Save"),
-		"",
-		tr("Save File (*.qc)"));
-
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save"), "", tr("Save File (*.qc)"));
 	_sceneCtrl->doSave(fileName);
+}
+
+void EditorMain::load()
+{
+	QString file = QFileDialog::getOpenFileName(this, tr("Select File"), "", "Editor Files (*.qc *.xml)");
+
+	if (file.length() != 0)
+	{
+		_sceneCtrl->doLoad(file);
+	}
 }

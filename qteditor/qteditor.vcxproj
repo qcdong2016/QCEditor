@@ -157,6 +157,7 @@
     <ClCompile Include="Editor\QC_GLView.cpp" />
     <ClCompile Include="Editor\QC_GLWidget.cpp" />
     <ClCompile Include="Editor\SceneCtrl.cpp" />
+    <ClCompile Include="Editor\Serializer.cpp" />
     <ClCompile Include="Editor\WindowBox.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_BoxList.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -259,6 +260,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Editor\Serializer.h" />
     <ClInclude Include="rapidxml-1.13\rapidxml.hpp" />
     <ClInclude Include="rapidxml-1.13\rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml-1.13\rapidxml_print.hpp" />

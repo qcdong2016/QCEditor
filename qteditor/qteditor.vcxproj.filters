@@ -128,6 +128,9 @@
     <ClCompile Include="Editor\DefaultValue.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Editor\Serializer.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">
@@ -200,6 +203,9 @@
     </ClInclude>
     <ClInclude Include="rapidxml-1.13\rapidxml_print.hpp">
       <Filter>xml</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\Serializer.h">
+      <Filter>Source Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
