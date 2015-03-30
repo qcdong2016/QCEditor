@@ -4,10 +4,10 @@
 
 **QCEditor**是一个简单的cocos2d-x编辑器。 Qt和Cocos-x 都能跨平台，理论上是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。写这个编辑器的目的是为了实现一个能摆放ui控件位置的功能，我们在游戏开发过程中通常也只会用到这个功能。
 
-**QCEditor**的渲染使用的是cocos2d-x本身的渲染，所以说在编辑器里面编辑的效果和游戏中的效果会一模一样，在编辑器里面添加的控件代码、解析代码，不用再到项目里面实现一次，只需要拷贝过去就能用。
+**QCEditor**的渲染使用的是cocos2d-x本身的渲染，所以说在编辑器里面编辑的效果和游戏中的效果会一模一样，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
 ##功能添加
-添加新的属性和控件非常方便，只需要按照下面格式添加，将会自动与Node绑定，并且自动添加到存储功能中(目前该功能还不完善)。理论上通过这种方式，能够编辑cocos2d-x里所有可视化组件，甚至其他一些组件。
+添加新的属性和控件非常方便，只需要按照下面格式添加，将会自动与Node绑定，并且自动添加到存储功能中。通过这种方式，能够编辑cocos2d-x里所有可视化组件，甚至其他一些组件。
 
 ```C++
 	StartGroup(Node, defaultNodeCtor);
@@ -52,19 +52,44 @@
 	EndGroup();
 ```
 
-预期的xml文件格式如下：
+xml文件格式如下：
 
 ```XML
-	<Property name="Local Z Order"	value="1" />
-	<Property name="Global Z Order"	value="1.0" />
-	<Property name="Visible"	value="true" />
-	<Property name="Scale X"	value="1.0" />
-	<Property name="Scale Y"	value="1.0" />
-	<Property name="Rotation"	value="0.0" />
-	<Property name="Position"	value="0 0" />
-	<Property name="Tag"	value="0" />
-	<Property name="Name"	value="node" />
-	<Property name="Anchor Pos"	value="0 0" />
+<?xml version='1.0' encoding='utf-8' ?>
+<Root>
+	<UI>
+		<Node>
+			<Property name="Position" value="340 190.5"/>
+			<Property name="Tag" value="-1"/>
+			<LabelTTF>
+				<Property name="String" value="wwwd"/>
+				<Property name="Font File" value="Marker Felt.ttf"/>
+				
+				<ParticleSystemQuad>
+					<Property name="Duration" value="-1"/>
+					<Property name="Life" value="4"/>
+					<Property name="Life Var" value="1"/>
+					<Property name="Angle" value="90"/>
+					<Property name="Angle Var" value="360"/>
+					<Property name="Start Size" value="30"/>
+					<Property name="Start Size Var" value="10"/>
+					<Property name="End Size" value="30"/>
+					<Property name="Start Color" value="0.5 0.5 0.5 1"/>
+					<Property name="Start Color Var" value="0.5 0.5 0.5 0"/>
+					<Property name="End Color" value="0 0 0 1"/>
+					<Property name="End Color Var" value="0 0 0 0"/>
+					<Property name="Emission Rate" value="62.5"/>
+					<Property name="Total Particles" value="250"/>
+					<Node>
+						<Property name="Position" value="-67 -369"/>
+						<Property name="Tag" value="-1"/>
+					</Node>
+				</ParticleSystemQuad>
+			</LabelTTF>
+		</Node>
+	</UI>
+</Root>
+
 ```
 
 在编辑器里面看到的是这样：
@@ -85,7 +110,7 @@
 
 
 ##其他
-个人力量有限，如果有小伙伴一起来搞就好啦，欢迎提供代码。
+个人力量有限，如果有小伙伴一起来搞就好啦，欢迎提供代码。QQ(526738316) Email(qcdong@yeah.net)
 
 ##License
 Licensed under the MIT license, see [LICENSE](LICENSE) for details.
