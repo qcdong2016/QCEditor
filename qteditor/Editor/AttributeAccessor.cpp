@@ -107,6 +107,7 @@ void AAManager::initAll()
 	ATTRSTEP("Scale Y", &Node::getScaleY, &Node::setScaleY, float, 1.0, 0.1);
 	ATTR("Rotation", &Node::getRotation, &Node::setRotation, float, 0);
 	ATTR("Position", &Node::getPosition, &Node::setPosition, Vec2, Vec2(0, 0));
+	ATTR("Content Size", &Node::getContentSize, &Node::setContentSize, Size, Size(100, 100));
 	ATTR("Tag", &Node::getTag, &Node::setTag, int, 0);
 	ATTRMixed("Name", &Node::getName, &Node::setName, string, string());
 	ATTRMMS("Anchor Pos", &Node::getAnchorPoint, &Node::setAnchorPoint, Vec2, Vec2(0, 0), Vec2(0, 0), Vec2(1, 1), Vec2(0.1, 0.1));

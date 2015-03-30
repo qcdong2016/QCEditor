@@ -38,7 +38,7 @@ static void saveNode(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent
 	}
 
 	Vector<Node*> childs = node->getChildren();
-
+	//has bug(for label/sprite 9): re-write
 	for (int i = 0; i < childs.size(); i++)
 	{
 		Node* child = childs.at(i);
