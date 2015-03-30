@@ -36,9 +36,9 @@ signals:
 public slots:
 	void setCurrentNode(Node*);
 	void registerNode(NodeInfo* info);
+	void doSave(const QString& name);
 
 private:
-
 
 	int _hoveredResizePoint;
 	bool _isMouseHoveredBox;

@@ -6,6 +6,7 @@
 #include "DefaultValue.h"
 #include "2d/CCLabelTTF.h"
 #include "2d/CCLabelBMFont.h"
+#include "StringUtil.h"
 
 AAManager AAManager::_instance;
 
@@ -38,6 +39,18 @@ AccessorGroup* AAManager::getGroup(const std::string& name) const
 	return nullptr;
 }
 
+#define type_to_string(type) \
+	static void type ## _to_string(const type & v, std::string& ret) { ret = StringUtil::toString(v); } \
+
+type_to_string(int);
+type_to_string(float);
+type_to_string(double);
+type_to_string(bool);
+
+static void Vec2_to_string(const Vec2& v, std::string& ret) { ret = StringUtil::toString(v.x, v.y); }
+static void Size_to_string(const Size& v, std::string& ret) { ret = StringUtil::toString(v.width, v.height); }
+static void Color4F_to_string(const Color4F& v, std::string& ret) { ret = StringUtil::toString(v.r, v.g, v.b, v.a); }
+static void string_to_string(const std::string& v, std::string& ret) { ret = v; }
 
 static std::string getSpriteTextureName(const Sprite*) { return "image.png"; }//lazy
 static void setSpriteTextureName(Sprite* sp, const std::string& name) { sp->setTexture(name); }
@@ -46,13 +59,13 @@ static std::string getFntFile(const LabelBMFont* label) { return label->getFntFi
 static void setFntFile(LabelBMFont* label, const std::string& file) { label->setFntFile(file); }
 
 #define ATTR_(trait, name, get, set, typeName, defaultValue) \
-	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, trait<typeName> >(name, get, set), defaultValue)) \
+	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, trait<typeName> >(name, get, set, typeName ## _to_string), defaultValue)) \
 
 #define ATTR(name, get, set, typeName, defaultValue) ATTR_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed(name, get, set, typeName, defaultValue) ATTR_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
 
 #define ATTRMMS(name, get, set, typeName, defaultValue, mini, maxi, step) \
-	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, AttributeTrait<typeName> >(name, get, set), defaultValue, mini, maxi, step)) \
+	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, AttributeTrait<typeName> >(name, get, set, typeName ## _to_string), defaultValue, mini, maxi, step)) \
 
 #define ATTRSTEP(name, get, set, typeName, defaultValue, step) \
 	ATTRMMS(name, get, set, typeName, defaultValue, Variant(), Variant(), step)
@@ -64,7 +77,7 @@ static void setFntFile(LabelBMFont* label, const std::string& file) { label->set
 #define EndGroup() }
 
 #define ATTR1_(trait, name, get, set, typeName, defaultValue) \
-	currentGroup->add(new AAInfo(new AttributeAccessorHelper<TYPE, typeName, trait<typeName> >(name, get, set), defaultValue))
+	currentGroup->add(new AAInfo(new AttributeAccessorHelper<TYPE, typeName, trait<typeName> >(name, get, set, typeName ## _to_string), defaultValue))
 #define ATTR1(name, get, set, typeName, defaultValue) ATTR1_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed1(name, get, set, typeName, defaultValue) ATTR1_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
 
@@ -72,6 +85,8 @@ static void setFntFile(LabelBMFont* label, const std::string& file) { label->set
 
 void AAManager::initAll()
 {
+	using namespace std;
+
 	AccessorGroup* currentGroup;
 
 	StartGroup(Node, DefaultValue::defaultNodeCtor);
@@ -83,25 +98,25 @@ void AAManager::initAll()
 	ATTR("Rotation", &Node::getRotation, &Node::setRotation, float, 0);
 	ATTR("Position", &Node::getPosition, &Node::setPosition, Vec2, Vec2(0, 0));
 	ATTR("Tag", &Node::getTag, &Node::setTag, int, 0);
-	ATTRMixed("Name", &Node::getName, &Node::setName, std::string, std::string());
+	ATTRMixed("Name", &Node::getName, &Node::setName, string, string());
 	ATTRMMS("Anchor Pos", &Node::getAnchorPoint, &Node::setAnchorPoint, Vec2, Vec2(0, 0), Vec2(0, 0), Vec2(1, 1), Vec2(0.1, 0.1));
 	EndGroup();
 
 	StartGroup(Sprite, DefaultValue::defaultSpriteCtor);
 	Require(Node);
-	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, std::string, std::string());
+	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, string, string());
 	EndGroup();
 
 	StartGroup(LabelBMFont, DefaultValue::defaultBMFont);
 	Require(Node);
-	ATTR("String", &LabelBMFont::getString, &LabelBMFont::setString, std::string, std::string());
-	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, std::string, std::string());
+	ATTR("String", &LabelBMFont::getString, &LabelBMFont::setString, string, string());
+	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, string, string());
 	EndGroup();
 
 	StartGroup(LabelTTF, DefaultValue::defaultLabelTTF);
 	Require(Node);
-	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, std::string, std::string());
-	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, std::string, std::string());
+	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, string, string());
+	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, string());
 	ATTR("Font Size", &LabelTTF::getFontSize, &LabelTTF::setFontSize, float, 20);
 	ATTR("Dimensions", &LabelTTF::getDimensions, &LabelTTF::setDimensions, Size, Size(0,0));
 	EndGroup();

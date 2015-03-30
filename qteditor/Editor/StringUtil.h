@@ -14,11 +14,6 @@ namespace StringUtil
 		return stream.str();
 	}
 
-	inline std::string toString(const QString& value)
-	{
-		return std::string(value.toUtf8(), value.length());
-	}
-
 	inline const std::string& toString(const std::string& value)
 	{
 		return value;
@@ -33,33 +28,24 @@ namespace StringUtil
 	inline std::string toString(T1 p1, T2 p2)
 	{
 		std::ostringstream stream;
-		stream << p1 << p2;
+		stream << p1 << " " << p2;
 		return stream.str();
 	}
 
-	inline std::string toString(const QSizeF& s)
+	template<typename T1, typename T2, typename T3>
+	inline std::string toString(T1 p1, T2 p2, T3 p3)
 	{
-		return toString(s.width(), s.height());
+		std::ostringstream stream;
+		stream << p1 << " " << p2 << " " << p3;
+		return stream.str();
 	}
 
-	inline std::string toString(const QPointF& p)
+	template<typename T1, typename T2, typename T3, typename T4>
+	inline std::string toString(T1 p1, T2 p2, T3 p3, T4 p4)
 	{
-		return toString(p.x(), p.y());
-	}
-
-	inline std::string toString(const QVariant& v)
-	{
-		switch (v.type())
-		{
-		case QVariant::SizeF:	return toString(v.toSizeF());
-		case QVariant::PointF:	return toString(v.toPointF());
-		case QVariant::Int:		return toString(v.toInt());
-		case QVariant::Double:	return toString(v.toDouble());
-		case QVariant::Bool:	return toString(v.toBool());
-
-		default:
-			return "";
-		}
+		std::ostringstream stream;
+		stream << p1 << " " << p2 << " " << p3 << " " << p4;
+		return stream.str();
 	}
 
 	template<typename T>

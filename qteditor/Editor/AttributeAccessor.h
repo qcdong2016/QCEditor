@@ -60,18 +60,20 @@ public:
 
 	typedef typename Trait::ReturnType(T::*getFunctionPtr)() const;
 	typedef void (T::*setFunctionPtr)(typename Trait::ParameterType);
+	typedef void(*toStringFuncPtr)(const U&, std::string&);
 
-
-	AttributeAccessorImpl(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction)
+	AttributeAccessorImpl(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
 		: AttributeAccessor(name)
 		, _getFunc(getFunction)
 		, _setFunc(setFunction)
+		, _toStringFunc(toStrF)
 	{}
 
-	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
+	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
 	{
 		_getFunc = getFunction;
 		_setFunc = setFunction;
+		_toStringFunc = toStrF;
 	}
 
 	/// Invoke getter function.
@@ -93,6 +95,7 @@ public:
 
 	virtual void save(const Variant& value, std::string& out)
 	{
+		_toStringFunc(value.value<U>(), out);
 	}
 
 	virtual void read(const std::string& str, Variant& out)
@@ -103,6 +106,7 @@ public:
 	getFunctionPtr _getFunc;
 	/// Class-specific pointer to setter function.
 	setFunctionPtr _setFunc;
+	toStringFuncPtr _toStringFunc;
 };
 
 
@@ -113,17 +117,20 @@ public:
 
 	typedef typename Trait::ReturnType(*getFunctionPtr)(const T*);
 	typedef void(*setFunctionPtr)(T*, typename Trait::ParameterType);
+	typedef void(*toStringFuncPtr)(const U&, std::string&);
 
-	AttributeAccessorHelper(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction)
+	AttributeAccessorHelper(const std::string& name, getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
 		: AttributeAccessor(name)
 		, _getFunc(getFunction)
 		, _setFunc(setFunction)
+		, _toStringFunc(toStrF)
 	{}
 
-	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction)
+	void setFunction(getFunctionPtr getFunction, setFunctionPtr setFunction, toStringFuncPtr toStrF)
 	{
 		_getFunc = getFunction;
 		_setFunc = setFunction;
+		_toStringFunc = toStrF;
 	}
 
 	/// Invoke getter function.
@@ -145,6 +152,7 @@ public:
 
 	virtual void save(const Variant& value, std::string& out)
 	{
+		_toStringFunc(value.value<U>(), out);
 	}
 
 	virtual void read(const std::string& str, Variant& out)
@@ -153,6 +161,7 @@ public:
 
 	getFunctionPtr _getFunc;
 	setFunctionPtr _setFunc;
+	toStringFuncPtr _toStringFunc;
 };
 
 struct AAInfo

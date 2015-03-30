@@ -8,6 +8,7 @@
 #include "Editor/QC_GLWidget.h"
 #include "Editor/SceneCtrl.h"
 #include "BoxList.h"
+#include "qfiledialog.h"
 
 EditorMain::EditorMain(QWidget *parent)
 	: QMainWindow(parent)
@@ -83,4 +84,24 @@ void EditorMain::onStart()
 	connect(_boxlist, SIGNAL(newNode(NodeInfo*)), _sceneCtrl, SLOT(registerNode(NodeInfo*)));
 	connect(_sceneCtrl->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
 	_boxlist->updateList(_sceneCtrl->getUiRoot());
+
+	createActions();
+}
+
+void EditorMain::createActions()
+{
+	_saveAction = new QAction("&Save", this);
+	_saveAction->setShortcut(QKeySequence::Save);
+	ui.menuFile->addAction(_saveAction);
+	connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
+}
+
+void EditorMain::save()
+{
+	QString fileName = QFileDialog::getSaveFileName(this,
+		tr("Save"),
+		"",
+		tr("Save File (*.qc)"));
+
+	_sceneCtrl->doSave(fileName);
 }

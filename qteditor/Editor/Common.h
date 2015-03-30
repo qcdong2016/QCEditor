@@ -3,12 +3,12 @@
 
 #include "2d/CCNode.h"
 #include "qstring.h"
-#include "SceneCtrl.h"
 #include "BoxList.h"
 #include "EditorMain.h"
 #include <string>
 
 USING_NS_CC;
+class SceneCtrl;
 
 class NodeInfo
 {

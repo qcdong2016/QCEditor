@@ -26,7 +26,7 @@ private slots:
 	void valueChanged(QtProperty *, const QVariant &);
 	void boxPositionChanged(const Vec2& pos);
 	void viewBoxAttr(Node*);
-
+	void save();
 
 public:
 	void onStart();
@@ -36,6 +36,8 @@ protected:
 
 
 private:
+	void createActions();
+
 	Ui::EditorMainClass ui;
 	BoxList* _boxlist;
 	QCGLWidget* _glwindow;
@@ -43,6 +45,9 @@ private:
 
 	QtVariantPropertyManager* _variantManager;
 	QtTreePropertyBrowser* _variantEditor;
+
+
+	QAction* _saveAction;
 };
 
 #endif // EDITORMAIN_H

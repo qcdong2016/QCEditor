@@ -13,14 +13,23 @@ USING_NS_CC;
 
 //all number in Variant was a double
 
-
+#define isNumber(type) (((type) & 0x10) == 0x10)
 class Variant
 {
 public:
 
 	enum Type
 	{
-		TNull,TBool,TInt,TFloat,TDouble,TVec2,TSize,TString,TColor
+		TNull = 0x00,
+		TBool = 0x01, 
+		TVec2 = 0x02, 
+		TSize = 0x03, 
+		TString = 0x04, 
+		TColor = 0x05,
+
+		TInt = 0x10,
+		TFloat = 0x11,
+		TDouble = 0x12,
 	};
 	Variant() : _type(TNull) {}
 
@@ -212,6 +221,26 @@ public:
 		else
 			qDebug("Variant not support %s", v.typeName());
 		return *this;
+	}
+
+	bool operator==(const Variant& rhs)
+	{
+		if (isNumber(_type) && isNumber(rhs._type))
+			return (value<double>() == rhs.value<double>());
+
+		if (this->_type != rhs._type) return false;
+
+		if (_type == TBool) return (value<bool>() == rhs.value<bool>());
+		if (_type == TVec2) return (value<Vec2>() == rhs.value<Vec2>());
+		if (_type == TString) return (value<std::string>() == rhs.value<std::string>());
+		if (_type == TColor) return (value<Color4F>() == rhs.value<Color4F>());
+		if (_type == TSize) {//..
+			const Size& s1 = value<Size>();
+			const Size& s2 = rhs.value<Size>();
+			return s1.width == s2.width && s1.height == s2.height;
+		}
+
+		return false;
 	}
 
 	Type getType() { return _type; }
