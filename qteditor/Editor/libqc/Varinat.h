@@ -6,7 +6,7 @@
 #include "math/CCGeometry.h"
 #include "base/ccTypes.h"
 
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 #include "qvariant.h"
 #include "qsize.h"
 #include "qpoint.h"
@@ -47,7 +47,7 @@ public:
 	Variant(const Color4F& v) { *this = v; }
 	Variant(const Variant& v) { _type = v._type; _content = v._content; }
 
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 	Variant(const QSizeF& v) { *this = v; }
 	Variant(const QPointF& v) { *this = v; }
 	Variant(const QString& v) { *this = v; }
@@ -117,7 +117,7 @@ public:
 		return *this;
 	}
 
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 	Variant& operator=(const QString& v)
 	{
 		*this = std::string(v.toUtf8());
@@ -187,7 +187,7 @@ public:
 	}
 
 	Type getType() { return _type; }
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 	QVariant::Type getQType()
 	{
 		return typeToQtype(_type);

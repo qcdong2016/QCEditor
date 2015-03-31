@@ -1,5 +1,5 @@
 #include "DefaultValue.h"
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 #include "Editor/EditorNode.h"
 #endif
 
@@ -11,7 +11,7 @@
 
 Node* DefaultValue::defaultNodeCtor()
 {
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 	Node* node = EditorNode::create();
 #else
 	Node* node = Node::create();

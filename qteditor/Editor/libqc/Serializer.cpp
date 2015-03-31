@@ -7,7 +7,7 @@
 #include <fstream>
 #include "CCFileUtils.h"
 
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 #include "Editor/Common.h"
 #include "Editor/SceneCtrl.h"
 
@@ -104,7 +104,7 @@ static Node* loadNode(rapidxml::xml_node<>* element)
 	if (!gp) return nullptr;// 
 
 	Node* node = gp->ctor->operator()();
-	setDefaultValue(gp, node);//slowly
+	//setDefaultValue(gp, node);//I guess, this is not necessary.
 
 	rapidxml::xml_node<>* prop = element->first_node();
 	while (prop)
@@ -129,15 +129,17 @@ static Node* loadNode(rapidxml::xml_node<>* element)
 
 Node* Serializer::read(const std::string& fileName)
 {
-// 	Data d = FileUtils::getInstance()->getDataFromFile(fileName);
-// 
-// 	char* buf = new char[d.getSize()];
-// 	memcpy(buf, d.getBytes(), d.getSize());
+#ifdef QC_EDITOR
 	rapidxml::file<> fdoc(fileName.c_str());
+	char* data = fdoc.data();
+#else
+	Data d = FileUtils::getInstance()->getDataFromFile(fileName);
+	char* data = (char*)d.getBytes();
+#endif
 	rapidxml::xml_document<> doc;
 	try
 	{
-		doc.parse<0>(fdoc.data());
+		doc.parse<0>(data);
 	}
 	catch (std::exception* e)
 	{

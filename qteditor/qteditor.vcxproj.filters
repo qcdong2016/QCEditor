@@ -134,6 +134,9 @@
     <ClCompile Include="Editor\libqc\Serializer.cpp">
       <Filter>Source Files\libqc</Filter>
     </ClCompile>
+    <ClCompile Include="Editor\libqc\Varinat.cpp">
+      <Filter>Source Files\libqc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="EditorMain.h">

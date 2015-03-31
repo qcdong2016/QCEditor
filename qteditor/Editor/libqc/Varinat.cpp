@@ -21,7 +21,7 @@ int Variant::value<int>() const
 	return (int)v;
 }
 
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 template<>
 QVariant Variant::value<QVariant>() const
 {

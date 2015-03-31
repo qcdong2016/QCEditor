@@ -2,7 +2,7 @@
 #define _ANY_H_
 
 #include <typeinfo>
-#ifdef QT_GUI_LIB//lazy
+#ifdef QC_EDITOR
 #include "qlogging.h"
 #define xLog qDebug
 #else

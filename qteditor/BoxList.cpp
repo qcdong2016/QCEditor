@@ -101,6 +101,8 @@ void BoxList::doAddWidget(QAction* act)
 void BoxList::updateList(Node* root)
 {
 	_root = root;
+
+	ui.treeWidget->clear();
 	//for each child
 }
 
