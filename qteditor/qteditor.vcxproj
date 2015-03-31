@@ -78,7 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;_DEBUG;_WINDOWS;_USE_MATH_DEFINES;GL_GLEXT_PROTOTYPES;CC_ENABLE_CHIPMUNK_INTEGRATION=1;COCOS2D_DEBUG=1;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_VARIADIC_MAX=10;_USING_V110_SDK71_;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)qteditor\qtpropertybrowser\src;$(EngineRoot)external\win32-specific\gles\include\OGLES;$(EngineRoot)external\glfw3\include\win32;$(EngineRoot)cocos\platform\desktop;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(EngineRoot)cocos\platform;$(EngineRoot)cocos;$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Editor\libqc;$(SolutionDir)qteditor\qtpropertybrowser\src;$(EngineRoot)external\win32-specific\gles\include\OGLES;$(EngineRoot)external\glfw3\include\win32;$(EngineRoot)cocos\platform\desktop;.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(EngineRoot)cocos\platform;$(EngineRoot)cocos;$(EngineRoot)cocos\audio\include;$(EngineRoot)external;$(EngineRoot)external\chipmunk\include\chipmunk;$(EngineRoot)extensions;..\Classes;..;%(AdditionalIncludeDirectories);$(_COCOS_HEADER_WIN32_BEGIN);$(_COCOS_HEADER_WIN32_END)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -147,17 +147,17 @@
   <ItemGroup>
     <ClCompile Include="BoxList.cpp" />
     <ClCompile Include="EditorMain.cpp" />
-    <ClCompile Include="Editor\Any.cpp" />
-    <ClCompile Include="Editor\AttributeAccessor.cpp" />
     <ClCompile Include="Editor\Common.cpp" />
-    <ClCompile Include="Editor\DefaultValue.cpp" />
     <ClCompile Include="Editor\EditorNode.cpp" />
+    <ClCompile Include="Editor\libqc\Any.cpp" />
+    <ClCompile Include="Editor\libqc\AttributeAccessor.cpp" />
+    <ClCompile Include="Editor\libqc\DefaultValue.cpp" />
+    <ClCompile Include="Editor\libqc\Serializer.cpp" />
     <ClCompile Include="Editor\PropertyDef.cpp" />
     <ClCompile Include="Editor\QC_Application.cpp" />
     <ClCompile Include="Editor\QC_GLView.cpp" />
     <ClCompile Include="Editor\QC_GLWidget.cpp" />
     <ClCompile Include="Editor\SceneCtrl.cpp" />
-    <ClCompile Include="Editor\Serializer.cpp" />
     <ClCompile Include="Editor\WindowBox.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_BoxList.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -260,7 +260,12 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Editor\Serializer.h" />
+    <ClInclude Include="Editor\libqc\Any.h" />
+    <ClInclude Include="Editor\libqc\AttributeAccessor.h" />
+    <ClInclude Include="Editor\libqc\DefaultValue.h" />
+    <ClInclude Include="Editor\libqc\Serializer.h" />
+    <ClInclude Include="Editor\libqc\StringUtil.h" />
+    <ClInclude Include="Editor\libqc\Varinat.h" />
     <ClInclude Include="rapidxml-1.13\rapidxml.hpp" />
     <ClInclude Include="rapidxml-1.13\rapidxml_iterators.hpp" />
     <ClInclude Include="rapidxml-1.13\rapidxml_print.hpp" />
@@ -283,10 +288,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-Id:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
-    <ClInclude Include="Editor\Any.h" />
-    <ClInclude Include="Editor\AttributeAccessor.h" />
     <ClInclude Include="Editor\Common.h" />
-    <ClInclude Include="Editor\DefaultValue.h" />
     <ClInclude Include="Editor\EditorNode.h" />
     <ClInclude Include="Editor\PropertyDef.h" />
     <CustomBuild Include="Editor\WindowBox.h">
@@ -362,7 +364,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-Id:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
-    <ClInclude Include="Editor\Varinat.h" />
     <ClInclude Include="GeneratedFiles\ui_BoxList.h" />
     <ClInclude Include="GeneratedFiles\ui_EditorMain.h" />
   </ItemGroup>

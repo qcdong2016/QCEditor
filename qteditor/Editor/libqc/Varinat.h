@@ -4,11 +4,15 @@
 #include "Any.h"
 #include "math/Vec2.h"
 #include "math/CCGeometry.h"
+#include "base/ccTypes.h"
+
+#ifdef QT_GUI_LIB//lazy
 #include "qvariant.h"
 #include "qsize.h"
 #include "qpoint.h"
 #include "qcolor.h"
-#include "base/ccTypes.h"
+#endif
+
 USING_NS_CC;
 
 //all number in Variant was a double
@@ -43,12 +47,13 @@ public:
 	Variant(const Color4F& v) { *this = v; }
 	Variant(const Variant& v) { _type = v._type; _content = v._content; }
 
+#ifdef QT_GUI_LIB//lazy
 	Variant(const QSizeF& v) { *this = v; }
 	Variant(const QPointF& v) { *this = v; }
 	Variant(const QString& v) { *this = v; }
 	Variant(const QVariant& v) { *this = v; }
 	Variant(const QColor& v) { *this = v; }
-
+#endif
 	bool isNull() const { return _type == TNull; }
 
 private:
@@ -82,6 +87,7 @@ public:
 		return (int)v;
 	}
 
+#ifdef QT_GUI_LIB//lazy
 	template<>
 	QVariant value<QVariant>() const
 	{
@@ -106,7 +112,7 @@ public:
 
 		return QVariant();
 	}
-
+#endif
 	template<>
 	Variant& operator=<double>(const double& v)
 	{
@@ -156,13 +162,6 @@ public:
 	}
 
 	template<>
-	Variant& operator=<QString>(const QString& v)
-	{
-		*this = std::string(v.toUtf8());
-		return *this;
-	}
-
-	template<>
 	Variant& operator=<Vec2>(const Vec2& v)
 	{
 		_type = TVec2;
@@ -175,6 +174,14 @@ public:
 	{
 		_type = TSize;
 		_content = v;
+		return *this;
+	}
+
+#ifdef QT_GUI_LIB//lazy
+	template<>
+	Variant& operator=<QString>(const QString& v)
+	{
+		*this = std::string(v.toUtf8());
 		return *this;
 	}
 
@@ -222,6 +229,7 @@ public:
 			qDebug("Variant not support %s", v.typeName());
 		return *this;
 	}
+#endif
 
 	bool operator==(const Variant& rhs)
 	{
@@ -244,6 +252,7 @@ public:
 	}
 
 	Type getType() { return _type; }
+#ifdef QT_GUI_LIB//lazy
 	QVariant::Type getQType()
 	{
 		return typeToQtype(_type);
@@ -262,6 +271,7 @@ public:
 
 		return QVariant::Invalid;
 	}
+#endif
 
 private:
 	Type _type;

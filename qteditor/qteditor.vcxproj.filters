@@ -45,6 +45,9 @@
     <Filter Include="xml">
       <UniqueIdentifier>{a10630c2-cc35-4973-8997-06a1a09e5e00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\libqc">
+      <UniqueIdentifier>{c679ab63-d3bc-4fc0-acec-04ccf75ab18c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -116,20 +119,20 @@
     <ClCompile Include="Editor\Common.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\Any.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor\AttributeAccessor.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="Editor\EditorNode.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\DefaultValue.cpp">
-      <Filter>Source Files\Editor</Filter>
+    <ClCompile Include="Editor\libqc\Any.cpp">
+      <Filter>Source Files\libqc</Filter>
     </ClCompile>
-    <ClCompile Include="Editor\Serializer.cpp">
-      <Filter>Source Files\Editor</Filter>
+    <ClCompile Include="Editor\libqc\AttributeAccessor.cpp">
+      <Filter>Source Files\libqc</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\libqc\DefaultValue.cpp">
+      <Filter>Source Files\libqc</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor\libqc\Serializer.cpp">
+      <Filter>Source Files\libqc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,19 +180,7 @@
     <ClInclude Include="Editor\Common.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\Any.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\Varinat.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\AttributeAccessor.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="Editor\EditorNode.h">
-      <Filter>Source Files\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor\DefaultValue.h">
       <Filter>Source Files\Editor</Filter>
     </ClInclude>
     <ClInclude Include="rapidxml-1.13\rapidxml_utils.hpp">
@@ -204,8 +195,23 @@
     <ClInclude Include="rapidxml-1.13\rapidxml_print.hpp">
       <Filter>xml</Filter>
     </ClInclude>
-    <ClInclude Include="Editor\Serializer.h">
-      <Filter>Source Files\Editor</Filter>
+    <ClInclude Include="Editor\libqc\Any.h">
+      <Filter>Source Files\libqc</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\libqc\AttributeAccessor.h">
+      <Filter>Source Files\libqc</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\libqc\DefaultValue.h">
+      <Filter>Source Files\libqc</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\libqc\Serializer.h">
+      <Filter>Source Files\libqc</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\libqc\StringUtil.h">
+      <Filter>Source Files\libqc</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor\libqc\Varinat.h">
+      <Filter>Source Files\libqc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

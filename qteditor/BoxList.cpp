@@ -2,7 +2,7 @@
 #include "qmenu.h"
 #include "qtreewidget.h"
 #include "Editor/Common.h"
-#include "Editor/AttributeAccessor.h"
+#include "AttributeAccessor.h"
 #include "qobjectdefs.h"
 #include "qcoreevent.h"
 

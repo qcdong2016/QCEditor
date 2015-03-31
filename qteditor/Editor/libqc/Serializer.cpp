@@ -1,13 +1,15 @@
 #include "Serializer.h"
-#include "Common.h"
 #include "rapidxml-1.13/rapidxml_print.hpp"
 #include "rapidxml-1.13/rapidxml_utils.hpp"
 
 #include "AttributeAccessor.h"
 #include <iostream>
 #include <fstream>
-#include "SceneCtrl.h"
 #include "CCFileUtils.h"
+
+#ifdef QT_GUI_LIB//lazy
+#include "Editor/Common.h"
+#include "Editor/SceneCtrl.h"
 
 static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* xmlnode, const std::string& type, AccessorGroup* gp, NodeTree* node)
 {
@@ -73,6 +75,9 @@ void Serializer::save(NodeTree* tree, const std::string& fileName)
 	std::ofstream out(fileName);
 	out << doc;
 }
+
+#endif
+
 
 #define streq(s1, s2) (!strcmp(s1, s2))
 

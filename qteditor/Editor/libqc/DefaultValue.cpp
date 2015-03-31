@@ -1,5 +1,7 @@
 #include "DefaultValue.h"
-#include "EditorNode.h"
+#ifdef QT_GUI_LIB//lazy
+#include "Editor/EditorNode.h"
+#endif
 
 #include "2d/CCNode.h"
 #include "2d/CCSprite.h"
