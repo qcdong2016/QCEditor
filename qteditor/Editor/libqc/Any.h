@@ -4,7 +4,7 @@
 #include <typeinfo>
 #ifdef QT_GUI_LIB//lazy
 #include "qlogging.h"
-#define xLog qDebug;
+#define xLog qDebug
 #else
 #include "base/CCConsole.h"
 #include "CCPlatformMacros.h"
