@@ -160,23 +160,29 @@ public:
 
 struct AAInfo
 {
+	Variant::Type type;
+
 	AttributeAccessor* accessor;
 	Variant maxi;
 	Variant mini;
 	Variant singleStep;
 	Variant defaultValue;
 
-	//lazy group
-	std::string groupname;
-	bool isGroup() { return groupname.length() != 0; }
-	AAInfo(const std::string& name) : groupname(name) {}
-	AAInfo(AttributeAccessor* accessor_, Variant def, Variant mx = Variant(), Variant mi = Variant(), Variant step = Variant())
+	AAInfo(AttributeAccessor* accessor_, Variant::Type type_)
+		: accessor(accessor_)
+		, type(type_)
+	{
+	}
+
+	AAInfo(AttributeAccessor* accessor_, Variant def = Variant(), Variant mx = Variant(), Variant mi = Variant(), Variant step = Variant())
 		: accessor(accessor_)
 		, defaultValue(def)
 		, mini(mi)
 		, maxi(mx)
 		, singleStep(step)
-	{}
+	{
+		type = defaultValue.getType();
+	}
 
 	~AAInfo() { delete accessor; }
 
@@ -224,6 +230,9 @@ struct AccessorGroup
 			if (info->accessor->getName() == name)
 				return info->accessor;
 		}
+
+		if (parent != nullptr)
+			return parent->get(name);
 
 		return nullptr;
 	}

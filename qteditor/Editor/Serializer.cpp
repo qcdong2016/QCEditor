@@ -9,13 +9,8 @@
 #include "SceneCtrl.h"
 #include "CCFileUtils.h"
 
-static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, NodeTree* node)
+static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* xmlnode, const std::string& type, AccessorGroup* gp, NodeTree* node)
 {
-	const std::string& type = Global::sceneCtrl->getNodeType(node->self);
-	rapidxml::xml_node<>* xmlnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string(type.c_str()));
-	parent->append_node(xmlnode);
-
-	AccessorGroup* gp = AAManager::getInstance().getGroup(type);
 
 	for (AccessorGroup::AAInfoList::iterator iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
 	{
@@ -35,6 +30,22 @@ static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent
 		attrnode->append_attribute(attrname);
 		attrnode->append_attribute(attrvalue);
 		xmlnode->append_node(attrnode);
+	}
+}
+
+static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, NodeTree* node)
+{
+	const std::string& type = Global::sceneCtrl->getNodeType(node->self);
+	AccessorGroup* gp = AAManager::getInstance().getGroup(type);
+	rapidxml::xml_node<>* xmlnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string(type.c_str()));
+	parent->append_node(xmlnode);
+
+	saveTreeByGroup(doc, xmlnode, type, gp, node);
+
+	while (gp->parent != nullptr)
+	{
+		gp = gp->parent;
+		saveTreeByGroup(doc, xmlnode, type, gp, node);
 	}
 
 	for (auto iter : node->children)

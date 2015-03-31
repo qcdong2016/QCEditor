@@ -53,7 +53,7 @@ public:
 		_browser->addProperty(_current);
 	}
 
-	virtual void updateValue(QtVariantProperty* item, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
+	virtual void updateValue(QtVariantProperty* item, AttributeAccessor* accessor, const Variant& minimum, const Variant& maximum, const Variant& step)
 	{
 		Variant value;
 		accessor->get(_node, value);
@@ -72,13 +72,12 @@ public:
 	}
 
 	virtual QtVariantProperty* add(
-		const std::string& name, AttributeAccessor* accessor, const Variant& defaultValue, const Variant& minimum, const Variant& maximum, const Variant& step)
+		const std::string& name, AttributeAccessor* accessor, QVariant::Type qtype, const Variant& minimum, const Variant& maximum, const Variant& step)
 	{
-		QString dfname = defaultValue.value<QVariant>().typeName();
-		QtVariantProperty *item = _mgr->addProperty(defaultValue.value<QVariant>().type(), QLatin1String(name.c_str()));
+		QtVariantProperty *item = _mgr->addProperty(qtype, QLatin1String(name.c_str()));
 
 		_map[item] = accessor;
-		updateValue(item, accessor, defaultValue, minimum, maximum, step);
+		updateValue(item, accessor, minimum, maximum, step);
 		_current->addSubProperty(item);
 
 		return item;
@@ -131,7 +130,7 @@ static void addAccessorGroup(AccessorGroup* ag)
 	{
 		AAInfo* aainfo = *iter;
 		s_builder.add(aainfo->accessor->getName(),
-			aainfo->accessor, aainfo->defaultValue, aainfo->mini, aainfo->maxi, aainfo->singleStep);
+			aainfo->accessor, Variant::typeToQtype(aainfo->type), aainfo->mini, aainfo->maxi, aainfo->singleStep);
 	}
 	s_builder.endGroup();
 

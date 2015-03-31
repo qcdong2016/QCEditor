@@ -244,6 +244,24 @@ public:
 	}
 
 	Type getType() { return _type; }
+	QVariant::Type getQType()
+	{
+		return typeToQtype(_type);
+	}
+
+	static QVariant::Type typeToQtype(Type tp)
+	{
+		if (isNumber(tp))
+			return QVariant::Double;
+
+		if (tp == TBool) return QVariant::Bool;
+		if (tp == TVec2) return QVariant::PointF;
+		if (tp == TString) return QVariant::String;
+		if (tp == TColor) return QVariant::Color;
+		if (tp == TSize) return QVariant::SizeF;
+
+		return QVariant::Invalid;
+	}
 
 private:
 	Type _type;

@@ -74,6 +74,15 @@ static void setFntFile(LabelBMFont* label, const std::string& file) { label->set
 #define ATTR(name, get, set, typeName, defaultValue) ATTR_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed(name, get, set, typeName, defaultValue) ATTR_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
 
+#define ATTR_NO_DEFAULT_(trait, name, get, set, typeName, variant_type) \
+	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, trait<typeName> >(name, get, set, typeName ## _to_string, typeName ## _from_string), variant_type)) \
+
+#define ATTR_NO_DEFAULT(name, get, set, typeName, variant_type) \
+	ATTR_NO_DEFAULT_(AttributeTrait, name, get, set, typeName, variant_type)
+
+#define ATTR_NO_DEFAULT_Mixed(name, get, set, typeName, variant_type) \
+	ATTR_NO_DEFAULT_(MixedAttributeTrait, name, get, set, typeName, variant_type)
+
 #define ATTRMMS(name, get, set, typeName, defaultValue, mini, maxi, step) \
 	currentGroup->add(new AAInfo(new AttributeAccessorImpl<TYPE, typeName, AttributeTrait<typeName> >(name, get, set, typeName ## _to_string, typeName ## _from_string), defaultValue, mini, maxi, step)) \
 
@@ -90,6 +99,12 @@ static void setFntFile(LabelBMFont* label, const std::string& file) { label->set
 	currentGroup->add(new AAInfo(new AttributeAccessorHelper<TYPE, typeName, trait<typeName> >(name, get, set, typeName ## _to_string, typeName ## _from_string), defaultValue))
 #define ATTR1(name, get, set, typeName, defaultValue) ATTR1_(AttributeTrait, name, get, set, typeName, defaultValue)
 #define ATTRMixed1(name, get, set, typeName, defaultValue) ATTR1_(MixedAttributeTrait, name, get, set, typeName, defaultValue)
+
+
+#define ATTR1_NO_DEFAULT_(trait, name, get, set, typeName, variant_type) \
+	currentGroup->add(new AAInfo(new AttributeAccessorHelper<TYPE, typeName, trait<typeName> >(name, get, set, typeName ## _to_string, typeName ## _from_string), variant_type))
+#define ATTR1_NO_DEFAULT_Mixed(name, get, set, typeName, variant_type) \
+	ATTR1_(MixedAttributeTrait, name, get, set, typeName, variant_type)
 
 #define Require(typeName) currentGroup->parent = AAManager::getInstance().getGroup(#typeName)
 
@@ -115,18 +130,18 @@ void AAManager::initAll()
 
 	StartGroup(Sprite, DefaultValue::defaultSpriteCtor);
 	Require(Node);
-	ATTRMixed1("Texture", &getSpriteTextureName, &setSpriteTextureName, string, string());
+	ATTR1_NO_DEFAULT_Mixed("Texture", &getSpriteTextureName, &setSpriteTextureName, string, Variant::TString);
 	EndGroup();
 
 	StartGroup(LabelBMFont, DefaultValue::defaultBMFont);
 	Require(Node);
-	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, string, Variant());
+	ATTR1_NO_DEFAULT_Mixed("Fnt File", &::getFntFile, &::setFntFile, string, Variant::TString);
 	ATTR("String", &LabelBMFont::getString, &LabelBMFont::setString, string, string());
 	EndGroup();
 
 	StartGroup(LabelTTF, DefaultValue::defaultLabelTTF);
 	Require(Node);
-	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, Variant());
+	ATTR_NO_DEFAULT("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, Variant::TString);
 	ATTR("Font Size", &LabelTTF::getFontSize, &LabelTTF::setFontSize, float, 20);
 	ATTR("Dimensions", &LabelTTF::getDimensions, &LabelTTF::setDimensions, Size, Size(0,0));
 	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, string, string());
