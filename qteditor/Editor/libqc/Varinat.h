@@ -56,121 +56,61 @@ public:
 #endif
 	bool isNull() const { return _type == TNull; }
 
-private:
-
-	template<typename valuetype>
-	Variant& operator=(const valuetype& v)
-	{
-		_content = v;
-		return *this;
-	}
-
 public:
 
-	template<typename valuetype>
-	valuetype value() const
-	{
-		return *_content.castType<valuetype>();
-	}
+	template<typename valuetype> valuetype value() const;
 
-	template<>
-	float value<float>() const
-	{
-		double v = *_content.castType<double>();
-		return (float)v;
-	}
 
-	template<>
-	int value<int>() const
-	{
-		int v = *_content.castType<double>();
-		return (int)v;
-	}
-
-#ifdef QT_GUI_LIB//lazy
-	template<>
-	QVariant value<QVariant>() const
-	{
-		if (_type == TInt || _type == TFloat || _type == TDouble)
-			return QVariant(value<double>());
-		else if (_type == TBool)
-			return QVariant(value<bool>());
-		else if (_type == TString)
-			return QVariant(value<std::string>().c_str());
-		else if (_type == TVec2) {
-			Vec2 v = value<Vec2>();
-			return QVariant(QPointF(v.x, v.y));
-		}
-		else if (_type == TSize) {
-			Size v = value<Size>();
-			return QVariant(QSizeF(v.width, v.height));
-		} 
-		else if (_type == TColor) {
-			Color4F v = value<Color4F>();
-			return QVariant(QColor(v.r * 255.0, v.g * 255.0, v.b * 255.0, v.a * 255.0));
-		}
-
-		return QVariant();
-	}
-#endif
-	template<>
-	Variant& operator=<double>(const double& v)
+	Variant& operator=(const double& v)
 	{
 		_type = TDouble;
 		_content = v;
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<float>(const float& v)
+	Variant& operator=(const float& v)
 	{
 		_type = TFloat;
 		_content.operator=<double>(v);
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<int>(const int& v)
+	Variant& operator=(const int& v)
 	{
 		_type = TInt;
 		_content.operator=<double>(v);
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<bool>(const bool& v)
+	Variant& operator=(const bool& v)
 	{
 		_type = TBool;
 		_content = v;
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<std::string>(const std::string& v)
+	Variant& operator=(const std::string& v)
 	{
 		_type = TString;
 		_content = v;
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<Color4F>(const Color4F& v)
+	Variant& operator=(const Color4F& v)
 	{
 		_type = TColor;
 		_content = v;
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<Vec2>(const Vec2& v)
+	Variant& operator=(const Vec2& v)
 	{
 		_type = TVec2;
 		_content = v;
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<Size>(const Size& v)
+	Variant& operator=(const Size& v)
 	{
 		_type = TSize;
 		_content = v;
@@ -178,38 +118,33 @@ public:
 	}
 
 #ifdef QT_GUI_LIB//lazy
-	template<>
-	Variant& operator=<QString>(const QString& v)
+	Variant& operator=(const QString& v)
 	{
 		*this = std::string(v.toUtf8());
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<QSizeF>(const QSizeF& v)
+	Variant& operator=(const QSizeF& v)
 	{
 		_type = TSize;
 		_content = Size(v.width(), v.height());
 		return *this;
 	}
-	template<>
-	Variant& operator=<QPointF>(const QPointF& v)
+	Variant& operator=(const QPointF& v)
 	{
 		_type = TVec2;
 		_content = Vec2(v.x(), v.y());
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<QColor>(const QColor& v)
+	Variant& operator=(const QColor& v)
 	{
 		_type = TColor;
 		_content = Color4F(v.redF(), v.greenF(), v.blueF(), v.alphaF());
 		return *this;
 	}
 
-	template<>
-	Variant& operator=<QVariant>(const QVariant& v)
+	Variant& operator=(const QVariant& v)
 	{
 		if (v.type() == QVariant::SizeF)
 			*this = v.toSizeF();
@@ -226,7 +161,7 @@ public:
 		else if (v.type() == QVariant::Color)
 			*this = v.value<QColor>();
 		else
-			qDebug("Variant not support %s", v.typeName());
+			xLog("Variant not support %s", v.typeName());
 		return *this;
 	}
 #endif

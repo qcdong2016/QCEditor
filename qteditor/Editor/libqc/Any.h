@@ -2,7 +2,14 @@
 #define _ANY_H_
 
 #include <typeinfo>
+#ifdef QT_GUI_LIB//lazy
 #include "qlogging.h"
+#define xLog qDebug;
+#else
+#include "base/CCConsole.h"
+#include "CCPlatformMacros.h"
+#define xLog CCLOG
+#endif
 
 class Any
 {
@@ -43,7 +50,7 @@ public:
 	{
 		if (this->getType() == typeid(ValueType))
 			return &static_cast<Any::Holder<ValueType> *>(this->mContent)->held;
-		qDebug("Bad cast from type '%s' to '%s'", getType().name(), typeid(ValueType).name());
+		xLog("Bad cast from type '%s' to '%s'", getType().name(), typeid(ValueType).name());
 		return nullptr;
 	}
 

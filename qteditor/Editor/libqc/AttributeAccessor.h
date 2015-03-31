@@ -3,6 +3,8 @@
 
 #include "Varinat.h"
 #include <string>
+#include <list>
+#include <map>
 
 class AttributeAccessor
 {

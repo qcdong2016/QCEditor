@@ -141,7 +141,7 @@ Node* Serializer::read(const std::string& fileName)
 	}
 	catch (std::exception* e)
 	{
-		qDebug("%s", e->what());
+		//qDebug("%s", e->what());
 	}
 
 	rapidxml::xml_node<>* root = doc.first_node();
