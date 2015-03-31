@@ -105,7 +105,9 @@ void EditorMain::createActions()
 void EditorMain::save()
 {
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save"), "", tr("Save File (*.qc)"));
-	_sceneCtrl->doSave(fileName);
+	NodeTree tree;
+	_boxlist->buildTree(&tree);
+	_sceneCtrl->doSave(fileName, &tree);
 }
 
 void EditorMain::load()

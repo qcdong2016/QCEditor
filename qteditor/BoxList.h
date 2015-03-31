@@ -8,6 +8,7 @@
 USING_NS_CC;
 
 class NodeInfo;
+struct NodeTree;
 
 class MyTreeWidgetItem : public QTreeWidgetItem
 {
@@ -25,6 +26,8 @@ public:
 	~BoxList();
 
 	MyTreeWidgetItem* add(const QString& name, QTreeWidgetItem* parent = nullptr);
+	void buildTree(NodeTree* tree);
+
 private slots:
 	void showMenu(const QPoint& pos);
 	void doAddWidget(QAction* act);

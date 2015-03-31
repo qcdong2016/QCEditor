@@ -17,6 +17,11 @@ public:
 	std::string typeName;
 };
 
+struct NodeTree
+{
+	Node* self;
+	std::list<NodeTree> children;
+};
 
 class Global
 {

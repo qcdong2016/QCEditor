@@ -9,9 +9,9 @@
 #include "SceneCtrl.h"
 #include "CCFileUtils.h"
 
-static void saveNode(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, Node* node)
+static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, NodeTree* node)
 {
-	const std::string& type = Global::sceneCtrl->getNodeType(node);
+	const std::string& type = Global::sceneCtrl->getNodeType(node->self);
 	rapidxml::xml_node<>* xmlnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string(type.c_str()));
 	parent->append_node(xmlnode);
 
@@ -22,7 +22,7 @@ static void saveNode(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent
 		AAInfo* info = *iter;
 		AttributeAccessor* aa = info->accessor;
 		Variant v;
-		aa->get(node, v);
+		aa->get(node->self, v);
 		if (v == info->defaultValue)
 			continue;
 
@@ -37,17 +37,13 @@ static void saveNode(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent
 		xmlnode->append_node(attrnode);
 	}
 
-	Vector<Node*> childs = node->getChildren();
-	//has bug(for label/sprite 9): re-write
-	for (int i = 0; i < childs.size(); i++)
+	for (auto iter : node->children)
 	{
-		Node* child = childs.at(i);
-		saveNode(doc, xmlnode, child);
+		saveTree(doc, xmlnode, &iter);
 	}
-
 }
 
-void Serializer::save(Node* node, const std::string& fileName)
+void Serializer::save(NodeTree* tree, const std::string& fileName)
 {
 	rapidxml::xml_document<> doc;
 
@@ -57,7 +53,7 @@ void Serializer::save(Node* node, const std::string& fileName)
 	rapidxml::xml_node<>* xmlroot = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Root"));
 	rapidxml::xml_node<>* uiroot = doc.allocate_node(rapidxml::node_element, doc.allocate_string("UI"));
 	xmlroot->append_node(uiroot);
-	saveNode(doc, uiroot, node);
+	saveTree(doc, uiroot, tree);
 	doc.append_node(xmlroot);
 
 	std::string text;
@@ -77,7 +73,8 @@ static void setDefaultValue(AccessorGroup* gp, Node* node)
 	for (iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
 	{
 		AAInfo* aainfo = *iter;
-		aainfo->accessor->set(node, aainfo->defaultValue);
+		if (!aainfo->defaultValue.isNull())
+			aainfo->accessor->set(node, aainfo->defaultValue);
 	}
 
 	if (gp->parent != nullptr)

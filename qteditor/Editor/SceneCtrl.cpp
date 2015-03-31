@@ -171,9 +171,9 @@ std::string SceneCtrl::getNodeType(Node* node)
 }
 
 
-void SceneCtrl::doSave(const QString& fileName)
+void SceneCtrl::doSave(const QString& fileName, NodeTree* tree)
 {
-	Serializer::save(getUiRoot(), std::string(fileName.toUtf8()));
+	Serializer::save(tree, std::string(fileName.toUtf8()));
 }
 
 void SceneCtrl::doLoad(const QString& fileName)

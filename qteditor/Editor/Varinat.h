@@ -41,7 +41,7 @@ public:
 	Variant(const Size& v) { *this = v; }
 	Variant(const std::string& v) { *this = v; }
 	Variant(const Color4F& v) { *this = v; }
-	//Variant(const Color3B& v) { *this = v; }
+	Variant(const Variant& v) { _type = v._type; _content = v._content; }
 
 	Variant(const QSizeF& v) { *this = v; }
 	Variant(const QPointF& v) { *this = v; }

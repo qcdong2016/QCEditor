@@ -120,16 +120,16 @@ void AAManager::initAll()
 
 	StartGroup(LabelBMFont, DefaultValue::defaultBMFont);
 	Require(Node);
+	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, string, Variant());
 	ATTR("String", &LabelBMFont::getString, &LabelBMFont::setString, string, string());
-	ATTRMixed1("Fnt File", &::getFntFile, &::setFntFile, string, string());
 	EndGroup();
 
 	StartGroup(LabelTTF, DefaultValue::defaultLabelTTF);
 	Require(Node);
-	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, string, string());
-	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, string());
+	ATTR("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, Variant());
 	ATTR("Font Size", &LabelTTF::getFontSize, &LabelTTF::setFontSize, float, 20);
 	ATTR("Dimensions", &LabelTTF::getDimensions, &LabelTTF::setDimensions, Size, Size(0,0));
+	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, string, string());
 	EndGroup();
 
 	StartGroup(ParticleSystemQuad, DefaultValue::defaultParticleSystem);

@@ -103,3 +103,26 @@ void BoxList::updateList(Node* root)
 	_root = root;
 	//for each child
 }
+
+static void buildTreeByItem(MyTreeWidgetItem* item, NodeTree* tree)
+{
+	tree->self = item->node;
+	for (int i = 0; i < item->childCount(); i++)
+	{
+		NodeTree s;
+		buildTreeByItem((MyTreeWidgetItem*)item->child(i), &s);
+		tree->children.push_back(s);
+	}
+}
+
+void BoxList::buildTree(NodeTree* tree)
+{
+	tree->self = _root;
+
+	for (int i = 0; i < ui.treeWidget->topLevelItemCount(); i++)
+	{
+		NodeTree s;
+		buildTreeByItem((MyTreeWidgetItem*)ui.treeWidget->topLevelItem(i), &s);
+		tree->children.push_back(s);
+	}
+}

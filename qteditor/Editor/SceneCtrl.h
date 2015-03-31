@@ -9,6 +9,7 @@ USING_NS_CC;
 class WindowBox;
 class NewItemData;
 class NodeInfo;
+struct NodeTree;
 
 class SceneCtrl : public QObject, public Scene
 {
@@ -36,7 +37,7 @@ signals:
 public slots:
 	void setCurrentNode(Node*);
 	void registerNode(NodeInfo* info);
-	void doSave(const QString& fileName);
+	void doSave(const QString& fileName, NodeTree* tree);
 	void doLoad(const QString& fileName);
 
 private:
