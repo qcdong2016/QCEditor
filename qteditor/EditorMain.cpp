@@ -10,6 +10,7 @@
 #include "Editor/SceneCtrl.h"
 #include "BoxList.h"
 #include "qfiledialog.h"
+#include "Serializer.h"
 
 EditorMain::EditorMain(QWidget *parent)
 	: QMainWindow(parent)
@@ -84,7 +85,11 @@ void EditorMain::onStart()
 	connect(_boxlist, SIGNAL(onSelectNode(Node*)), _sceneCtrl, SLOT(setCurrentNode(Node*)));
 	connect(_boxlist, SIGNAL(newNode(NodeInfo*)), _sceneCtrl, SLOT(registerNode(NodeInfo*)));
 	connect(_sceneCtrl->getBox(), SIGNAL(onPositionChanged(const Vec2&)), this, SLOT(boxPositionChanged(const Vec2&)));
-	_boxlist->updateList(_sceneCtrl->getUiRoot());
+
+	NodeInfo info;
+	info.typeName = "Node";
+	info.self = _sceneCtrl->getUiRoot();
+	_boxlist->updateWithTree(&info);
 
 	createActions();
 }
@@ -105,17 +110,20 @@ void EditorMain::createActions()
 void EditorMain::save()
 {
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save"), "", tr("Save File (*.qc)"));
-	NodeTree tree;
+	NodeInfo tree;
 	_boxlist->buildTree(&tree);
-	_sceneCtrl->doSave(fileName, &tree);
+	Serializer::save(&tree, std::string(fileName.toUtf8()));
 }
 
 void EditorMain::load()
 {
-	QString file = QFileDialog::getOpenFileName(this, tr("Select File"), "", "Editor Files (*.qc *.xml)");
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Select File"), "", "Editor Files (*.qc *.xml)");
 
-	if (file.length() != 0)
+	if (fileName.length() != 0)
 	{
-		_sceneCtrl->doLoad(file);
+		NodeInfo rootinfo;
+		Serializer::read(std::string(fileName.toUtf8()), &rootinfo);
+		_sceneCtrl->setUiRoot(rootinfo.self);
+		_boxlist->updateWithTree(&rootinfo);
 	}
 }

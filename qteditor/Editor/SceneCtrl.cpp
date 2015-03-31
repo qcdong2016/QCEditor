@@ -157,7 +157,7 @@ void SceneCtrl::setCurrentNode(Node* node)
 
 void SceneCtrl::registerNode(NodeInfo* info)
 {
-	_nodeTypeMapping[info->node] = info->typeName;
+	_nodeTypeMapping[info->self] = info->typeName;
 }
 
 std::string SceneCtrl::getNodeType(Node* node)
@@ -170,19 +170,11 @@ std::string SceneCtrl::getNodeType(Node* node)
 	return "Node";
 }
 
-
-void SceneCtrl::doSave(const QString& fileName, NodeTree* tree)
+void SceneCtrl::setUiRoot(Node* node)
 {
-	Serializer::save(tree, std::string(fileName.toUtf8()));
-}
-
-void SceneCtrl::doLoad(const QString& fileName)
-{
-	Node* newroot = Serializer::read(std::string(fileName.toUtf8()));
 	_rootNode->removeFromParent();
-	_rootNode = newroot;
-	addChild(newroot);
-
-	_boxesNode->setCurrentNode(_rootNode);
+	_rootNode = node;
+	addChild(node);
+	_boxesNode->setCurrentNode(nullptr);
 }
 

@@ -27,7 +27,8 @@ BoxList::~BoxList()
 void BoxList::selectedNode(QTreeWidgetItem* curr, QTreeWidgetItem* prev)
 {
 	MyTreeWidgetItem* myitem = (MyTreeWidgetItem*)curr;
-	emit onSelectNode(myitem->node);
+	if (myitem)
+		emit onSelectNode(myitem->node);
 }
 
 MyTreeWidgetItem* BoxList::add(const QString& name, QTreeWidgetItem* parent)
@@ -67,7 +68,9 @@ void BoxList::showMenu(const QPoint& pos)
 void BoxList::doAddWidget(QAction* act)
 {
 	std::string typeName = std::string(act->text().toUtf8());
-	MyTreeWidgetItem* newItem = add("new" + act->text() + QString::number(_index++), _currentWidget);
+	QString name = "new" + act->text() + QString::number(_index++);
+
+	MyTreeWidgetItem* newItem = add(name, _currentWidget);
 
 	newItem->setSelected(true);
 
@@ -80,9 +83,10 @@ void BoxList::doAddWidget(QAction* act)
 
 	newItem->node = info->ctor->operator()();
 	parent->addChild(newItem->node);
+	newItem->node->setName(std::string(name.toUtf8(), name.size()));
 
 	NodeInfo nodeinfo;
-	nodeinfo.node = newItem->node;
+	nodeinfo.self = newItem->node;
 	nodeinfo.typeName = typeName;
 
 	emit newNode(&nodeinfo);
@@ -98,33 +102,51 @@ void BoxList::doAddWidget(QAction* act)
 	}
 }
 
-void BoxList::updateList(Node* root)
-{
-	_root = root;
-
-	ui.treeWidget->clear();
-	//for each child
-}
-
-static void buildTreeByItem(MyTreeWidgetItem* item, NodeTree* tree)
+static void buildTreeByItem(MyTreeWidgetItem* item, NodeInfo* tree)
 {
 	tree->self = item->node;
 	for (int i = 0; i < item->childCount(); i++)
 	{
-		NodeTree s;
+		NodeInfo s;
 		buildTreeByItem((MyTreeWidgetItem*)item->child(i), &s);
 		tree->children.push_back(s);
 	}
 }
 
-void BoxList::buildTree(NodeTree* tree)
+void BoxList::buildTree(NodeInfo* tree)
 {
 	tree->self = _root;
 
 	for (int i = 0; i < ui.treeWidget->topLevelItemCount(); i++)
 	{
-		NodeTree s;
+		NodeInfo s;
 		buildTreeByItem((MyTreeWidgetItem*)ui.treeWidget->topLevelItem(i), &s);
 		tree->children.push_back(s);
+	}
+}
+
+static QTreeWidgetItem* addNode(NodeInfo* info)
+{
+	MyTreeWidgetItem* item = new MyTreeWidgetItem;
+	item->node = info->self;
+	item->setCheckState(0, info->self->isVisible() ? Qt::Checked : Qt::Unchecked);
+	item->setText(0, QString(info->self->getName().c_str()));
+
+	for (NodeInfo& child_info : info->children)
+	{
+		item->addChild(addNode(&child_info));
+	}
+
+	return item;
+}
+
+void BoxList::updateWithTree(NodeInfo* tree)
+{
+	ui.treeWidget->clear();
+	_root = tree->self;
+
+	for (NodeInfo& child_info : tree->children)
+	{
+		ui.treeWidget->addTopLevelItem(addNode(&child_info));
 	}
 }

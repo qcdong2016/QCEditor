@@ -11,7 +11,7 @@
 #include "Editor/Common.h"
 #include "Editor/SceneCtrl.h"
 
-static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* xmlnode, const std::string& type, AccessorGroup* gp, NodeTree* node)
+static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* xmlnode, const std::string& type, AccessorGroup* gp, NodeInfo* node)
 {
 
 	for (AccessorGroup::AAInfoList::iterator iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
@@ -35,7 +35,7 @@ static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>*
 	}
 }
 
-static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, NodeTree* node)
+static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent, NodeInfo* node)
 {
 	const std::string& type = Global::sceneCtrl->getNodeType(node->self);
 	AccessorGroup* gp = AAManager::getInstance().getGroup(type);
@@ -56,7 +56,7 @@ static void saveTree(rapidxml::xml_document<>& doc, rapidxml::xml_node<>* parent
 	}
 }
 
-void Serializer::save(NodeTree* tree, const std::string& fileName)
+void Serializer::save(NodeInfo* tree, const std::string& fileName)
 {
 	rapidxml::xml_document<> doc;
 
@@ -82,29 +82,42 @@ void Serializer::save(NodeTree* tree, const std::string& fileName)
 #define streq(s1, s2) (!strcmp(s1, s2))
 
 
-static void setDefaultValue(AccessorGroup* gp, Node* node)
+// static void setDefaultValue(AccessorGroup* gp, Node* node)
+// {
+// 	AccessorGroup::AAInfoList::iterator iter;
+// 
+// 	for (iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
+// 	{
+// 		AAInfo* aainfo = *iter;
+// 		if (!aainfo->defaultValue.isNull())
+// 			aainfo->accessor->set(node, aainfo->defaultValue);
+// 	}
+// 
+// 	if (gp->parent != nullptr)
+// 		setDefaultValue(gp->parent, node);
+// }
+
+static Node* loadNode(rapidxml::xml_node<>* element
+#ifdef QC_EDITOR
+	, NodeInfo* tree
+#endif
+	)
 {
-	AccessorGroup::AAInfoList::iterator iter;
-
-	for (iter = gp->infolist.begin(); iter != gp->infolist.end(); iter++)
-	{
-		AAInfo* aainfo = *iter;
-		if (!aainfo->defaultValue.isNull())
-			aainfo->accessor->set(node, aainfo->defaultValue);
-	}
-
-	if (gp->parent != nullptr)
-		setDefaultValue(gp->parent, node);
-}
-
-static Node* loadNode(rapidxml::xml_node<>* element)
-{
-	AccessorGroup* gp = AAManager::getInstance().getGroup(element->name());
+	std::string typeName = element->name();
+	AccessorGroup* gp = AAManager::getInstance().getGroup(typeName);
 
 	if (!gp) return nullptr;// 
 
 	Node* node = gp->ctor->operator()();
 	//setDefaultValue(gp, node);//I guess, this is not necessary.
+
+#ifdef QC_EDITOR
+	NodeInfo curtree;
+	curtree.self = node;
+	curtree.typeName = typeName;
+	Global::sceneCtrl->registerNode(&curtree);
+	tree->children.push_back(curtree);
+#endif
 
 	rapidxml::xml_node<>* prop = element->first_node();
 	while (prop)
@@ -119,7 +132,11 @@ static Node* loadNode(rapidxml::xml_node<>* element)
 		}
 		else 
 		{
-			node->addChild(loadNode(prop));
+			node->addChild(loadNode(prop
+#ifdef QC_EDITOR
+				, &curtree
+#endif
+				));
 		}
 		prop = prop->next_sibling();
 	}
@@ -127,7 +144,11 @@ static Node* loadNode(rapidxml::xml_node<>* element)
 	return node;
 }
 
-Node* Serializer::read(const std::string& fileName)
+static Node* read_(const std::string& fileName
+#ifdef QC_EDITOR
+	, NodeInfo* tree
+#endif
+	)
 {
 #ifdef QC_EDITOR
 	rapidxml::file<> fdoc(fileName.c_str());
@@ -154,7 +175,29 @@ Node* Serializer::read(const std::string& fileName)
 	if (!streq(uiroot->name(), "UI"))
 		return nullptr;
 
-	Node* node =  loadNode(uiroot->first_node());
+	Node* node = loadNode(uiroot->first_node()
+#ifdef QC_EDITOR
+		, tree
+#endif
+		);
+
+#ifdef QC_EDITOR
+	tree->self = node;
+	tree->typeName = "Node";//hack
+	Global::sceneCtrl->registerNode(tree);
+#endif
 
 	return node;
 }
+
+#ifdef QC_EDITOR
+Node* Serializer::read(const std::string& fileName, NodeInfo* tree)
+{
+	return read_(fileName, tree);
+}
+#else
+Node* Serializer::read(const std::string& fileName)
+{
+	return read_(fileName);
+}
+#endif

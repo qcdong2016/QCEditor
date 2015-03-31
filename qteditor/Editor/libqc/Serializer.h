@@ -6,16 +6,17 @@
 USING_NS_CC;
 
 #ifdef QC_EDITOR
-struct NodeTree;
+struct NodeInfo;
 #endif
 
 class Serializer
 {
 public:
-	static Node* read(const std::string& fileName);
-
 #ifdef QC_EDITOR
-	static void save(NodeTree* tree, const std::string& fileName);
+	static Node* read(const std::string& fileName, NodeInfo* tree);
+	static void save(NodeInfo* tree, const std::string& fileName);
+#else
+	static Node* read(const std::string& fileName);
 #endif
 };
 

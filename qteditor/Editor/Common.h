@@ -13,14 +13,9 @@ class SceneCtrl;
 class NodeInfo
 {
 public:
-	Node* node;
 	std::string typeName;
-};
-
-struct NodeTree
-{
 	Node* self;
-	std::list<NodeTree> children;
+	std::list<NodeInfo> children;
 };
 
 class Global
