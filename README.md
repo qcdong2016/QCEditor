@@ -6,6 +6,16 @@
 
 **QCEditor**的渲染使用的是cocos2d-x本身的渲染，所以说在编辑器里面编辑的效果和游戏中的效果会一模一样，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
+##编译过程
+* VS2013 + Qt 5.4.1 + QtCreator
+* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
+* 然后打开工程修改Qt版本为你本机版本
+* 编译运行
+
+##如何使用
+* 拷贝libqc文件夹下的文件到你的项目
+* 包含Serializer.h 调用Serializer::read（整个库只有这一个API）
+
 ##功能添加
 添加新的属性和控件非常方便，只需要按照下面格式添加，将会自动与Node绑定，并且自动添加到存储功能中。通过这种方式，能够编辑cocos2d-x里所有可视化组件，甚至其他一些组件。
 
@@ -24,31 +34,14 @@
 	EndGroup();
 ```
 
-添加一个粒子到编辑器代码如下：
+添加LabelTTF到编辑器代码如下：
 ```C++
-	StartGroup(ParticleSystemQuad, defaultParticleSystem);
+	StartGroup(LabelTTF, DefaultValue::defaultLabelTTF);
 	Require(Node);
-
-	ATTR("Duration", &ParticleSystem::getDuration, &ParticleSystem::setDuration, float, 0);
-	ATTR("Source Position", &ParticleSystem::getSourcePosition, &ParticleSystem::setSourcePosition, Vec2, Vec2(0,0));
-	ATTR("Pos Var", &ParticleSystem::getPosVar, &ParticleSystem::setPosVar, Vec2, Vec2(0, 0));
-	ATTR("Life", &ParticleSystem::getLife, &ParticleSystem::setLife, float, 0);
-	ATTR("Life Var", &ParticleSystem::getLifeVar, &ParticleSystem::setLifeVar, float, 0);
-	ATTR("Angle", &ParticleSystem::getAngle, &ParticleSystem::setAngle, float, 0);
-	ATTR("Angle Var", &ParticleSystem::getAngleVar, &ParticleSystem::setAngleVar, float, 0);
-	ATTR("Start Size", &ParticleSystem::getStartSize, &ParticleSystem::setStartSize, float, 0);
-	ATTR("Start Size Var", &ParticleSystem::getStartSizeVar, &ParticleSystem::setStartSizeVar, float, 0);
-	ATTR("End Size", &ParticleSystem::getEndSize, &ParticleSystem::setEndSize, float, 0);
-	ATTR("End Size Var", &ParticleSystem::getEndSizeVar, &ParticleSystem::setEndSizeVar, float, 0);
-	ATTR("Start Spin", &ParticleSystem::getStartSpin, &ParticleSystem::setStartSpin, float, 0);
-	ATTR("Start Spin Var", &ParticleSystem::getStartSpinVar, &ParticleSystem::setStartSpinVar, float, 0);
-	ATTR("End Spin", &ParticleSystem::getEndSpin, &ParticleSystem::setEndSpin, float, 0);
-	ATTR("End Spin Var", &ParticleSystem::getEndSpinVar, &ParticleSystem::setEndSpinVar, float, 0);
-
-	ATTR("Emission Rate", &ParticleSystem::getEmissionRate, &ParticleSystem::setEmissionRate, float, 0);
-	ATTR("Total Particles", &ParticleSystem::getTotalParticles, &ParticleSystem::setTotalParticles, int, 0);
-	ATTR("Opacity Modify RGB", &ParticleSystem::isOpacityModifyRGB, &ParticleSystem::setOpacityModifyRGB, bool, false);
-
+	ATTR_NO_DEFAULT("Font File", &LabelTTF::getFontName, &LabelTTF::setFontName, string, Variant::TString);
+	ATTR("Font Size", &LabelTTF::getFontSize, &LabelTTF::setFontSize, float, 20);
+	ATTR("Dimensions", &LabelTTF::getDimensions, &LabelTTF::setDimensions, Size, Size(0,0));
+	ATTR("String", &LabelTTF::getString, &LabelTTF::setString, string, string());
 	EndGroup();
 ```
 
@@ -96,12 +89,6 @@ xml文件格式如下：
 
 ![attr][]
 
-
-##编译过程
-* VS2013 + Qt 5.4.1 + QtCreator
-* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
-* 然后打开工程修改Qt版本为你本机版本
-* 编译运行
 
 ##项目地址
 
