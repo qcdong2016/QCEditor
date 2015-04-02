@@ -102,6 +102,9 @@ xml文件格式如下：
 ##License
 Licensed under the MIT license, see [LICENSE](LICENSE) for details.
 
+###说明
+	该项目提交了cocos2d-x 3.4创建的工程中的cocos文件夹（解压约380M），仓库大小大约120M，所以拉项目的时候比较慢。但项目本身代码并不多。
+
 
 [preview]: images/preview.jpg
 [attr]: images/attr.png
