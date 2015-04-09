@@ -39,9 +39,13 @@ private:
 	QMap<const QtProperty *, Data> theValues;
 };
 
+class FileEdit;
+
 class FileEditFactory : public QtAbstractEditorFactory<FilePathManager>
 {
 	Q_OBJECT
+public:
+	QWidget *createEditor(FilePathManager *manager, QtProperty *property, QWidget *parent);
 
 private slots:
 	void slotPropertyChanged(QtProperty *property,

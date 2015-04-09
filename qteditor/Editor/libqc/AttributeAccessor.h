@@ -18,6 +18,7 @@ public:
 	virtual void read(const std::string& str, Variant& out) = 0;
 
 	virtual const std::string& getName() { return _name; }
+
 private:
 	std::string _name;
 };
@@ -54,6 +55,13 @@ template<typename T> struct MixedAttributeTrait
 	typedef const T& ParameterType;
 };
 
+template<typename T> struct AttributeTraitEnum
+{
+	/// Get function return type.
+	typedef T ReturnType;
+	/// Set function parameter type.
+	typedef T ParameterType;
+};
 
 template <typename T, typename U, typename Trait> 
 class AttributeAccessorImpl : public AttributeAccessor
@@ -160,6 +168,57 @@ public:
 	formStringFuncPtr _fromStringFunc;
 };
 
+
+
+template <typename T, typename U>
+class AttributeAccessorEnum : public AttributeAccessor
+{
+	typedef U(T::*getFunctionPtr)() const;
+	typedef void (T::*setFunctionPtr)(U);
+public:
+	AttributeAccessorEnum(const std::string& name,
+		getFunctionPtr getFunction, setFunctionPtr setFunction)
+		: AttributeAccessor(name)
+		, _getFunc(getFunction)
+		, _setFunc(setFunction)
+	{}
+
+	/// Invoke getter function.
+	virtual void get(const Node* ptr, Variant& dest) const
+	{
+		assert(ptr);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = (classPtr->*_getFunc)();
+		dest = (int)value;
+	}
+
+	/// Invoke setter function.
+	virtual void set(Node* ptr, const Variant& value)
+	{
+		assert(ptr);
+		T* classPtr = static_cast<T*>(ptr);
+		(classPtr->*_setFunc)((U)value.value<int>());
+	}
+
+	virtual void save(const Variant& value, std::string& out)
+	{
+		StringUtil::toString(value.value<int>(), out);
+	}
+
+	virtual void read(const std::string& str, Variant& out)
+	{
+		out = StringUtil::parseValue<int>(str);
+	}
+	getFunctionPtr _getFunc;
+	setFunctionPtr _setFunc;
+};
+
+struct EnumInfo
+{
+	const char* name;
+	int value;
+};
+
 struct AAInfo
 {
 	Variant::Type type;
@@ -170,9 +229,13 @@ struct AAInfo
 	Variant singleStep;
 	Variant defaultValue;
 
+	EnumInfo* enuminfo;
+	int enuminfo_count;
+
 	AAInfo(AttributeAccessor* accessor_, Variant::Type type_)
 		: accessor(accessor_)
 		, type(type_)
+		, enuminfo(nullptr)
 	{
 	}
 
@@ -182,11 +245,23 @@ struct AAInfo
 		, mini(mi)
 		, maxi(mx)
 		, singleStep(step)
+		, enuminfo(nullptr)
 	{
 		type = defaultValue.getType();
 	}
 
+	AAInfo(AttributeAccessor* accessor_, Variant def, EnumInfo* info, int count)
+		: accessor(accessor_)
+		, defaultValue(def)
+		, enuminfo(info)
+		, enuminfo_count(count)
+	{
+		type = Variant::TInt;
+	}
+
 	~AAInfo() { delete accessor; }
+
+	bool isEnum() { return enuminfo != nullptr; }
 
 	void setValue(const Variant& mx, const Variant& mi, const Variant& step)
 	{

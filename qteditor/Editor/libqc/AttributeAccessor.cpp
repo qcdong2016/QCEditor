@@ -150,6 +150,18 @@ void AAManager::initAll()
 	StartGroup(ParticleSystemQuad, DefaultValue::defaultParticleSystem);
 	Require(Node);
 
+	static EnumInfo PSPT[] = {
+		{ "FREE", (int)ParticleSystem::PositionType::FREE },
+		{ "RELATIVE", (int)ParticleSystem::PositionType::RELATIVE },
+		{ "GROUPED", (int)ParticleSystem::PositionType::GROUPED },
+	};
+
+
+#define ATTR_ENUM(name, get, set, names, typeName, defaultValue) \
+	currentGroup->add(new AAInfo(new AttributeAccessorEnum<TYPE, typeName>(name, get, set), defaultValue, names, sizeof(names)/sizeof(names[0])))
+
+	ATTR_ENUM("Position Type", &ParticleSystem::getPositionType, &ParticleSystem::setPositionType, PSPT, ParticleSystem::PositionType, 0);
+
 	ATTR("Duration", &ParticleSystem::getDuration, &ParticleSystem::setDuration, float, 0);
 	ATTR("Source Position", &ParticleSystem::getSourcePosition, &ParticleSystem::setSourcePosition, Vec2, Vec2(0,0));
 	ATTR("Pos Var", &ParticleSystem::getPosVar, &ParticleSystem::setPosVar, Vec2, Vec2(0, 0));

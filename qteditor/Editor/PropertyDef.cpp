@@ -83,6 +83,34 @@ public:
 		return item;
 	}
 
+	virtual QtVariantProperty* addEnum(AAInfo* info)
+	{
+		QtVariantProperty *item = _mgr->addProperty(QtVariantPropertyManager::enumTypeId(),
+			QLatin1String(info->accessor->getName().c_str()));
+
+		QStringList enumNames;
+		for (int i = 0; i < info->enuminfo_count; i++)
+		{
+			enumNames.append(QString(info->enuminfo[i].name));
+		}
+		item->setAttribute(QLatin1String("enumNames"), enumNames);
+
+		Variant value;
+		info->accessor->get(_node, value);
+		int v = value.value<int>();
+
+		for (int i = 0; i < info->enuminfo_count; i++)
+		{
+			if (info->enuminfo[i].value == v)
+				item->setValue(i);
+		}
+
+		_map[item] = info->accessor;
+		_current->addSubProperty(item);
+
+		return item;
+	}
+
 	virtual QtProperty* get(const QString& name)
 	{
 		for (auto iter = _map.begin(); iter != _map.end(); ++iter)
@@ -129,8 +157,11 @@ static void addAccessorGroup(AccessorGroup* ag)
 	for (iter = ag->infolist.begin(); iter != ag->infolist.end(); iter++)
 	{
 		AAInfo* aainfo = *iter;
-		s_builder.add(aainfo->accessor->getName(),
-			aainfo->accessor, Variant::typeToQtype(aainfo->type), aainfo->mini, aainfo->maxi, aainfo->singleStep);
+		AttributeAccessor* accessor = aainfo->accessor;
+		if (aainfo->isEnum())
+			s_builder.addEnum(aainfo);
+		else
+			s_builder.add(accessor->getName(), accessor, Variant::typeToQtype(aainfo->type), aainfo->mini, aainfo->maxi, aainfo->singleStep);
 	}
 	s_builder.endGroup();
 
