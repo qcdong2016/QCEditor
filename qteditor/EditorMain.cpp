@@ -79,6 +79,7 @@ void EditorMain::onStart()
 	director->setOpenGLView(view);
 	view->setFrameSize(_glwindow->frameSize().width(), _glwindow->frameSize().height());
 
+	FileUtils::getInstance()->addSearchPath("Resources/");
 	_sceneCtrl = _glwindow->createCocos2dSceneCtrl();
 
 	connect(_boxlist, SIGNAL(onSelectNode(Node*)), this, SLOT(viewBoxAttr(Node*)));
