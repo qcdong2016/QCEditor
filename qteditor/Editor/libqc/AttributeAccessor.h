@@ -11,11 +11,11 @@ class AttributeAccessor
 public:
 	AttributeAccessor(const std::string& name) : _name(name) {}
 
-	virtual void get(const Node* classPtr, Variant& dest) const = 0;
-	virtual void set(Node* classPtr, const Variant& src) = 0;
+	virtual void get(const Node* ptr, Variant& dest) const = 0;
+	virtual void set(Node* ptr, const Variant& src) = 0;
 
-	virtual void save(const Variant& value, std::string& out) = 0;
-	virtual void read(const std::string& str, Variant& out) = 0;
+	virtual void toString(const Node* ptr, std::string& out) = 0;
+	virtual void fromString(Node* ptr, const std::string& str) = 0;
 
 	virtual const std::string& getName() { return _name; }
 
@@ -99,14 +99,18 @@ public:
 		(classPtr->*_setFunc)(value.value<U>());
 	}
 
-	virtual void save(const Variant& value, std::string& out)
+	virtual void toString(const Node* ptr, std::string& out)
 	{
-		_toStringFunc(value.value<U>(), out);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = (classPtr->*_getFunc)();
+		_toStringFunc(value, out);
 	}
 
-	virtual void read(const std::string& str, Variant& out)
+	virtual void fromString(Node* ptr, const std::string& str)
 	{
-		out = _fromStringFunc(str);
+		U value = _fromStringFunc(str);
+		T* classPtr = static_cast<T*>(ptr);
+		(classPtr->*_setFunc)(value);
 	}
 
 	getFunctionPtr _getFunc;
@@ -152,14 +156,18 @@ public:
 		_setFunc(classPtr, value.value<U>());
 	}
 
-	virtual void save(const Variant& value, std::string& out)
+	virtual void toString(const Node* ptr, std::string& out)
 	{
-		_toStringFunc(value.value<U>(), out);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = _getFunc(classPtr);
+		_toStringFunc(value, out);
 	}
 
-	virtual void read(const std::string& str, Variant& out)
+	virtual void fromString(Node* ptr, const std::string& str)
 	{
-		out = _fromStringFunc(str);
+		U value = _fromStringFunc(str);
+		T* classPtr = static_cast<T*>(ptr);
+		_setFunc(classPtr, value);
 	}
 
 	getFunctionPtr _getFunc;
@@ -200,14 +208,18 @@ public:
 		(classPtr->*_setFunc)((U)value.value<int>());
 	}
 
-	virtual void save(const Variant& value, std::string& out)
+	virtual void toString(const Node* ptr, std::string& out)
 	{
-		StringUtil::toString(value.value<int>(), out);
+		const T* classPtr = static_cast<const T*>(ptr);
+		U value = (classPtr->*_getFunc)();
+		out = StringUtil::toString((int)value);
 	}
 
-	virtual void read(const std::string& str, Variant& out)
+	virtual void fromString(Node* ptr, const std::string& str)
 	{
-		out = StringUtil::parseValue<int>(str);
+		int value = StringUtil::parseValue<int>(str);
+		T* classPtr = static_cast<T*>(ptr);
+		(classPtr->*_setFunc)((U)value);
 	}
 	getFunctionPtr _getFunc;
 	setFunctionPtr _setFunc;

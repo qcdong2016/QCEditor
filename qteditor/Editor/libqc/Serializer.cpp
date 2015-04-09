@@ -24,7 +24,7 @@ static void saveTreeByGroup(rapidxml::xml_document<>& doc, rapidxml::xml_node<>*
 			continue;
 
 		std::string s;
-		aa->save(v, s);
+		aa->toString(node->self, s);
 
 		rapidxml::xml_node<>* attrnode = doc.allocate_node(rapidxml::node_element, doc.allocate_string("Property"));
 		rapidxml::xml_attribute<>* attrname = doc.allocate_attribute("name", doc.allocate_string(aa->getName().c_str()));
@@ -125,9 +125,7 @@ static Node* loadNode(rapidxml::xml_node<>* element
 		{
 			AttributeAccessor* aa = gp->get(prop->first_attribute("name")->value());
 			const char* vstr = prop->first_attribute("value")->value();
-			Variant v;
-			aa->read(vstr, v);
-			aa->set(node, v);
+			aa->fromString(node, vstr);
 		}
 		else 
 		{
