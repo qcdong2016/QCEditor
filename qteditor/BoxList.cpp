@@ -150,3 +150,8 @@ void BoxList::updateWithTree(NodeInfo* tree)
 		ui.treeWidget->addTopLevelItem(addNode(&child_info));
 	}
 }
+
+void BoxList::updateWithTreeRoot(NodeInfo* tree)
+{
+	updateWithTree(&(*tree->children.begin()));
+}

@@ -116,7 +116,6 @@ static Node* loadNode(rapidxml::xml_node<>* element
 	curtree.self = node;
 	curtree.typeName = typeName;
 	Global::sceneCtrl->registerNode(&curtree);
-	tree->children.push_back(curtree);
 #endif
 
 	rapidxml::xml_node<>* prop = element->first_node();
@@ -140,6 +139,9 @@ static Node* loadNode(rapidxml::xml_node<>* element
 		}
 		prop = prop->next_sibling();
 	}
+#ifdef QC_EDITOR
+	tree->children.push_back(curtree);
+#endif
 
 	return node;
 }
@@ -182,8 +184,7 @@ static Node* read_(const std::string& fileName
 		);
 
 #ifdef QC_EDITOR
-	tree->self = node;
-	tree->typeName = "Node";//hack
+	tree->self = nullptr;
 	Global::sceneCtrl->registerNode(tree);
 #endif
 

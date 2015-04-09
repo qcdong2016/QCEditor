@@ -33,11 +33,11 @@ private slots:
 	void selectedNode(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
 public slots:
 	void updateWithTree(NodeInfo* tree);
+	void updateWithTreeRoot(NodeInfo* tree);
 
 signals:
 	void onSelectNode(Node* node);
 	void newNode(NodeInfo* info);
-
 private:
 	Ui::Form ui;
 	MyTreeWidgetItem* _currentWidget;

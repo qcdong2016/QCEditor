@@ -123,7 +123,7 @@ void EditorMain::load()
 	{
 		NodeInfo rootinfo;
 		Serializer::read(std::string(fileName.toUtf8()), &rootinfo);
-		_sceneCtrl->setUiRoot(rootinfo.self);
-		_boxlist->updateWithTree(&rootinfo);
+		_sceneCtrl->setUiRoot((*rootinfo.children.begin()).self);
+		_boxlist->updateWithTreeRoot(&rootinfo);
 	}
 }
