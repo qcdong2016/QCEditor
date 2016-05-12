@@ -3,9 +3,9 @@
 [该项目被列为oschina "2015 年度新增开源软件排名 TOP100" 第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
 #QCEditor
 
-**QCEditor**是一个简单的cocos2d-x编辑器。 Qt和Cocos-x 都能跨平台，理论上是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。写这个编辑器的目的是为了实现一个能摆放ui控件位置的功能，我们在游戏开发过程中通常也只会用到这个功能。
+**QCEditor**是一个简单的cocos2d-x UI编辑器，基于cocos2d-x 3.4。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
 
-**QCEditor**的渲染使用的是cocos2d-x本身的渲染，所以说在编辑器里面编辑的效果和游戏中的效果会一模一样，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
+**QCEditor**的渲染使用的是cocos2d-x本身的渲染，所见即所得，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
 ##编译过程
 * VS2013 + Qt 5.4.1 + QtCreator
@@ -15,7 +15,7 @@
 
 ##如何使用
 * 拷贝libqc文件夹下的文件到你的项目
-* 包含Serializer.h 调用Serializer::read（整个库只有这一个API）
+* 包含Serializer.h 调用Serializer::read
 
 ##功能添加
 添加新的属性和控件非常方便，只需要按照下面格式添加，将会自动与Node绑定，并且自动添加到存储功能中。通过这种方式，能够编辑cocos2d-x里所有可视化组件，甚至其他一些组件。
@@ -98,7 +98,7 @@ xml文件格式如下：
 
 
 ##其他
-个人力量有限，如果有小伙伴一起来搞就好啦，欢迎提供代码。QQ(526738316) Email(qcdong@yeah.net)
+联系方式：QQ(526738316) Email(qcdong@yeah.net)
 
 ##License
 Licensed under the MIT license, see [LICENSE](LICENSE) for details.
