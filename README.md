@@ -1,6 +1,7 @@
 ![preview][]
 
-#QCEditor[该项目被列为OSCHINA 2015 top100第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
+[该项目被列为oschina "2015 年度新增开源软件排名 TOP100" 第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
+#QCEditor
 
 **QCEditor**是一个简单的cocos2d-x编辑器。 Qt和Cocos-x 都能跨平台，理论上是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。写这个编辑器的目的是为了实现一个能摆放ui控件位置的功能，我们在游戏开发过程中通常也只会用到这个功能。
 
