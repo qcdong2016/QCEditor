@@ -1,6 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -65,11 +65,12 @@ void AutoreleasePool::clear()
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     _isClearing = true;
 #endif
-    for (const auto &obj : _managedObjectArray)
+    std::vector<Ref*> releasings;
+    releasings.swap(_managedObjectArray);
+    for (const auto &obj : releasings)
     {
         obj->release();
     }
-    _managedObjectArray.clear();
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     _isClearing = false;
 #endif
@@ -91,7 +92,6 @@ void AutoreleasePool::dump()
     CCLOG("%20s%20s%20s", "Object pointer", "Object id", "reference count");
     for (const auto &obj : _managedObjectArray)
     {
-        CC_UNUSED_PARAM(obj);
         CCLOG("%20p%20u\n", obj, obj->getReferenceCount());
     }
 }

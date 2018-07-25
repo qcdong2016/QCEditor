@@ -7,6 +7,7 @@
 
 QCGLWidget::QCGLWidget(QWidget* parent /* = nullptr */)
 : QGLWidget(QGLFormat(QGL::DoubleBuffer), parent)
+, _sceneCtrl(nullptr)
 {
 	this->setMouseTracking(true);
 
@@ -64,7 +65,8 @@ void QCGLWidget::resizeEvent(QResizeEvent* evnet)
 	if (v)
 		v->setFrameSize(frameSize().width(), frameSize().height());
 
-	_sceneCtrl->onResize(frameSize().width(), frameSize().height());
+    if (_sceneCtrl)
+	    _sceneCtrl->onResize(frameSize().width(), frameSize().height());
 }
 
 void QCGLWidget::cocos2dDraw()

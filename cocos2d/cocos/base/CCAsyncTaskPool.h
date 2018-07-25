@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2010      cocos2d-x.org
-Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -39,9 +38,18 @@ THE SOFTWARE.
 #include <functional>
 #include <stdexcept>
 
+/**
+* @addtogroup base
+* @{
+*/
 NS_CC_BEGIN
-/////////////////////////////////////////////////////////////////////////////
 
+
+/**
+ * @class AsyncTaskPool
+ * @brief This class allows to perform background operations without having to manipulate threads.
+ * @js NA
+ */
 class CC_DLL AsyncTaskPool
 {
 public:
@@ -54,31 +62,46 @@ public:
         TASK_OTHER,
         TASK_MAX_TYPE,
     };
+
     /**
-     * get instance
+     * Returns the shared instance of the async task pool.
      */
     static AsyncTaskPool* getInstance();
+
     /**
-     * destroy instance
+     * Destroys the async task pool.
      */
-    static void destoryInstance();
+    static void destroyInstance();
+    
+    /** @deprecated Use method destroyInstance() instead. */
+    CC_DEPRECATED_ATTRIBUTE static void destoryInstance() { return destroyInstance(); }
     
     /**
-     * stop tasks
-     * @param type task type you want to stop
+     * Stop tasks.
+     *
+     * @param type Task type you want to stop.
      */
     void stopTasks(TaskType type);
     
     /**
-     * enqueue a asynchronous task
+     * Enqueue a asynchronous task.
+     *
      * @param type task type is io task, network task or others, each type of task has a thread to deal with it.
-     * @param callback callback when the task is finished. The callback is called in the main thread instead of task thread
-     * @param callbackParam parameter used by the callback
-     * @param f task can be lambda function
-     * @param args task parameters
+     * @param callback callback when the task is finished. The callback is called in the main thread instead of task thread.
+     * @param callbackParam parameter used by the callback.
+     * @param task: task can be lambda function to be performed off thread.
+     * @lua NA
      */
-    template<class F>
-    inline void enqueue(TaskType type, const TaskCallBack& callback, void* callbackParam, F&& f);
+    void enqueue(TaskType type, TaskCallBack callback, void* callbackParam, std::function<void()> task);
+
+    /**
+    * Enqueue a asynchronous task.
+    *
+    * @param type task type is io task, network task or others, each type of task has a thread to deal with it.
+    * @param task: task can be lambda function to be performed off thread.
+    * @lua NA
+    */
+    void enqueue(AsyncTaskPool::TaskType type, std::function<void()> task);
     
 CC_CONSTRUCTOR_ACCESS:
     AsyncTaskPool();
@@ -117,7 +140,7 @@ protected:
                                           }
                                           
                                           task();
-                                          Director::getInstance()->getScheduler()->performFunctionInCocosThread([&, callback]{ callback.callback(callback.callbackParam); });
+                                          Director::getInstance()->getScheduler()->performFunctionInCocosThread(std::bind(callback.callback, callback.callbackParam));
                                       }
                                   }
                                   );
@@ -144,11 +167,13 @@ protected:
             while (_taskCallBacks.size())
                 _taskCallBacks.pop();
         }
-        template<class F>
-        void enqueue(const TaskCallBack& callback, void* callbackParam, F&& f)
+
+        void enqueue(TaskCallBack callback, void* callbackParam, std::function<void()> task)
         {
-            auto task = f;//std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-            
+            AsyncTaskCallBack taskCallBack;
+            taskCallBack.callback = std::move(callback);
+            taskCallBack.callbackParam = callbackParam;
+
             {
                 std::unique_lock<std::mutex> lock(_queueMutex);
                 
@@ -159,11 +184,8 @@ protected:
                     return;
                 }
                 
-                AsyncTaskCallBack taskCallBack;
-                taskCallBack.callback = callback;
-                taskCallBack.callbackParam = callbackParam;
-                _tasks.emplace([task](){ task(); });
-                _taskCallBacks.emplace(taskCallBack);
+                _tasks.push(std::move(task));
+                _taskCallBacks.push(std::move(taskCallBack));
             }
             _condition.notify_one();
         }
@@ -173,7 +195,7 @@ protected:
         std::thread _thread;
         // the task queue
         std::queue< std::function<void()> > _tasks;
-        std::queue<AsyncTaskCallBack>            _taskCallBacks;
+        std::queue<AsyncTaskCallBack> _taskCallBacks;
         
         // synchronization
         std::mutex _queueMutex;
@@ -193,13 +215,19 @@ inline void AsyncTaskPool::stopTasks(TaskType type)
     threadTask.clear();
 }
 
-template<class F>
-inline void AsyncTaskPool::enqueue(AsyncTaskPool::TaskType type, const TaskCallBack& callback, void* callbackParam, F&& f)
+inline void AsyncTaskPool::enqueue(AsyncTaskPool::TaskType type, TaskCallBack callback, void* callbackParam, std::function<void()> task)
 {
     auto& threadTask = _threadTasks[(int)type];
     
-    threadTask.enqueue(callback, callbackParam, f);
+    threadTask.enqueue(std::move(callback), callbackParam, std::move(task));
+}
+
+inline void AsyncTaskPool::enqueue(AsyncTaskPool::TaskType type, std::function<void()> task)
+{
+    enqueue(type, [](void*) {}, nullptr, std::move(task));
 }
 
 NS_CC_END
+// end group
+/// @}
 #endif //__CCSYNC_TASK_POOL_H_

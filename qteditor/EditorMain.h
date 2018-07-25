@@ -2,12 +2,12 @@
 #define EDITORMAIN_H
 
 #include <QtWidgets/QMainWindow>
-#include "ui_EditorMain.h"
 #include "BoxList.h"
 #include "Editor/PropertyDef.h"
 #include "math/Vec2.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
+#include "ui_EditorMain.h"
 
 USING_NS_CC;
 class QtProperty;

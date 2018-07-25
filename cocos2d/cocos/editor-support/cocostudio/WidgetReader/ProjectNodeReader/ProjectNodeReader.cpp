@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "ProjectNodeReader.h"
+#include "editor-support/cocostudio/WidgetReader/ProjectNodeReader/ProjectNodeReader.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "editor-support/cocostudio/CSParseBinary_generated.h"
+#include "editor-support/cocostudio/WidgetReader/NodeReader/NodeReader.h"
 
 #include "tinyxml2.h"
 #include "flatbuffers/flatbuffers.h"
@@ -51,13 +51,18 @@ namespace cocostudio
     {
         if (!_instanceProjectNodeReader)
         {
-            _instanceProjectNodeReader = new ProjectNodeReader();
+            _instanceProjectNodeReader = new (std::nothrow) ProjectNodeReader();
         }
         
         return _instanceProjectNodeReader;
     }
     
     void ProjectNodeReader::purge()
+    {
+        CC_SAFE_DELETE(_instanceProjectNodeReader);
+    }
+    
+    void ProjectNodeReader::destroyInstance()
     {
         CC_SAFE_DELETE(_instanceProjectNodeReader);
     }
@@ -69,6 +74,21 @@ namespace cocostudio
         auto nodeOptions = *(Offset<WidgetOptions>*)(&temp);
         
         std::string filename = "";
+        float innerspeed = 1.0f;
+
+        const tinyxml2::XMLAttribute* objattri = objectData->FirstAttribute();
+        // inneraction speed
+        while (objattri)
+        {
+            std::string name = objattri->Name();
+            std::string value = objattri->Value();
+            if (name == "InnerActionSpeed")
+            {
+                    innerspeed = atof(objattri->Value());
+                    break;
+            }
+            objattri = objattri->Next();
+        }
 
         // FileData
         const tinyxml2::XMLElement* child = objectData->FirstChildElement();
@@ -101,7 +121,8 @@ namespace cocostudio
         
         auto options = CreateProjectNodeOptions(*builder,
                                                 nodeOptions,
-                                                builder->CreateString(filename));
+                                                builder->CreateString(filename),
+                                                innerspeed);
         
         return *(Offset<Table>*)(&options);
     }
@@ -114,5 +135,10 @@ namespace cocostudio
         auto nodeReader = NodeReader::getInstance();
         
         nodeReader->setPropsWithFlatBuffers(node, (Table*)options->nodeOptions());
+    }
+    
+    Node* ProjectNodeReader::createNodeWithFlatBuffers(const flatbuffers::Table* /*nodeOptions*/)
+    {
+        return nullptr;
     }
 }

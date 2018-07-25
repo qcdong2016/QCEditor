@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014 Chukong Technologies Inc.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -57,11 +57,17 @@ enum class LightFlag
     LIGHT15 = 1 << 15,
 };
 
+/**
+@js NA
+*/
 class CC_DLL BaseLight : public Node
 {
 public:
     
-    //get light type
+    /**
+     * Get the light type,light type MUST be one of LightType::DIRECTIONAL ,
+     * LightType::POINT, LightType::SPOT, LightType::AMBIENT.
+     */
     virtual LightType getLightType() const = 0;
     
     /** intensity getter and setter */
@@ -95,6 +101,9 @@ protected:
     bool        _enabled;
 };
 
+/**
+@js NA
+*/
 class CC_DLL DirectionLight : public BaseLight
 {
 public:
@@ -133,6 +142,9 @@ CC_CONSTRUCTOR_ACCESS:
     
 };
 
+/**
+@js NA
+*/
 class CC_DLL PointLight : public BaseLight
 {
 public:
@@ -161,6 +173,9 @@ protected:
     float _range;
 };
 
+/**
+@js NA
+*/
 class CC_DLL SpotLight : public BaseLight
 {
 public:
@@ -230,7 +245,7 @@ public:
      *
      * @param outerAngle The angle of spot light (in radians).
      */
-    void setOuterAngle(float angle);
+    void setOuterAngle(float outerAngle);
     
     /**
      * Returns the outer angle of the spot light (in radians).
@@ -252,6 +267,9 @@ protected:
     float _cosOuterAngle;
 };
 
+/**
+@js NA
+*/
 class CC_DLL AmbientLight : public BaseLight
 {
 public:

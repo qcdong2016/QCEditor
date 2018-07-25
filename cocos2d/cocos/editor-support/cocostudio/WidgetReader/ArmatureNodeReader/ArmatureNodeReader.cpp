@@ -1,10 +1,12 @@
-#include "tinyxml2/tinyxml2.h"
+#include "editor-support/cocostudio/WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
+
+#include "platform/CCFileUtils.h"
+#include "tinyxml2.h"
 #include "flatbuffers/flatbuffers.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "CSArmatureNode_generated.h"
-#include "cocostudio/WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
-#include "cocostudio/CCArmature.h"
+#include "editor-support/cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "editor-support/cocostudio/CSParseBinary_generated.h"
+#include "editor-support/cocostudio/WidgetReader/ArmatureNodeReader/CSArmatureNode_generated.h"
+#include "editor-support/cocostudio/CCArmature.h"
 
 
 USING_NS_CC;
@@ -32,6 +34,11 @@ ArmatureNodeReader* ArmatureNodeReader::getInstance()
 		_instanceArmatureNodeReader = new (std::nothrow) ArmatureNodeReader();
 	}
 	return _instanceArmatureNodeReader;
+}
+
+void ArmatureNodeReader::destroyInstance()
+{
+    CC_SAFE_DELETE(_instanceArmatureNodeReader);
 }
 
 Offset<Table> ArmatureNodeReader::createOptionsWithFlatBuffers(const tinyxml2::XMLElement *objectData,
@@ -116,29 +123,43 @@ void ArmatureNodeReader::setPropsWithFlatBuffers(cocos2d::Node *node,
 {
 
 	auto* custom = static_cast<Armature*>(node);
-	auto options = (flatbuffers::CSArmatureNodeOption*)nodeOptions;	
+	auto options = (flatbuffers::CSArmatureNodeOption*)nodeOptions;
+    
+    bool fileExist = false;
+    std::string errorFilePath = "";
 
-	std::string filepath(options->fileData()->path()->c_str());
-    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(filepath);
+	std::string filepath(options->fileData()->path()->c_str());    
     
-    std::string dirpath = fullpath.substr(0, fullpath.find_last_of("/"));
-    FileUtils::getInstance()->addSearchPath(dirpath);
-    
-	ArmatureDataManager::getInstance()->addArmatureFileInfo(fullpath);
-	custom->init(getArmatureName(filepath));
-    std::string currentname = options->currentAnimationName()->c_str();
-	if (options->isAutoPlay())
-		custom->getAnimation()->play(currentname, -1, options->isLoop());
-	else
+    if (FileUtils::getInstance()->isFileExist(filepath))
     {
-        custom->getAnimation()->play(currentname);
-        custom->getAnimation()->gotoAndPause(0);
+        fileExist = true;
+        
+        std::string fullpath = FileUtils::getInstance()->fullPathForFilename(filepath);
+        
+        std::string dirpath = fullpath.substr(0, fullpath.find_last_of("/"));
+        FileUtils::getInstance()->addSearchPath(dirpath);
+        
+        ArmatureDataManager::getInstance()->addArmatureFileInfo(fullpath);
+        custom->init(getArmatureName(filepath));
+        std::string currentname = options->currentAnimationName()->c_str();
+        if (options->isAutoPlay())
+            custom->getAnimation()->play(currentname, -1, options->isLoop());
+        else
+        {
+            custom->getAnimation()->play(currentname);
+            custom->getAnimation()->gotoAndPause(0);
+        }
+    }
+    else
+    {
+        errorFilePath = filepath;
+        fileExist = false;
     }
 }
 
 cocos2d::Node*  ArmatureNodeReader::createNodeWithFlatBuffers(const flatbuffers::Table *nodeOptions)
 {
-	auto node = CCArmature::create();
+	auto node = Armature::create();
 
 	// self
 	auto options = (flatbuffers::CSArmatureNodeOption*)nodeOptions;

@@ -27,14 +27,18 @@ THE SOFTWARE.
 
 #include <string>
 #include <functional>
+#include <unordered_map>
+#include "SimulatorExport.h"
 
 void recvBuf(int fd, char *pbuf, unsigned long bufsize);
 
 void sendBuf(int fd, const char *pbuf, unsigned long bufsize);
 
-std::string& replaceAll(std::string& str, const std::string& old_value, const std::string& new_value);
+CC_LIBSIM_DLL extern std::string g_projectPath;
 
-std::string getIPAddress();
+CC_LIBSIM_DLL std::string& replaceAll(std::string& str, const std::string& old_value, const std::string& new_value);
+
+CC_LIBSIM_DLL std::string getIPAddress();
 
 const char* getRuntimeVersion();
 
@@ -46,8 +50,13 @@ const char* getRuntimeVersion();
 // RuntimeEngine
 //
 #include "ProjectConfig/ProjectConfig.h"
+
+#define kRuntimeEngineLua 1
+#define kRuntimeEngineJs  2
+#define kRuntimeEngineCCS 4
+
 class RuntimeProtocol;
-class RuntimeEngine
+class CC_LIBSIM_DLL RuntimeEngine
 {
 public:
     static RuntimeEngine* getInstance();
@@ -62,7 +71,9 @@ public:
     void end();
     void setEventTrackingEnable(bool enable);
     
+    void addRuntime(RuntimeProtocol *runtime, int type);
     RuntimeProtocol *getRuntime();
+    
 private:
     RuntimeEngine();
     bool startNetwork();
@@ -73,10 +84,11 @@ private:
     void trackEvent(const std::string &eventName);
     void trackLaunchEvent();
     
-    RuntimeProtocol *_runtime;
+    RuntimeProtocol *_runtime;  // weak ref
     ProjectConfig _project;
     bool _eventTrackingEnable;  // false default
     std::string _launchEvent;
+    std::unordered_map<int,RuntimeProtocol*> _runtimes;
 };
 
 #endif // _RUNTIME__H_

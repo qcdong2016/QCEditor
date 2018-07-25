@@ -13,7 +13,7 @@ public:
 	QCApplication(int argc, char *argv[]) : QApplication(argc, argv) {}
 	virtual ~QCApplication() {}
 
-	virtual void setAnimationInterval(double interval) override {} 
+	virtual void setAnimationInterval(float interval) override {} 
 	virtual bool applicationDidFinishLaunching() override { return true; }
 	virtual void applicationDidEnterBackground() override {}
 	virtual void applicationWillEnterForeground() override {}

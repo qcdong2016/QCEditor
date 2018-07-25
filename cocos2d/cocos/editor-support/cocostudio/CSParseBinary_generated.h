@@ -45,6 +45,7 @@ struct EventFrame;
 struct IntFrame;
 struct BoolFrame;
 struct InnerActionFrame;
+struct EasingData;
 struct RotationSkew;
 struct Position;
 struct Scale;
@@ -53,7 +54,9 @@ struct Color;
 struct ColorVector;
 struct FlatSize;
 struct CapInsets;
+struct BlendFunc;
 struct ResourceData;
+struct BlendFrame;
 
 MANUALLY_ALIGNED_STRUCT(4) RotationSkew {
  private:
@@ -174,6 +177,20 @@ MANUALLY_ALIGNED_STRUCT(4) CapInsets {
   float height() const { return flatbuffers::EndianScalar(height_); }
 };
 STRUCT_END(CapInsets, 16);
+
+MANUALLY_ALIGNED_STRUCT(4) BlendFunc {
+ private:
+  int32_t src_;
+  int32_t dst_;
+
+ public:
+  BlendFunc(int32_t src, int32_t dst)
+    : src_(flatbuffers::EndianScalar(src)), dst_(flatbuffers::EndianScalar(dst)) { }
+
+  int32_t src() const { return flatbuffers::EndianScalar(src_); }
+  int32_t dst() const { return flatbuffers::EndianScalar(dst_); }
+};
+STRUCT_END(BlendFunc, 8);
 
 struct CSParseBinary : private flatbuffers::Table {
   const flatbuffers::String *version() const { return GetPointer<const flatbuffers::String *>(4); }
@@ -308,7 +325,7 @@ struct OptionsBuilder {
 };
 
 inline flatbuffers::Offset<Options> CreateOptions(flatbuffers::FlatBufferBuilder &_fbb,
-   flatbuffers::Offset<Table> data = 0) {
+  flatbuffers::Offset<Table> data = 0) {
   OptionsBuilder builder_(_fbb);
   builder_.add_data(data);
   return builder_.Finish();
@@ -585,12 +602,14 @@ inline flatbuffers::Offset<SingleNodeOptions> CreateSingleNodeOptions(flatbuffer
 struct SpriteOptions : private flatbuffers::Table {
   const WidgetOptions *nodeOptions() const { return GetPointer<const WidgetOptions *>(4); }
   const ResourceData *fileNameData() const { return GetPointer<const ResourceData *>(6); }
+  const BlendFunc *blendFunc() const { return GetStruct<const BlendFunc *>(8); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* nodeOptions */) &&
            verifier.VerifyTable(nodeOptions()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 6 /* fileNameData */) &&
            verifier.VerifyTable(fileNameData()) &&
+           VerifyField<BlendFunc>(verifier, 8 /* blendFunc */) &&
            verifier.EndTable();
   }
 };
@@ -600,18 +619,21 @@ struct SpriteOptionsBuilder {
   flatbuffers::uoffset_t start_;
   void add_nodeOptions(flatbuffers::Offset<WidgetOptions> nodeOptions) { fbb_.AddOffset(4, nodeOptions); }
   void add_fileNameData(flatbuffers::Offset<ResourceData> fileNameData) { fbb_.AddOffset(6, fileNameData); }
+  void add_blendFunc(const BlendFunc *blendFunc) { fbb_.AddStruct(8, blendFunc); }
   SpriteOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   SpriteOptionsBuilder &operator=(const SpriteOptionsBuilder &);
   flatbuffers::Offset<SpriteOptions> Finish() {
-    auto o = flatbuffers::Offset<SpriteOptions>(fbb_.EndTable(start_, 2));
+    auto o = flatbuffers::Offset<SpriteOptions>(fbb_.EndTable(start_, 3));
     return o;
   }
 };
 
 inline flatbuffers::Offset<SpriteOptions> CreateSpriteOptions(flatbuffers::FlatBufferBuilder &_fbb,
    flatbuffers::Offset<WidgetOptions> nodeOptions = 0,
-   flatbuffers::Offset<ResourceData> fileNameData = 0) {
+   flatbuffers::Offset<ResourceData> fileNameData = 0,
+   const BlendFunc *blendFunc = 0) {
   SpriteOptionsBuilder builder_(_fbb);
+  builder_.add_blendFunc(blendFunc);
   builder_.add_fileNameData(fileNameData);
   builder_.add_nodeOptions(nodeOptions);
   return builder_.Finish();
@@ -620,12 +642,14 @@ inline flatbuffers::Offset<SpriteOptions> CreateSpriteOptions(flatbuffers::FlatB
 struct ParticleSystemOptions : private flatbuffers::Table {
   const WidgetOptions *nodeOptions() const { return GetPointer<const WidgetOptions *>(4); }
   const ResourceData *fileNameData() const { return GetPointer<const ResourceData *>(6); }
+  const BlendFunc *blendFunc() const { return GetStruct<const BlendFunc *>(8); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* nodeOptions */) &&
            verifier.VerifyTable(nodeOptions()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 6 /* fileNameData */) &&
            verifier.VerifyTable(fileNameData()) &&
+           VerifyField<BlendFunc>(verifier, 8 /* blendFunc */) &&
            verifier.EndTable();
   }
 };
@@ -635,18 +659,21 @@ struct ParticleSystemOptionsBuilder {
   flatbuffers::uoffset_t start_;
   void add_nodeOptions(flatbuffers::Offset<WidgetOptions> nodeOptions) { fbb_.AddOffset(4, nodeOptions); }
   void add_fileNameData(flatbuffers::Offset<ResourceData> fileNameData) { fbb_.AddOffset(6, fileNameData); }
+  void add_blendFunc(const BlendFunc *blendFunc) { fbb_.AddStruct(8, blendFunc); }
   ParticleSystemOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ParticleSystemOptionsBuilder &operator=(const ParticleSystemOptionsBuilder &);
   flatbuffers::Offset<ParticleSystemOptions> Finish() {
-    auto o = flatbuffers::Offset<ParticleSystemOptions>(fbb_.EndTable(start_, 2));
+    auto o = flatbuffers::Offset<ParticleSystemOptions>(fbb_.EndTable(start_, 3));
     return o;
   }
 };
 
 inline flatbuffers::Offset<ParticleSystemOptions> CreateParticleSystemOptions(flatbuffers::FlatBufferBuilder &_fbb,
    flatbuffers::Offset<WidgetOptions> nodeOptions = 0,
-   flatbuffers::Offset<ResourceData> fileNameData = 0) {
+   flatbuffers::Offset<ResourceData> fileNameData = 0,
+   const BlendFunc *blendFunc = 0) {
   ParticleSystemOptionsBuilder builder_(_fbb);
+  builder_.add_blendFunc(blendFunc);
   builder_.add_fileNameData(fileNameData);
   builder_.add_nodeOptions(nodeOptions);
   return builder_.Finish();
@@ -701,6 +728,15 @@ struct ButtonOptions : private flatbuffers::Table {
   const FlatSize *scale9Size() const { return GetStruct<const FlatSize *>(24); }
   uint8_t scale9Enabled() const { return GetField<uint8_t>(26, 0); }
   uint8_t displaystate() const { return GetField<uint8_t>(28, 1); }
+  uint8_t outlineEnabled() const { return GetField<uint8_t>(30, 0); }
+  const Color *outlineColor() const { return GetStruct<const Color *>(32); }
+  int32_t outlineSize() const { return GetField<int32_t>(34, 1); }
+  uint8_t shadowEnabled() const { return GetField<uint8_t>(36, 0); }
+  const Color *shadowColor() const { return GetStruct<const Color *>(38); }
+  float shadowOffsetX() const { return GetField<float>(40, 2); }
+  float shadowOffsetY() const { return GetField<float>(42, -2); }
+  int32_t shadowBlurRadius() const { return GetField<int32_t>(44, 0); }
+  uint8_t isLocalized() const { return GetField<uint8_t>(46, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* widgetOptions */) &&
@@ -723,6 +759,15 @@ struct ButtonOptions : private flatbuffers::Table {
            VerifyField<FlatSize>(verifier, 24 /* scale9Size */) &&
            VerifyField<uint8_t>(verifier, 26 /* scale9Enabled */) &&
            VerifyField<uint8_t>(verifier, 28 /* displaystate */) &&
+           VerifyField<uint8_t>(verifier, 30 /* outlineEnabled */) &&
+           VerifyField<Color>(verifier, 32 /* outlineColor */) &&
+           VerifyField<int32_t>(verifier, 34 /* outlineSize */) &&
+           VerifyField<uint8_t>(verifier, 36 /* shadowEnabled */) &&
+           VerifyField<Color>(verifier, 38 /* shadowColor */) &&
+           VerifyField<float>(verifier, 40 /* shadowOffsetX */) &&
+           VerifyField<float>(verifier, 42 /* shadowOffsetY */) &&
+           VerifyField<int32_t>(verifier, 44 /* shadowBlurRadius */) &&
+           VerifyField<uint8_t>(verifier, 46 /* isLocalized */) &&
            verifier.EndTable();
   }
 };
@@ -743,10 +788,19 @@ struct ButtonOptionsBuilder {
   void add_scale9Size(const FlatSize *scale9Size) { fbb_.AddStruct(24, scale9Size); }
   void add_scale9Enabled(uint8_t scale9Enabled) { fbb_.AddElement<uint8_t>(26, scale9Enabled, 0); }
   void add_displaystate(uint8_t displaystate) { fbb_.AddElement<uint8_t>(28, displaystate, 1); }
+  void add_outlineEnabled(uint8_t outlineEnabled) { fbb_.AddElement<uint8_t>(30, outlineEnabled, 0); }
+  void add_outlineColor(const Color *outlineColor) { fbb_.AddStruct(32, outlineColor); }
+  void add_outlineSize(int32_t outlineSize) { fbb_.AddElement<int32_t>(34, outlineSize, 1); }
+  void add_shadowEnabled(uint8_t shadowEnabled) { fbb_.AddElement<uint8_t>(36, shadowEnabled, 0); }
+  void add_shadowColor(const Color *shadowColor) { fbb_.AddStruct(38, shadowColor); }
+  void add_shadowOffsetX(float shadowOffsetX) { fbb_.AddElement<float>(40, shadowOffsetX, 2); }
+  void add_shadowOffsetY(float shadowOffsetY) { fbb_.AddElement<float>(42, shadowOffsetY, -2); }
+  void add_shadowBlurRadius(int32_t shadowBlurRadius) { fbb_.AddElement<int32_t>(44, shadowBlurRadius, 0); }
+  void add_isLocalized(uint8_t isLocalized) { fbb_.AddElement<uint8_t>(46, isLocalized, 0); }
   ButtonOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ButtonOptionsBuilder &operator=(const ButtonOptionsBuilder &);
   flatbuffers::Offset<ButtonOptions> Finish() {
-    auto o = flatbuffers::Offset<ButtonOptions>(fbb_.EndTable(start_, 13));
+    auto o = flatbuffers::Offset<ButtonOptions>(fbb_.EndTable(start_, 22));
     return o;
   }
 };
@@ -764,8 +818,23 @@ inline flatbuffers::Offset<ButtonOptions> CreateButtonOptions(flatbuffers::FlatB
    const CapInsets *capInsets = 0,
    const FlatSize *scale9Size = 0,
    uint8_t scale9Enabled = 0,
-   uint8_t displaystate = 1) {
+   uint8_t displaystate = 1,
+   uint8_t outlineEnabled = 0,
+   const Color *outlineColor = 0,
+   int32_t outlineSize = 1,
+   uint8_t shadowEnabled = 0,
+   const Color *shadowColor = 0,
+   float shadowOffsetX = 2,
+   float shadowOffsetY = -2,
+   int32_t shadowBlurRadius = 0,
+   uint8_t isLocalized = 0) {
   ButtonOptionsBuilder builder_(_fbb);
+  builder_.add_shadowBlurRadius(shadowBlurRadius);
+  builder_.add_shadowOffsetY(shadowOffsetY);
+  builder_.add_shadowOffsetX(shadowOffsetX);
+  builder_.add_shadowColor(shadowColor);
+  builder_.add_outlineSize(outlineSize);
+  builder_.add_outlineColor(outlineColor);
   builder_.add_scale9Size(scale9Size);
   builder_.add_capInsets(capInsets);
   builder_.add_textColor(textColor);
@@ -777,6 +846,9 @@ inline flatbuffers::Offset<ButtonOptions> CreateButtonOptions(flatbuffers::FlatB
   builder_.add_pressedData(pressedData);
   builder_.add_normalData(normalData);
   builder_.add_widgetOptions(widgetOptions);
+  builder_.add_isLocalized(isLocalized);
+  builder_.add_shadowEnabled(shadowEnabled);
+  builder_.add_outlineEnabled(outlineEnabled);
   builder_.add_displaystate(displaystate);
   builder_.add_scale9Enabled(scale9Enabled);
   return builder_.Finish();
@@ -962,6 +1034,7 @@ struct TextBMFontOptions : private flatbuffers::Table {
   const WidgetOptions *widgetOptions() const { return GetPointer<const WidgetOptions *>(4); }
   const ResourceData *fileNameData() const { return GetPointer<const ResourceData *>(6); }
   const flatbuffers::String *text() const { return GetPointer<const flatbuffers::String *>(8); }
+  uint8_t isLocalized() const { return GetField<uint8_t>(10, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* widgetOptions */) &&
@@ -970,6 +1043,7 @@ struct TextBMFontOptions : private flatbuffers::Table {
            verifier.VerifyTable(fileNameData()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 8 /* text */) &&
            verifier.Verify(text()) &&
+           VerifyField<uint8_t>(verifier, 10 /* isLocalized */) &&
            verifier.EndTable();
   }
 };
@@ -980,10 +1054,11 @@ struct TextBMFontOptionsBuilder {
   void add_widgetOptions(flatbuffers::Offset<WidgetOptions> widgetOptions) { fbb_.AddOffset(4, widgetOptions); }
   void add_fileNameData(flatbuffers::Offset<ResourceData> fileNameData) { fbb_.AddOffset(6, fileNameData); }
   void add_text(flatbuffers::Offset<flatbuffers::String> text) { fbb_.AddOffset(8, text); }
+  void add_isLocalized(uint8_t isLocalized) { fbb_.AddElement<uint8_t>(10, isLocalized, 0); }
   TextBMFontOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   TextBMFontOptionsBuilder &operator=(const TextBMFontOptionsBuilder &);
   flatbuffers::Offset<TextBMFontOptions> Finish() {
-    auto o = flatbuffers::Offset<TextBMFontOptions>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<TextBMFontOptions>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -991,11 +1066,13 @@ struct TextBMFontOptionsBuilder {
 inline flatbuffers::Offset<TextBMFontOptions> CreateTextBMFontOptions(flatbuffers::FlatBufferBuilder &_fbb,
    flatbuffers::Offset<WidgetOptions> widgetOptions = 0,
    flatbuffers::Offset<ResourceData> fileNameData = 0,
-   flatbuffers::Offset<flatbuffers::String> text = 0) {
+   flatbuffers::Offset<flatbuffers::String> text = 0,
+   uint8_t isLocalized = 0) {
   TextBMFontOptionsBuilder builder_(_fbb);
   builder_.add_text(text);
   builder_.add_fileNameData(fileNameData);
   builder_.add_widgetOptions(widgetOptions);
+  builder_.add_isLocalized(isLocalized);
   return builder_.Finish();
 }
 
@@ -1011,6 +1088,15 @@ struct TextOptions : private flatbuffers::Table {
   int32_t vAlignment() const { return GetField<int32_t>(20, 0); }
   uint8_t touchScaleEnable() const { return GetField<uint8_t>(22, 0); }
   uint8_t isCustomSize() const { return GetField<uint8_t>(24, 0); }
+  uint8_t outlineEnabled() const { return GetField<uint8_t>(26, 0); }
+  const Color *outlineColor() const { return GetStruct<const Color *>(28); }
+  int32_t outlineSize() const { return GetField<int32_t>(30, 1); }
+  uint8_t shadowEnabled() const { return GetField<uint8_t>(32, 0); }
+  const Color *shadowColor() const { return GetStruct<const Color *>(34); }
+  float shadowOffsetX() const { return GetField<float>(36, 2); }
+  float shadowOffsetY() const { return GetField<float>(38, -2); }
+  int32_t shadowBlurRadius() const { return GetField<int32_t>(40, 0); }
+  uint8_t isLocalized() const { return GetField<uint8_t>(42, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* widgetOptions */) &&
@@ -1028,6 +1114,15 @@ struct TextOptions : private flatbuffers::Table {
            VerifyField<int32_t>(verifier, 20 /* vAlignment */) &&
            VerifyField<uint8_t>(verifier, 22 /* touchScaleEnable */) &&
            VerifyField<uint8_t>(verifier, 24 /* isCustomSize */) &&
+           VerifyField<uint8_t>(verifier, 26 /* outlineEnabled */) &&
+           VerifyField<Color>(verifier, 28 /* outlineColor */) &&
+           VerifyField<int32_t>(verifier, 30 /* outlineSize */) &&
+           VerifyField<uint8_t>(verifier, 32 /* shadowEnabled */) &&
+           VerifyField<Color>(verifier, 34 /* shadowColor */) &&
+           VerifyField<float>(verifier, 36 /* shadowOffsetX */) &&
+           VerifyField<float>(verifier, 38 /* shadowOffsetY */) &&
+           VerifyField<int32_t>(verifier, 40 /* shadowBlurRadius */) &&
+           VerifyField<uint8_t>(verifier, 42 /* isLocalized */) &&
            verifier.EndTable();
   }
 };
@@ -1046,10 +1141,19 @@ struct TextOptionsBuilder {
   void add_vAlignment(int32_t vAlignment) { fbb_.AddElement<int32_t>(20, vAlignment, 0); }
   void add_touchScaleEnable(uint8_t touchScaleEnable) { fbb_.AddElement<uint8_t>(22, touchScaleEnable, 0); }
   void add_isCustomSize(uint8_t isCustomSize) { fbb_.AddElement<uint8_t>(24, isCustomSize, 0); }
+  void add_outlineEnabled(uint8_t outlineEnabled) { fbb_.AddElement<uint8_t>(26, outlineEnabled, 0); }
+  void add_outlineColor(const Color *outlineColor) { fbb_.AddStruct(28, outlineColor); }
+  void add_outlineSize(int32_t outlineSize) { fbb_.AddElement<int32_t>(30, outlineSize, 1); }
+  void add_shadowEnabled(uint8_t shadowEnabled) { fbb_.AddElement<uint8_t>(32, shadowEnabled, 0); }
+  void add_shadowColor(const Color *shadowColor) { fbb_.AddStruct(34, shadowColor); }
+  void add_shadowOffsetX(float shadowOffsetX) { fbb_.AddElement<float>(36, shadowOffsetX, 2); }
+  void add_shadowOffsetY(float shadowOffsetY) { fbb_.AddElement<float>(38, shadowOffsetY, -2); }
+  void add_shadowBlurRadius(int32_t shadowBlurRadius) { fbb_.AddElement<int32_t>(40, shadowBlurRadius, 0); }
+  void add_isLocalized(uint8_t isLocalized) { fbb_.AddElement<uint8_t>(42, isLocalized, 0); }
   TextOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   TextOptionsBuilder &operator=(const TextOptionsBuilder &);
   flatbuffers::Offset<TextOptions> Finish() {
-    auto o = flatbuffers::Offset<TextOptions>(fbb_.EndTable(start_, 11));
+    auto o = flatbuffers::Offset<TextOptions>(fbb_.EndTable(start_, 20));
     return o;
   }
 };
@@ -1065,8 +1169,23 @@ inline flatbuffers::Offset<TextOptions> CreateTextOptions(flatbuffers::FlatBuffe
    int32_t hAlignment = 0,
    int32_t vAlignment = 0,
    uint8_t touchScaleEnable = 0,
-   uint8_t isCustomSize = 0) {
+   uint8_t isCustomSize = 0,
+   uint8_t outlineEnabled = 0,
+   const Color *outlineColor = 0,
+   int32_t outlineSize = 1,
+   uint8_t shadowEnabled = 0,
+   const Color *shadowColor = 0,
+   float shadowOffsetX = 2,
+   float shadowOffsetY = -2,
+   int32_t shadowBlurRadius = 0,
+   uint8_t isLocalized = 0) {
   TextOptionsBuilder builder_(_fbb);
+  builder_.add_shadowBlurRadius(shadowBlurRadius);
+  builder_.add_shadowOffsetY(shadowOffsetY);
+  builder_.add_shadowOffsetX(shadowOffsetX);
+  builder_.add_shadowColor(shadowColor);
+  builder_.add_outlineSize(outlineSize);
+  builder_.add_outlineColor(outlineColor);
   builder_.add_vAlignment(vAlignment);
   builder_.add_hAlignment(hAlignment);
   builder_.add_areaHeight(areaHeight);
@@ -1076,6 +1195,9 @@ inline flatbuffers::Offset<TextOptions> CreateTextOptions(flatbuffers::FlatBuffe
   builder_.add_fontName(fontName);
   builder_.add_fontResource(fontResource);
   builder_.add_widgetOptions(widgetOptions);
+  builder_.add_isLocalized(isLocalized);
+  builder_.add_shadowEnabled(shadowEnabled);
+  builder_.add_outlineEnabled(outlineEnabled);
   builder_.add_isCustomSize(isCustomSize);
   builder_.add_touchScaleEnable(touchScaleEnable);
   return builder_.Finish();
@@ -1095,6 +1217,7 @@ struct TextFieldOptions : private flatbuffers::Table {
   int32_t areaWidth() const { return GetField<int32_t>(24, 0); }
   int32_t areaHeight() const { return GetField<int32_t>(26, 0); }
   uint8_t isCustomSize() const { return GetField<uint8_t>(28, 0); }
+  uint8_t isLocalized() const { return GetField<uint8_t>(30, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* widgetOptions */) &&
@@ -1116,6 +1239,7 @@ struct TextFieldOptions : private flatbuffers::Table {
            VerifyField<int32_t>(verifier, 24 /* areaWidth */) &&
            VerifyField<int32_t>(verifier, 26 /* areaHeight */) &&
            VerifyField<uint8_t>(verifier, 28 /* isCustomSize */) &&
+           VerifyField<uint8_t>(verifier, 30 /* isLocalized */) &&
            verifier.EndTable();
   }
 };
@@ -1136,10 +1260,11 @@ struct TextFieldOptionsBuilder {
   void add_areaWidth(int32_t areaWidth) { fbb_.AddElement<int32_t>(24, areaWidth, 0); }
   void add_areaHeight(int32_t areaHeight) { fbb_.AddElement<int32_t>(26, areaHeight, 0); }
   void add_isCustomSize(uint8_t isCustomSize) { fbb_.AddElement<uint8_t>(28, isCustomSize, 0); }
+  void add_isLocalized(uint8_t isLocalized) { fbb_.AddElement<uint8_t>(30, isLocalized, 0); }
   TextFieldOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   TextFieldOptionsBuilder &operator=(const TextFieldOptionsBuilder &);
   flatbuffers::Offset<TextFieldOptions> Finish() {
-    auto o = flatbuffers::Offset<TextFieldOptions>(fbb_.EndTable(start_, 13));
+    auto o = flatbuffers::Offset<TextFieldOptions>(fbb_.EndTable(start_, 14));
     return o;
   }
 };
@@ -1157,7 +1282,8 @@ inline flatbuffers::Offset<TextFieldOptions> CreateTextFieldOptions(flatbuffers:
    int32_t maxLength = 0,
    int32_t areaWidth = 0,
    int32_t areaHeight = 0,
-   uint8_t isCustomSize = 0) {
+   uint8_t isCustomSize = 0,
+   uint8_t isLocalized = 0) {
   TextFieldOptionsBuilder builder_(_fbb);
   builder_.add_areaHeight(areaHeight);
   builder_.add_areaWidth(areaWidth);
@@ -1169,6 +1295,7 @@ inline flatbuffers::Offset<TextFieldOptions> CreateTextFieldOptions(flatbuffers:
   builder_.add_fontName(fontName);
   builder_.add_fontResource(fontResource);
   builder_.add_widgetOptions(widgetOptions);
+  builder_.add_isLocalized(isLocalized);
   builder_.add_isCustomSize(isCustomSize);
   builder_.add_maxLengthEnabled(maxLengthEnabled);
   builder_.add_passwordEnabled(passwordEnabled);
@@ -1390,6 +1517,9 @@ struct ScrollViewOptions : private flatbuffers::Table {
   const FlatSize *innerSize() const { return GetStruct<const FlatSize *>(28); }
   int32_t direction() const { return GetField<int32_t>(30, 0); }
   uint8_t bounceEnabled() const { return GetField<uint8_t>(32, 0); }
+  uint8_t scrollbarEnabeld() const { return GetField<uint8_t>(34, 1); }
+  uint8_t scrollbarAutoHide() const { return GetField<uint8_t>(36, 1); }
+  float scrollbarAutoHideTime() const { return GetField<float>(38, 0.2); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* widgetOptions */) &&
@@ -1409,6 +1539,9 @@ struct ScrollViewOptions : private flatbuffers::Table {
            VerifyField<FlatSize>(verifier, 28 /* innerSize */) &&
            VerifyField<int32_t>(verifier, 30 /* direction */) &&
            VerifyField<uint8_t>(verifier, 32 /* bounceEnabled */) &&
+           VerifyField<uint8_t>(verifier, 34 /* scrollbarEnabeld */) &&
+           VerifyField<uint8_t>(verifier, 36 /* scrollbarAutoHide */) &&
+           VerifyField<float>(verifier, 38 /* scrollbarAutoHideTime */) &&
            verifier.EndTable();
   }
 };
@@ -1431,10 +1564,13 @@ struct ScrollViewOptionsBuilder {
   void add_innerSize(const FlatSize *innerSize) { fbb_.AddStruct(28, innerSize); }
   void add_direction(int32_t direction) { fbb_.AddElement<int32_t>(30, direction, 0); }
   void add_bounceEnabled(uint8_t bounceEnabled) { fbb_.AddElement<uint8_t>(32, bounceEnabled, 0); }
+  void add_scrollbarEnabeld(uint8_t scrollbarEnabeld) { fbb_.AddElement<uint8_t>(34, scrollbarEnabeld, 1); }
+  void add_scrollbarAutoHide(uint8_t scrollbarAutoHide) { fbb_.AddElement<uint8_t>(36, scrollbarAutoHide, 1); }
+  void add_scrollbarAutoHideTime(float scrollbarAutoHideTime) { fbb_.AddElement<float>(38, scrollbarAutoHideTime, 0.2); }
   ScrollViewOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ScrollViewOptionsBuilder &operator=(const ScrollViewOptionsBuilder &);
   flatbuffers::Offset<ScrollViewOptions> Finish() {
-    auto o = flatbuffers::Offset<ScrollViewOptions>(fbb_.EndTable(start_, 15));
+    auto o = flatbuffers::Offset<ScrollViewOptions>(fbb_.EndTable(start_, 18));
     return o;
   }
 };
@@ -1454,8 +1590,12 @@ inline flatbuffers::Offset<ScrollViewOptions> CreateScrollViewOptions(flatbuffer
    uint8_t backGroundScale9Enabled = 0,
    const FlatSize *innerSize = 0,
    int32_t direction = 0,
-   uint8_t bounceEnabled = 0) {
+   uint8_t bounceEnabled = 0,
+   uint8_t scrollbarEnabeld = 1,
+   uint8_t scrollbarAutoHide = 1,
+   float scrollbarAutoHideTime = 0.2) {
   ScrollViewOptionsBuilder builder_(_fbb);
+  builder_.add_scrollbarAutoHideTime(scrollbarAutoHideTime);
   builder_.add_direction(direction);
   builder_.add_innerSize(innerSize);
   builder_.add_scale9Size(scale9Size);
@@ -1467,6 +1607,8 @@ inline flatbuffers::Offset<ScrollViewOptions> CreateScrollViewOptions(flatbuffer
   builder_.add_bgColor(bgColor);
   builder_.add_backGroundImageData(backGroundImageData);
   builder_.add_widgetOptions(widgetOptions);
+  builder_.add_scrollbarAutoHide(scrollbarAutoHide);
+  builder_.add_scrollbarEnabeld(scrollbarEnabeld);
   builder_.add_bounceEnabled(bounceEnabled);
   builder_.add_backGroundScale9Enabled(backGroundScale9Enabled);
   builder_.add_bgColorOpacity(bgColorOpacity);
@@ -1685,12 +1827,14 @@ inline flatbuffers::Offset<ListViewOptions> CreateListViewOptions(flatbuffers::F
 struct ProjectNodeOptions : private flatbuffers::Table {
   const WidgetOptions *nodeOptions() const { return GetPointer<const WidgetOptions *>(4); }
   const flatbuffers::String *fileName() const { return GetPointer<const flatbuffers::String *>(6); }
+  float innerActionSpeed() const { return GetField<float>(8, 0); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* nodeOptions */) &&
            verifier.VerifyTable(nodeOptions()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 6 /* fileName */) &&
            verifier.Verify(fileName()) &&
+           VerifyField<float>(verifier, 8 /* innerActionSpeed */) &&
            verifier.EndTable();
   }
 };
@@ -1700,18 +1844,21 @@ struct ProjectNodeOptionsBuilder {
   flatbuffers::uoffset_t start_;
   void add_nodeOptions(flatbuffers::Offset<WidgetOptions> nodeOptions) { fbb_.AddOffset(4, nodeOptions); }
   void add_fileName(flatbuffers::Offset<flatbuffers::String> fileName) { fbb_.AddOffset(6, fileName); }
+  void add_innerActionSpeed(float innerActionSpeed) { fbb_.AddElement<float>(8, innerActionSpeed, 0); }
   ProjectNodeOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ProjectNodeOptionsBuilder &operator=(const ProjectNodeOptionsBuilder &);
   flatbuffers::Offset<ProjectNodeOptions> Finish() {
-    auto o = flatbuffers::Offset<ProjectNodeOptions>(fbb_.EndTable(start_, 2));
+    auto o = flatbuffers::Offset<ProjectNodeOptions>(fbb_.EndTable(start_, 3));
     return o;
   }
 };
 
 inline flatbuffers::Offset<ProjectNodeOptions> CreateProjectNodeOptions(flatbuffers::FlatBufferBuilder &_fbb,
    flatbuffers::Offset<WidgetOptions> nodeOptions = 0,
-   flatbuffers::Offset<flatbuffers::String> fileName = 0) {
+   flatbuffers::Offset<flatbuffers::String> fileName = 0,
+   float innerActionSpeed = 0) {
   ProjectNodeOptionsBuilder builder_(_fbb);
+  builder_.add_innerActionSpeed(innerActionSpeed);
   builder_.add_fileName(fileName);
   builder_.add_nodeOptions(nodeOptions);
   return builder_.Finish();
@@ -1949,6 +2096,7 @@ struct Frame : private flatbuffers::Table {
   const IntFrame *intFrame() const { return GetPointer<const IntFrame *>(14); }
   const BoolFrame *boolFrame() const { return GetPointer<const BoolFrame *>(16); }
   const InnerActionFrame *innerActionFrame() const { return GetPointer<const InnerActionFrame *>(18); }
+  const BlendFrame *blendFrame() const { return GetPointer<const BlendFrame *>(20); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 4 /* pointFrame */) &&
@@ -1967,6 +2115,8 @@ struct Frame : private flatbuffers::Table {
            verifier.VerifyTable(boolFrame()) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 18 /* innerActionFrame */) &&
            verifier.VerifyTable(innerActionFrame()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 20 /* blendFrame */) &&
+           verifier.VerifyTable(blendFrame()) &&
            verifier.EndTable();
   }
 };
@@ -1982,10 +2132,11 @@ struct FrameBuilder {
   void add_intFrame(flatbuffers::Offset<IntFrame> intFrame) { fbb_.AddOffset(14, intFrame); }
   void add_boolFrame(flatbuffers::Offset<BoolFrame> boolFrame) { fbb_.AddOffset(16, boolFrame); }
   void add_innerActionFrame(flatbuffers::Offset<InnerActionFrame> innerActionFrame) { fbb_.AddOffset(18, innerActionFrame); }
+  void add_blendFrame(flatbuffers::Offset<BlendFrame> blendFrame) { fbb_.AddOffset(20, blendFrame); }
   FrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   FrameBuilder &operator=(const FrameBuilder &);
   flatbuffers::Offset<Frame> Finish() {
-    auto o = flatbuffers::Offset<Frame>(fbb_.EndTable(start_, 8));
+    auto o = flatbuffers::Offset<Frame>(fbb_.EndTable(start_, 9));
     return o;
   }
 };
@@ -1998,8 +2149,10 @@ inline flatbuffers::Offset<Frame> CreateFrame(flatbuffers::FlatBufferBuilder &_f
    flatbuffers::Offset<EventFrame> eventFrame = 0,
    flatbuffers::Offset<IntFrame> intFrame = 0,
    flatbuffers::Offset<BoolFrame> boolFrame = 0,
-   flatbuffers::Offset<InnerActionFrame> innerActionFrame = 0) {
+   flatbuffers::Offset<InnerActionFrame> innerActionFrame = 0,
+   flatbuffers::Offset<BlendFrame> blendFrame = 0) {
   FrameBuilder builder_(_fbb);
+  builder_.add_blendFrame(blendFrame);
   builder_.add_innerActionFrame(innerActionFrame);
   builder_.add_boolFrame(boolFrame);
   builder_.add_intFrame(intFrame);
@@ -2014,12 +2167,15 @@ inline flatbuffers::Offset<Frame> CreateFrame(flatbuffers::FlatBufferBuilder &_f
 struct PointFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
-  const Position *postion() const { return GetStruct<const Position *>(8); }
+  const Position *position() const { return GetStruct<const Position *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
-           VerifyField<Position>(verifier, 8 /* postion */) &&
+           VerifyField<Position>(verifier, 8 /* position */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2029,11 +2185,12 @@ struct PointFrameBuilder {
   flatbuffers::uoffset_t start_;
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
-  void add_postion(const Position *postion) { fbb_.AddStruct(8, postion); }
+  void add_postion(const Position *position) { fbb_.AddStruct(8, position); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   PointFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   PointFrameBuilder &operator=(const PointFrameBuilder &);
   flatbuffers::Offset<PointFrame> Finish() {
-    auto o = flatbuffers::Offset<PointFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<PointFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2041,9 +2198,11 @@ struct PointFrameBuilder {
 inline flatbuffers::Offset<PointFrame> CreatePointFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   const Position *postion = 0) {
+   const Position *position = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   PointFrameBuilder builder_(_fbb);
-  builder_.add_postion(postion);
+  builder_.add_easingData(easingData);
+  builder_.add_postion(position);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
   return builder_.Finish();
@@ -2053,11 +2212,14 @@ struct ScaleFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   const Scale *scale() const { return GetStruct<const Scale *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<Scale>(verifier, 8 /* scale */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2068,10 +2230,11 @@ struct ScaleFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_scale(const Scale *scale) { fbb_.AddStruct(8, scale); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   ScaleFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ScaleFrameBuilder &operator=(const ScaleFrameBuilder &);
   flatbuffers::Offset<ScaleFrame> Finish() {
-    auto o = flatbuffers::Offset<ScaleFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<ScaleFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2079,8 +2242,10 @@ struct ScaleFrameBuilder {
 inline flatbuffers::Offset<ScaleFrame> CreateScaleFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   const Scale *scale = 0) {
+   const Scale *scale = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   ScaleFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_scale(scale);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
@@ -2091,11 +2256,14 @@ struct ColorFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   const Color *color() const { return GetStruct<const Color *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<Color>(verifier, 8 /* color */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2106,10 +2274,11 @@ struct ColorFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_color(const Color *color) { fbb_.AddStruct(8, color); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   ColorFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   ColorFrameBuilder &operator=(const ColorFrameBuilder &);
   flatbuffers::Offset<ColorFrame> Finish() {
-    auto o = flatbuffers::Offset<ColorFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<ColorFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2117,8 +2286,10 @@ struct ColorFrameBuilder {
 inline flatbuffers::Offset<ColorFrame> CreateColorFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   const Color *color = 0) {
+   const Color *color = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   ColorFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_color(color);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
@@ -2129,12 +2300,15 @@ struct TextureFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   const ResourceData *textureFile() const { return GetPointer<const ResourceData *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 8 /* textureFile */) &&
            verifier.VerifyTable(textureFile()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2145,10 +2319,11 @@ struct TextureFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_textureFile(flatbuffers::Offset<ResourceData> textureFile) { fbb_.AddOffset(8, textureFile); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   TextureFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   TextureFrameBuilder &operator=(const TextureFrameBuilder &);
   flatbuffers::Offset<TextureFrame> Finish() {
-    auto o = flatbuffers::Offset<TextureFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<TextureFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2156,8 +2331,10 @@ struct TextureFrameBuilder {
 inline flatbuffers::Offset<TextureFrame> CreateTextureFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   flatbuffers::Offset<ResourceData> textureFile = 0) {
+   flatbuffers::Offset<ResourceData> textureFile = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   TextureFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_textureFile(textureFile);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
@@ -2168,12 +2345,15 @@ struct EventFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   const flatbuffers::String *value() const { return GetPointer<const flatbuffers::String *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<flatbuffers::uoffset_t>(verifier, 8 /* value */) &&
            verifier.Verify(value()) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2184,10 +2364,11 @@ struct EventFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_value(flatbuffers::Offset<flatbuffers::String> value) { fbb_.AddOffset(8, value); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   EventFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   EventFrameBuilder &operator=(const EventFrameBuilder &);
   flatbuffers::Offset<EventFrame> Finish() {
-    auto o = flatbuffers::Offset<EventFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<EventFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2195,8 +2376,10 @@ struct EventFrameBuilder {
 inline flatbuffers::Offset<EventFrame> CreateEventFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   flatbuffers::Offset<flatbuffers::String> value = 0) {
+   flatbuffers::Offset<flatbuffers::String> value = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   EventFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_value(value);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
@@ -2207,11 +2390,14 @@ struct IntFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   int32_t value() const { return GetField<int32_t>(8, 0); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<int32_t>(verifier, 8 /* value */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2222,10 +2408,11 @@ struct IntFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_value(int32_t value) { fbb_.AddElement<int32_t>(8, value, 0); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   IntFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   IntFrameBuilder &operator=(const IntFrameBuilder &);
   flatbuffers::Offset<IntFrame> Finish() {
-    auto o = flatbuffers::Offset<IntFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<IntFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2233,8 +2420,10 @@ struct IntFrameBuilder {
 inline flatbuffers::Offset<IntFrame> CreateIntFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   int32_t value = 0) {
+   int32_t value = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   IntFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_value(value);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
@@ -2245,11 +2434,14 @@ struct BoolFrame : private flatbuffers::Table {
   int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
   uint8_t tween() const { return GetField<uint8_t>(6, 1); }
   uint8_t value() const { return GetField<uint8_t>(8, 1); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
            VerifyField<uint8_t>(verifier, 6 /* tween */) &&
            VerifyField<uint8_t>(verifier, 8 /* value */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2260,10 +2452,11 @@ struct BoolFrameBuilder {
   void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
   void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
   void add_value(uint8_t value) { fbb_.AddElement<uint8_t>(8, value, 1); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
   BoolFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   BoolFrameBuilder &operator=(const BoolFrameBuilder &);
   flatbuffers::Offset<BoolFrame> Finish() {
-    auto o = flatbuffers::Offset<BoolFrame>(fbb_.EndTable(start_, 3));
+    auto o = flatbuffers::Offset<BoolFrame>(fbb_.EndTable(start_, 4));
     return o;
   }
 };
@@ -2271,8 +2464,10 @@ struct BoolFrameBuilder {
 inline flatbuffers::Offset<BoolFrame> CreateBoolFrame(flatbuffers::FlatBufferBuilder &_fbb,
    int32_t frameIndex = 0,
    uint8_t tween = 1,
-   uint8_t value = 1) {
+   uint8_t value = 1,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   BoolFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_frameIndex(frameIndex);
   builder_.add_value(value);
   builder_.add_tween(tween);
@@ -2285,6 +2480,7 @@ struct InnerActionFrame : private flatbuffers::Table {
   int32_t innerActionType() const { return GetField<int32_t>(8, 0); }
   const flatbuffers::String *currentAniamtionName() const { return GetPointer<const flatbuffers::String *>(10); }
   int32_t singleFrameIndex() const { return GetField<int32_t>(12, 0); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(14); }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
@@ -2293,6 +2489,8 @@ struct InnerActionFrame : private flatbuffers::Table {
            VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* currentAniamtionName */) &&
            verifier.Verify(currentAniamtionName()) &&
            VerifyField<int32_t>(verifier, 12 /* singleFrameIndex */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 14 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
            verifier.EndTable();
   }
 };
@@ -2305,10 +2503,11 @@ struct InnerActionFrameBuilder {
   void add_innerActionType(int32_t innerActionType) { fbb_.AddElement<int32_t>(8, innerActionType, 0); }
   void add_currentAniamtionName(flatbuffers::Offset<flatbuffers::String> currentAniamtionName) { fbb_.AddOffset(10, currentAniamtionName); }
   void add_singleFrameIndex(int32_t singleFrameIndex) { fbb_.AddElement<int32_t>(12, singleFrameIndex, 0); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(14, easingData); }
   InnerActionFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
   InnerActionFrameBuilder &operator=(const InnerActionFrameBuilder &);
   flatbuffers::Offset<InnerActionFrame> Finish() {
-    auto o = flatbuffers::Offset<InnerActionFrame>(fbb_.EndTable(start_, 5));
+    auto o = flatbuffers::Offset<InnerActionFrame>(fbb_.EndTable(start_, 6));
     return o;
   }
 };
@@ -2318,13 +2517,49 @@ inline flatbuffers::Offset<InnerActionFrame> CreateInnerActionFrame(flatbuffers:
    uint8_t tween = 1,
    int32_t innerActionType = 0,
    flatbuffers::Offset<flatbuffers::String> currentAniamtionName = 0,
-   int32_t singleFrameIndex = 0) {
+   int32_t singleFrameIndex = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
   InnerActionFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
   builder_.add_singleFrameIndex(singleFrameIndex);
   builder_.add_currentAniamtionName(currentAniamtionName);
   builder_.add_innerActionType(innerActionType);
   builder_.add_frameIndex(frameIndex);
   builder_.add_tween(tween);
+  return builder_.Finish();
+}
+
+struct EasingData : private flatbuffers::Table {
+  int32_t type() const { return GetField<int32_t>(4, -1); }
+  const flatbuffers::Vector<const Position *> *points() const { return GetPointer<const flatbuffers::Vector<const Position *> *>(6); }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, 4 /* type */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 6 /* points */) &&
+           verifier.Verify(points()) &&
+           verifier.EndTable();
+  }
+};
+
+struct EasingDataBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_type(int32_t type) { fbb_.AddElement<int32_t>(4, type, -1); }
+  void add_points(flatbuffers::Offset<flatbuffers::Vector<const Position *>> points) { fbb_.AddOffset(6, points); }
+  EasingDataBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+  EasingDataBuilder &operator=(const EasingDataBuilder &);
+  flatbuffers::Offset<EasingData> Finish() {
+    auto o = flatbuffers::Offset<EasingData>(fbb_.EndTable(start_, 2));
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<EasingData> CreateEasingData(flatbuffers::FlatBufferBuilder &_fbb,
+   int32_t type = -1,
+   flatbuffers::Offset<flatbuffers::Vector<const Position *>> points = 0) {
+  EasingDataBuilder builder_(_fbb);
+  builder_.add_points(points);
+  builder_.add_type(type);
   return builder_.Finish();
 }
 
@@ -2365,6 +2600,50 @@ inline flatbuffers::Offset<ResourceData> CreateResourceData(flatbuffers::FlatBuf
   builder_.add_resourceType(resourceType);
   builder_.add_plistFile(plistFile);
   builder_.add_path(path);
+  return builder_.Finish();
+}
+
+struct BlendFrame : private flatbuffers::Table {
+  int32_t frameIndex() const { return GetField<int32_t>(4, 0); }
+  uint8_t tween() const { return GetField<uint8_t>(6, 1); }
+  const BlendFunc *blendFunc() const { return GetStruct<const BlendFunc *>(8); }
+  const EasingData *easingData() const { return GetPointer<const EasingData *>(10); }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, 4 /* frameIndex */) &&
+           VerifyField<uint8_t>(verifier, 6 /* tween */) &&
+           VerifyField<BlendFunc>(verifier, 8 /* blendFunc */) &&
+           VerifyField<flatbuffers::uoffset_t>(verifier, 10 /* easingData */) &&
+           verifier.VerifyTable(easingData()) &&
+           verifier.EndTable();
+  }
+};
+
+struct BlendFrameBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_frameIndex(int32_t frameIndex) { fbb_.AddElement<int32_t>(4, frameIndex, 0); }
+  void add_tween(uint8_t tween) { fbb_.AddElement<uint8_t>(6, tween, 1); }
+  void add_blendFunc(const BlendFunc *blendFunc) { fbb_.AddStruct(8, blendFunc); }
+  void add_easingData(flatbuffers::Offset<EasingData> easingData) { fbb_.AddOffset(10, easingData); }
+  BlendFrameBuilder(flatbuffers::FlatBufferBuilder &_fbb) : fbb_(_fbb) { start_ = fbb_.StartTable(); }
+  BlendFrameBuilder &operator=(const BlendFrameBuilder &);
+  flatbuffers::Offset<BlendFrame> Finish() {
+    auto o = flatbuffers::Offset<BlendFrame>(fbb_.EndTable(start_, 4));
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<BlendFrame> CreateBlendFrame(flatbuffers::FlatBufferBuilder &_fbb,
+   int32_t frameIndex = 0,
+   uint8_t tween = 1,
+   const BlendFunc *blendFunc = 0,
+   flatbuffers::Offset<EasingData> easingData = 0) {
+  BlendFrameBuilder builder_(_fbb);
+  builder_.add_easingData(easingData);
+  builder_.add_blendFunc(blendFunc);
+  builder_.add_frameIndex(frameIndex);
+  builder_.add_tween(tween);
   return builder_.Finish();
 }
 

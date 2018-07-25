@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -48,7 +48,9 @@ void RenderCommand::init(float globalZOrder, const cocos2d::Mat4 &transform, uin
     _globalOrder = globalZOrder;
     if (flags & Node::FLAGS_RENDER_AS_3D)
     {
-        _depth = Camera::getVisitingCamera()->getDepthInView(transform);
+        if (Camera::getVisitingCamera())
+            _depth = Camera::getVisitingCamera()->getDepthInView(transform);
+        
         set3D(true);
     }
     else
@@ -56,24 +58,6 @@ void RenderCommand::init(float globalZOrder, const cocos2d::Mat4 &transform, uin
         set3D(false);
         _depth = 0;
     }
-}
-
-void printBits(ssize_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    ssize_t i, j;
-
-    for (i=size-1;i>=0;i--)
-    {
-        for (j=7;j>=0;j--)
-        {
-            byte = b[i] & (1<<j);
-            byte >>= j;
-            printf("%u", byte);
-        }
-    }
-    puts("");
 }
 
 void RenderCommand::printID()

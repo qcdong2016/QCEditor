@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2014 Chukong Technologies Inc.
+ Copyright (c) 2014-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -36,23 +36,37 @@ Animation3D* Animation3D::create(const std::string& fileName, const std::string&
     if (animation != nullptr)
         return animation;
     
-    //load animation here
     animation = new (std::nothrow) Animation3D();
-    auto bundle = Bundle3D::createBundle();
-    Animation3DData animationdata;
-    if (bundle->load(fullPath) && bundle->loadAnimationData(animationName, &animationdata) && animation->init(animationdata))
+    if(animation->initWithFile(fileName, animationName))
     {
-        Animation3DCache::getInstance()->addAnimation(key, animation);
         animation->autorelease();
     }
     else
     {
         CC_SAFE_DELETE(animation);
-        animation = nullptr;
+    }
+    
+    return animation;
+}
+
+bool Animation3D::initWithFile(const std::string& filename, const std::string& animationName)
+{
+    std::string fullPath = FileUtils::getInstance()->fullPathForFilename(filename);
+    
+    //load animation here
+    auto bundle = Bundle3D::createBundle();
+    Animation3DData animationdata;
+    if (bundle->load(fullPath) && bundle->loadAnimationData(animationName, &animationdata) && init(animationdata))
+    {
+        std::string key = fullPath + "#" + animationName;
+        Animation3DCache::getInstance()->addAnimation(key, this);
+        Bundle3D::destroyBundle(bundle);
+        return true;
     }
     
     Bundle3D::destroyBundle(bundle);
-    return animation;
+    
+    return false;
 }
 
 Animation3D::Curve* Animation3D::getBoneCurveByName(const std::string& name) const
@@ -218,7 +232,7 @@ void Animation3DCache::removeUnusedAnimation()
         if (itor->second->getReferenceCount() == 1)
         {
             itor->second->release();
-            _animations.erase(itor++);
+            itor = _animations.erase(itor);
         }
         else
             ++itor;

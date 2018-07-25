@@ -79,6 +79,11 @@ ConnectWaitLayer::ConnectWaitLayer()
     addChild(shineSprite, 9998);
 
     std::string strip = getIPAddress();
+	if (strip.empty())
+	{
+		strip = "0.0.0.0";
+	}
+
     char szIPAddress[64] = {0};
     sprintf(szIPAddress, "IP: %s", strip.c_str());
     auto IPlabel = Label::createWithSystemFont(szIPAddress, "", 72);
@@ -145,9 +150,9 @@ ConnectWaitLayer::ConnectWaitLayer()
 
 ConnectWaitLayer::~ConnectWaitLayer()
 {
-	CC_SAFE_DELETE(_imagebg);
-	CC_SAFE_DELETE(_imageplay);
-	CC_SAFE_DELETE(_imageShine);
+	CC_SAFE_RELEASE(_imagebg);
+	CC_SAFE_RELEASE(_imageplay);
+	CC_SAFE_RELEASE(_imageShine);
 }
 
 // clean up: ignore stdin, stdout and stderr

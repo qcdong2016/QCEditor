@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'EditorMain.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.10.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -84,9 +84,9 @@ public:
 
     void retranslateUi(QMainWindow *EditorMainClass)
     {
-        EditorMainClass->setWindowTitle(QApplication::translate("EditorMainClass", "EditorMain", 0));
-        action_Quit->setText(QApplication::translate("EditorMainClass", "&Quit", 0));
-        menuFile->setTitle(QApplication::translate("EditorMainClass", "File", 0));
+        EditorMainClass->setWindowTitle(QApplication::translate("EditorMainClass", "EditorMain", nullptr));
+        action_Quit->setText(QApplication::translate("EditorMainClass", "&Quit", nullptr));
+        menuFile->setTitle(QApplication::translate("EditorMainClass", "File", nullptr));
     } // retranslateUi
 
 };

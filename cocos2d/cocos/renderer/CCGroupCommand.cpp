@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -49,13 +49,12 @@ bool GroupCommandManager::init()
 int GroupCommandManager::getGroupID()
 {
     //Reuse old id
-    for(auto it = _groupMapping.begin(); it != _groupMapping.end(); ++it)
+    if (!_unusedIDs.empty())
     {
-        if(!it->second)
-        {
-            _groupMapping[it->first] = true;
-            return it->first;
-        }
+        int groupID = *_unusedIDs.rbegin();
+        _unusedIDs.pop_back();
+        _groupMapping[groupID] = true;
+        return groupID;
     }
 
     //Create new ID
@@ -69,6 +68,7 @@ int GroupCommandManager::getGroupID()
 void GroupCommandManager::releaseGroupID(int groupID)
 {
     _groupMapping[groupID] = false;
+    _unusedIDs.push_back(groupID);
 }
 
 GroupCommand::GroupCommand()

@@ -4,36 +4,47 @@
 cocos2d-x
 =========
 
-[![Build Status](https://travis-ci.org/cocos2d/cocos2d-x.png?branch=v3)](https://travis-ci.org/cocos2d/cocos2d-x)
-[![Build Status](https://travis-ci.org/cocos-travis-mac/cocos2d-x.png?branch=v3)](https://travis-ci.org/cocos-travis-mac/cocos2d-x)
+|  |iOS|Mac|Linux|Win32|Android|
+| ----|----|----- | ---|----|------|
+|v3|[![Build Status](http://45.56.80.45:8080/buildStatus/icon?job=daily-build-v3/node=ios)](http://45.56.80.45:8080/job/daily-build-v3/node=ios)|[![Build Status](http://45.56.80.45:8080/buildStatus/icon?job=daily-build-v3/node=mac)](http://45.56.80.45:8080/job/daily-build-v3/node=mac)|[![Build Status](http://45.56.80.45:8080/buildStatus/icon?job=daily-build-v3/node=linux)](http://45.56.80.45:8080/job/daily-build-v3/node=linux)|[![Build Status](http://45.56.80.45:8080/buildStatus/icon?job=daily-build-v3/node=win32_bak)](http://45.56.80.45:8080/job/daily-build-v3/node=win32_bak)|[![Build Status](http://45.56.80.45:8080/buildStatus/icon?job=daily-build-v3/node=android)](http://45.56.80.45:8080/job/daily-build-v3/node=android)
+
 
 [cocos2d-x][1] is a multi-platform framework for building 2d games, interactive books, demos and other graphical applications.
 It is based on [cocos2d-iphone][2], but instead of using Objective-C, it uses C++.
-It works on iOS, Android, Windows Phone, OS X, Windows and Linux.
+It works on iOS, Android, OS X, Windows, Linux and Web platforms.
+
+**Cocos2d-x Framework Architecture**:
+
+![](docs/framework_architecture.jpg "")
 
 cocos2d-x is:
 
   * Fast
   * Free
   * Easy to use
-  * Community Supported
+  * Community supported
 
 Git user attention
 -----------------------
 
-1. clone the repo from GitHub.
+1. Clone the repo from GitHub.
 
-         $ git clone git@github.com:cocos2d/cocos2d-x.git
+         $ git clone https://github.com/cocos2d/cocos2d-x.git
 
 2. After cloning the repo, please execute `download-deps.py` to download and install dependencies.
 
          $ cd cocos2d-x
-         $ python download-deps.py
+         cocos2d-x $ python download-deps.py
 
 3. After running `download-deps.py`.
 
-         $ cd cocos2d-x
-         $ git submodule update --init
+         cocos2d-x $ git submodule update --init
+
+Download stable versions
+-----------------------
+
+* [Cocos2d-x stable versions](http://www.cocos2d-x.org/download)
+* [Cocos2d-JS Lite version](http://www.cocos2d-x.org/filecenter/jsbuilder)
 
 How to start a new game
 -----------------------
@@ -50,6 +61,8 @@ Example:
     $ cocos new MyGame -p com.your_company.mygame -l cpp -d NEW_PROJECTS_DIR
     $ cd NEW_PROJECTS_DIR/MyGame
 
+You can also create a JS project or Lua project with `-l js` or `-l lua`.
+
 ### Build and run a new project for Android ###
 
     $ cocos run -p android -j 4
@@ -57,14 +70,14 @@ Example:
 ### Build and run a new project for iOS ###
 
     $ cocos run -p ios
-    
+
 ### Build and run a new project for OSX ###
 
     $ cocos run -p mac
 
 ### Build and run a new project for Linux ###
 
-if you never run cocos2d-x on Linux, you need to install all dependencies by the
+If you never run cocos2d-x on Linux, you need to install all dependencies by the
 script in **cocos2d/build/install-deps-linux.sh**
 
     $ cd cocos2d-x/build
@@ -74,7 +87,7 @@ Then
 
     $ cd NEW_PROJECTS_DIR/MyGame
     $ cocos run -p linux
-    
+
 Run
 
     $ bin/MyGame
@@ -83,12 +96,27 @@ Run
 
     $ cocos run -p win32
 
-### Build and run new project for Windows 8.1 and Windows Phone 8.1 ###
+### Build and run new project for web ###
 
-    $ cocos new MyGame -p com.bar.foo -l cpp -d projects
+Only JS project can be published to web platforms, so you will need to create a JS project first:
 
-With the Cocos2d-x v3.3, you can create Universal App (Two projects at the same time: Windows(Tablet) and Windows Phone 8.1 )
-See more info on How to install and Create games on Windows RT (Windows and Windows Phone 8.1) at http://msopentech.github.io/cocos2d-x/
+    $ cocos new -l js WebGame
+
+Then you can run your game in a web browser:
+
+    $ cocos run -p web
+
+Or you can publish your game to `publish/html5/` folder:
+
+    $ cocos run -p web -m release [--advanced]
+
+Documentations and samples
+-------------
+* [All Docs in a single place!](http://cocos2d-x.org/docs/)
+* [Online API Reference](http://cocos2d-x.org/docs/api-ref/index.html) _Note that Cocos2d-x, Cocos2d-JS and Cocos Creator have different API set_
+* [Programmers Guide](http://cocos2d-x.org/docs/programmers-guide/2/index.html)
+* [Latest Release Note](https://github.com/cocos2d/cocos2d-x/blob/v3/docs/RELEASE_NOTES.md)
+* [Changelog](https://github.com/cocos2d/cocos2d-x/blob/v3/CHANGELOG)
 
 Main features
 -------------
@@ -97,7 +125,7 @@ Main features
    * Sprites and Sprite Sheets
    * Effects: Lens, Ripple, Waves, Liquid, etc.
    * Actions (behaviours):
-     * Trasformation Actions: Move, Rotate, Scale, Fade, Tint, etc.
+     * Transformation Actions: Move, Rotate, Scale, Fade, Tint, etc.
      * Composable actions: Sequence, Spawn, Repeat, Reverse
      * Ease Actions: Exp, Sin, Cubic, Elastic, etc.
      * Misc actions: CallFunc, OrbitCamera, Follow, Tween
@@ -125,35 +153,47 @@ Main features
 Build Requirements
 ------------------
 
-* Mac OS X 10.7+, Xcode 5.1+
+* Mac OS X 10.7+, Xcode 7+
 * or Ubuntu 12.10+, CMake 2.6+
-* or Windows 7+, VS 2012+
+* or Windows 7+, VS 2013+
 * Python 2.7.5
-* NDK r10c+ is required to build Android games
-* Windows Phone/Store 8.0 VS 2012+
-* Windows Phone/Store 8.1 VS 2013 Update 3+
-
+* NDK r11+ is required to build Android games(tested with r14)
+* Android Studio 2.3.3+ to build Android games(tested with 2.3.3)
+* JRE or JDK 1.6+ is required for web publishing
 
 Runtime Requirements
 --------------------
-  * iOS 5.0+ for iPhone / iPad games
-  * Android 2.3+ for Android games
-  * Windows Phone 8 and 8.1 for Windows Phone games
-  * OS X v10.6+ for Mac games
+  * iOS 6.0+ for iPhone / iPad games
+  * Android 2.3.3+ for Android
+  * OS X v10.9+ for Mac games
   * Windows 7+ for Win games
-  * Windows 8+ for WinRT games (Modern Apps)
-
+  * Modern browsers and IE 9+ for web games
 
 Running Tests
 --------------------
 
 Select the test you want from Xcode Scheme chooser.
 
+* Cocos Console
+
+```
+// Enter cpp test folder
+cd tests/cpp-tests
+// Or enter js test folder
+cd tests/js-tests
+// Or enter lua test folder
+cd tests/lua-tests
+
+// Compile or run test case
+cocos compile -p ios|mac|android|win32|win8_1|metro|web -m debug|release
+cocos run -p ios|mac|android|win32|win8_1|metro|web -m debug|release
+```
+
 * For OS X / iOS
 
 ```
 $ cd cocos2d-x/build
-$ open cocos_tests.xcodeproj
+$ open cocos2d_tests.xcodeproj
 ```
 
 * For Linux
@@ -178,31 +218,69 @@ $ bin/lua-empty-test/lua-empty-test
 
 * For Windows
 
-Open the `cocos2d-x/build/cocos2d-win32.vc2012.sln`
+Open the `cocos2d-x/build/cocos2d-win32.sln`
 
 * For Android
 
 ```
 $ cd cocos2d-x/build
-$ python ./android-build.py cpp-empty-test -p 10
+$ python ./android-build.py cpp-empty-test -p 14
 $ adb install ../tests/cpp-empty-test/proj.android/bin/CppEmptyTest-debug.apk
 ```
 
-Then click item on Android device to run tests. Available value of `-p` is the API level, cocos2d-x supports from level 10.
+Then click item on Android device to run tests. Available value of `-p` is the API level, cocos2d-x supports from level 14.
 
+Learning Resources
+--------------------------------
+
+* [Programmers Guide](http://cocos2d-x.org/docs/programmers-guide/2/index.html)
+* [Sonar Systems Videos](https://www.youtube.com/user/sonarsystemslimited/search?query=cocos2d-x)
+* [Android Fundamentals](https://developer.android.com/guide/components/fundamentals.html)
+* [Make School Tutorials](https://www.makeschool.com/tutorials/)
+* [Games From Scratch](http://www.gamefromscratch.com/page/Cocos2d-x-CPP-Game-Programming-Tutorial-Series.aspx)
+* [Cocos2d sample games](https://github.com/cocos2d/cocos2d-x-samples)
+
+Spreading the word!
+--------------------------------
+You can help us spread the word about cocos2d-x! We would surely appreciate it!
+
+* Talk about us on Facebook! Our [Facebook Page](https://www.facebook.com/cocos2dx/)
+* Tweet, Tweet! Our [Twitter](https://twitter.com/cocos2dx)
+* Read our [Blog](http://blog.cocos2d-x.org/) and promote it on your social media.
+* Become a [Regional Coordinator](http://discuss.cocos2d-x.org/t/we-need-regional-coordinators/24104)
+
+See what we are planning!
+--------------------------------
+You can see exactly what we are planning to do with the Cocos family of products.
+
+* [Cocos2d-x roadmap](https://trello.com/b/Np6obnuE/cocos2d-x-roadmap)
+
+Where to get help
+--------------------------------
+
+* [Forums](http://discuss.cocos2d-x.org)
+* [Bug Tracker](https://github.com/cocos2d/cocos2d-x/issues)
+* IRC. We are in [Freenode](https://webchat.freenode.net/) in the _#cocos2d_ channel
+* `cpp-tests` project. This project is our basis for testing. Use this project to
+learn how we implement the functionality of the engine. This project is located in
+__cocos2d-x_root/build.__
+* [API Reference](http://cocos2d-x.org/docs/api-ref/index.html).
+* [Latest Release Note](https://github.com/cocos2d/cocos2d-x/blob/v3/docs/RELEASE_NOTES.md)
+* [Changelog](https://github.com/cocos2d/cocos2d-x/blob/v3/CHANGELOG)
 
 Contributing to the Project
 --------------------------------
+
+Cocos2d-x is licensed under the [MIT License](https://opensource.org/licenses/MIT). We welcome participation!
 
 Did you find a bug? Do you have feature request? Do you want to merge a feature?
 
   * [contributing to cocos2d-x][8]
 
-
 Contact us
 ----------
 
-   * Forum: [http://forum.cocos2d-x.org][9]
+   * Forum: [http://discuss.cocos2d-x.org][9]
    * Twitter: [http://www.twitter.com/cocos2dx][10]
    * Weibo: [http://t.sina.com.cn/cocos2dx][11]
    * IRC: [https://webchat.freenode.net/][12] (#cocos2d and #cocos2d-x channels)
@@ -214,8 +292,8 @@ Contact us
 [5]: http://www.box2d.org "Box2D"
 [6]: http://www.chipmunk-physics.net "Chipmunk2D"
 [7]: http://esotericsoftware.com/ "http://esotericsoftware.com/"
-[8]: https://github.com/cocos2d/cocos2d-x/blob/v3/docs/CONTRIBUTE.md
-[9]: http://forum.cocos2d-x.org "http://forum.cocos2d-x.org"
+[8]: https://github.com/cocos2d/cocos2d-x/blob/v3/CONTRIBUTING.md
+[9]: http://discuss.cocos2d-x.org "http://discuss.cocos2d-x.org"
 [10]: http://www.twitter.com/cocos2dx "http://www.twitter.com/cocos2dx"
 [11]: http://t.sina.com.cn/cocos2dx "http://t.sina.com.cn/cocos2dx"
 [12]: https://webchat.freenode.net/ "https://webchat.freenode.net/"
