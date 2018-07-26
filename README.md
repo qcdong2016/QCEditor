@@ -1,15 +1,14 @@
 ![preview][]
 
-[该项目被列为oschina "2015 年度新增开源软件排名 TOP100" 第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
+[该项目被列为oschina "2015 年度新增开源软件排名 TOP100"](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
 #QCEditor
 
-**QCEditor**是一个简单的cocos2d-x UI编辑器，基于cocos2d-x 3.4。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
+**QCEditor**是一个简单的cocos2d-x UI编辑器，基于cocos2d-x 3.16。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
 
 **QCEditor**的渲染使用的是cocos2d-x本身的渲染，所见即所得，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
 ##编译过程
-* VS2013 + Qt 5.4.1 + QtCreator
-* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
+* VS2015 + Qt 5.10.1
 * 然后打开工程修改Qt版本为你本机版本
 * 编译运行
 
