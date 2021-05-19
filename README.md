@@ -98,7 +98,7 @@ xml文件格式如下：
 ## 项目地址
 
 * oschina  [http://git.oschina.net/qcdong/QCEditor](http://git.oschina.net/qcdong/QCEditor)
-* github   [https://github.com/CaptainCN/QCEditor](https://github.com/CaptainCN/QCEditor)
+* github   [https://github.com/qcdong2016/QCEditor](https://github.com/qcdong2016/QCEditor)
 
 
 ## 其他
