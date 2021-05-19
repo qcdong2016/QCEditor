@@ -46,7 +46,9 @@ public:
     {
         _retinaFactor = fac;
     }
-
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    HWND getWin32Window() { return nullptr; }
+#endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) */
 protected:
     void initializeGL() override;
     void paintGL() override;

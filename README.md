@@ -3,21 +3,25 @@
 [该项目被列为oschina "2015 年度新增开源软件排名 TOP100" 第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
 #QCEditor
 
-**QCEditor**是一个简单的cocos2d-x UI编辑器，基于cocos2d-x 3.4。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
+**QCEditor**是一个简单的cocos2d-x UI编辑器(DEMO)，基于cocos2d-x 3.17.2。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
 
 **QCEditor**的渲染使用的是cocos2d-x本身的渲染，所见即所得，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
-##编译过程
-* VS2013 + Qt 5.4.1 + QtCreator
-* 先用QtCreator编译qteditor\qtpropertybrowser\buildlib\buildlib.pro
-* 然后打开工程修改Qt版本为你本机版本
-* 编译运行
+## Build/编译
+windows:
+* VS2019 + Qt 5.12.1
+* mkdir vs
+* cd vs
+* cmake.exe .. -DCMAKE_PREFIX_PATH=C:\Qt\5.15.1\msvc2019 -G"Visual Studio 16 2019" -A Win32
+* cmake.exe --build .
+mac: 
+* Xcode + Qt 5.12.1
+* mkdir xcode
+* cd xcode
+* cmake .. -G"Xcode" -DCMAKE_PREFIX_PATH=/Users/mac/Qt/5.15.1/clang_64
+* cmake.exe --build .
 
-##如何使用
-* 拷贝libqc文件夹下的文件到你的项目
-* 包含Serializer.h 调用Serializer::read
-
-##功能添加
+## 功能添加
 添加新的属性和控件非常方便，只需要按照下面格式添加，将会自动与Node绑定，并且自动添加到存储功能中。通过这种方式，能够编辑cocos2d-x里所有可视化组件，甚至其他一些组件。
 
 ```C++
@@ -91,20 +95,20 @@ xml文件格式如下：
 ![attr][]
 
 
-##项目地址
+## 项目地址
 
 * oschina  [http://git.oschina.net/qcdong/QCEditor](http://git.oschina.net/qcdong/QCEditor)
 * github   [https://github.com/CaptainCN/QCEditor](https://github.com/CaptainCN/QCEditor)
 
 
-##其他
+## 其他
 联系方式：QQ(526738316) Email(qcdong@yeah.net)
 
-##License
+## License
 Licensed under the MIT license, see [LICENSE](LICENSE) for details.
 
-###说明
-	该项目提交了cocos2d-x 3.4创建的工程中的cocos文件夹（解压约380M），仓库大小大约120M，所以拉项目的时候比较慢。但项目本身代码并不多。
+### 说明
+	该项目提交了cocos2d-x 创建的工程中的cocos文件夹（解压约380M），仓库大小大约120M，所以拉项目的时候比较慢。但项目本身代码并不多。
 
 
 [preview]: images/preview.jpg

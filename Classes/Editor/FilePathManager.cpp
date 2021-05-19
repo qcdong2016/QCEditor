@@ -48,4 +48,5 @@ QWidget * FileEditFactory::createEditor(FilePathManager *manager, QtProperty *pr
 		it = createdEditors.insert(property, QList<FileEdit *>());
 	it.value().append(edit);
 	editorToProperty.insert(edit, property);
+	return edit;
 }

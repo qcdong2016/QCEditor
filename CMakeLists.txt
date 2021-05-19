@@ -116,7 +116,7 @@ if(WINDOWS)
          proj.win32/resource.h
          )
     list(APPEND GAME_SOURCE
-         proj.win32/main.cpp
+        #  proj.win32/main.cpp
          proj.win32/game.rc
          ${common_res_files}
          )
