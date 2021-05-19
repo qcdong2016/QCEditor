@@ -21,7 +21,8 @@
 #ifndef _ZLIBIOAPI64_H
 #define _ZLIBIOAPI64_H
 
-#include "platform/CCPlatformConfig.h"
+// #include "platform/CCPlatformConfig.h"
+#define CC_DLL 
 
 #if (!defined(_WIN32)) && (!defined(WIN32))
 
@@ -56,12 +57,16 @@ namespace cocos2d {
 #define fopen64 fopen
 #define ftello64 ftell
 #define fseeko64 fseek
+#define ftello ftell
+#define fseeko fseek
 #else
 #ifdef _MSC_VER
  #define fopen64 fopen
  #if (_MSC_VER >= 1400) && (!(defined(NO_MSCVER_FILE64_FUNC)))
   #define ftello64 _ftelli64
   #define fseeko64 _fseeki64
+  #define ftello _ftelli64
+  #define fseeko _fseeki64
  #else // old MSC
   #define ftello64 ftell
   #define fseeko64 fseek

@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2015-2017 Chukong Technologies Inc.
+ Copyright (c) 2015-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
  
@@ -35,7 +36,7 @@
 #include "renderer/CCRenderState.h"
 #include "renderer/CCTextureCube.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#if CC_ENABLE_CACHE_TEXTURE_DATA
 #include "base/CCEventCustom.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventType.h"
@@ -87,8 +88,21 @@ CameraBackgroundDepthBrush::CameraBackgroundDepthBrush()
 , _vao(0)
 , _vertexBuffer(0)
 , _indexBuffer(0)
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    , _backToForegroundListener(nullptr)
+#endif
 {
-    
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    _backToForegroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom*)
+        {
+            _vao = 0;
+            _vertexBuffer = 0;
+            _indexBuffer = 0;
+            initBuffer();
+        }
+    );
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundListener, -1);
+#endif
 }
 CameraBackgroundDepthBrush::~CameraBackgroundDepthBrush()
 {
@@ -104,6 +118,9 @@ CameraBackgroundDepthBrush::~CameraBackgroundDepthBrush()
         GL::bindVAO(0);
         _vao = 0;
     }
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    Director::getInstance()->getEventDispatcher()->removeEventListener(_backToForegroundListener);
+#endif
 }
 
 CameraBackgroundDepthBrush* CameraBackgroundDepthBrush::create(float depth)
@@ -141,6 +158,12 @@ bool CameraBackgroundDepthBrush::init()
     _quad.tl.texCoords = Tex2F(0,1);
     _quad.tr.texCoords = Tex2F(1,1);
     
+    initBuffer();
+    return true;
+}
+
+void CameraBackgroundDepthBrush::initBuffer()
+{
     auto supportVAO = Configuration::getInstance()->supportsShareableVAO();
     if (supportVAO)
     {
@@ -177,7 +200,6 @@ bool CameraBackgroundDepthBrush::init()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    return true;
 }
 
 void CameraBackgroundDepthBrush::drawBackground(Camera* /*camera*/)
@@ -279,6 +301,13 @@ bool CameraBackgroundColorBrush::init()
     return true;
 }
 
+void CameraBackgroundColorBrush::drawBackground(Camera* camera)
+{
+    GL::blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED.src, BlendFunc::ALPHA_NON_PREMULTIPLIED.dst);
+
+    CameraBackgroundDepthBrush::drawBackground(camera);
+}
+
 void CameraBackgroundColorBrush::setColor(const Color4F& color)
 {
     _quad.bl.colors = _quad.br.colors = _quad.tl.colors = _quad.tr.colors = Color4B(color);
@@ -317,11 +346,17 @@ CameraBackgroundSkyBoxBrush::CameraBackgroundSkyBoxBrush()
 , _texture(nullptr)
 , _actived(true)
 , _textureValid(true)
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+, _backToForegroundListener(nullptr)
+#endif
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#if CC_ENABLE_CACHE_TEXTURE_DATA
     _backToForegroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED,
                                                             [this](EventCustom*)
                                                             {
+                                                                _vao = 0;
+                                                                _vertexBuffer = 0;
+                                                                _indexBuffer = 0;
                                                                 initBuffer();
                                                             }
                                                             );
@@ -345,6 +380,9 @@ CameraBackgroundSkyBoxBrush::~CameraBackgroundSkyBoxBrush()
         GL::bindVAO(0);
         _vao = 0;
     }
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    Director::getInstance()->getEventDispatcher()->removeEventListener(_backToForegroundListener);
+#endif
 }
 
 CameraBackgroundSkyBoxBrush* CameraBackgroundSkyBoxBrush::create(

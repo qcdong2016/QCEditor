@@ -1,6 +1,7 @@
 /****************************************************************************
 Copyright (c) 2010      cocos2d-x.org
-Copyright (c) 2013-2017 Chukong Technologies Inc.
+Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
 http://www.cocos2d-x.org
 
@@ -263,6 +264,13 @@ const std::string& IMEDispatcher::getContentText()
         return _impl->_delegateWithIme->getContentText();
     }
     return STD_STRING_EMPTY;
+}
+
+bool IMEDispatcher::isAnyDelegateAttachedWithIME() const
+{
+    if (!_impl)
+        return false;
+    return _impl->_delegateWithIme != nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

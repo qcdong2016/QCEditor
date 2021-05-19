@@ -1,5 +1,6 @@
 /****************************************************************************
 Copyright (c) 2013 cocos2d-x.org
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -175,7 +176,7 @@ ActionTimeline* ActionTimeline::clone() const
     newAction->setDuration(_duration);
     newAction->setTimeSpeed(_timeSpeed);
 
-    for (auto timelines : _timelineMap)
+    for (const auto& timelines : _timelineMap)
     {
         for(auto timeline : timelines.second)
         {      
@@ -184,7 +185,7 @@ ActionTimeline* ActionTimeline::clone() const
         }
     }
     
-    for( auto info : _animationInfos)
+    for(const auto& info : _animationInfos)
     {
         newAction->addAnimationInfo(info.second);
     }
@@ -415,7 +416,7 @@ void ActionTimeline::emitFrameEndCallFuncs(int frameIndex)
     if (clipEndCallsIter != _frameEndCallFuncs.end())
     {
         auto clipEndCalls = (*clipEndCallsIter).second;
-        for (auto call : clipEndCalls)
+        for (const auto& call : clipEndCalls)
             (call).second();
     }
 }

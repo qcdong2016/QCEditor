@@ -2,7 +2,8 @@
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
-Copyright (c) 2013-2017 Chukong Technologies Inc.
+Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -124,6 +125,15 @@ public:
 
     /** override function */
     virtual void removeAllChildren() override;
+    
+    /**
+     * Event callback that is invoked every time when Node enters the 'stage'.
+     * If the Node enters the 'stage' with a transition, this event is called when the transition starts.
+     * During onEnter you can't access a "sister/brother" node.
+     * If you override onEnter, you shall call its parent's one, e.g., Node::onEnter().
+     * @lua NA
+     */
+    virtual void onEnter() override;
     
 CC_CONSTRUCTOR_ACCESS:
     Scene();

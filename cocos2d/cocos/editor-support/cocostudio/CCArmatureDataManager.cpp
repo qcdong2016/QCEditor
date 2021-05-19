@@ -1,5 +1,6 @@
 /****************************************************************************
-Copyright (c) 2013-2017 Chukong Technologies Inc.
+Copyright (c) 2013-2016 Chukong Technologies Inc.
+Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -94,22 +95,22 @@ void ArmatureDataManager::removeArmatureFileInfo(const std::string& configFilePa
 {
     if (RelativeData *data = getRelativeData(configFilePath))
     {
-        for (std::string str : data->armatures)
+        for (const std::string& str : data->armatures)
         {
             removeArmatureData(str);
         }
 
-        for (std::string str : data->animations)
+        for (const std::string& str : data->animations)
         {
             removeAnimationData(str);
         }
 
-        for (std::string str : data->textures)
+        for (const std::string& str : data->textures)
         {
             removeTextureData(str);
         }
 
-        for (std::string str : data->plistFiles)
+        for (const std::string& str : data->plistFiles)
         {
             SpriteFrameCacheHelper::getInstance()->removeSpriteFrameFromFile(str);
         }
