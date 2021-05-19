@@ -8,13 +8,13 @@
 **QCEditor**的渲染使用的是cocos2d-x本身的渲染，所见即所得，在编辑器里面添加的控件代码，不用再到项目里面实现一次，只需要拷贝过去就能用。添加新控件只需注册属性就好，无需再添加新解析代码。（目前解析部分能支持大部分常用类型解析）。
 
 ## Build/编译
-windows:
+### windows:
 * VS2019 + Qt 5.12.1
 * mkdir vs
 * cd vs
 * cmake.exe .. -DCMAKE_PREFIX_PATH=C:\Qt\5.15.1\msvc2019 -G"Visual Studio 16 2019" -A Win32
 * cmake.exe --build .
-mac: 
+### mac: 
 * Xcode + Qt 5.12.1
 * mkdir xcode
 * cd xcode
