@@ -1,6 +1,6 @@
 ![preview][]
 
-[该项目被列为oschina "2015 年度新增开源软件排名 TOP100" 第96位](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
+[该项目被列为oschina "2015 年度新增开源软件排名 TOP100"](https://www.oschina.net/news/69808/2015-annual-ranking-top-100-new-open-source-software)
 #QCEditor
 
 **QCEditor**是一个简单的cocos2d-x UI编辑器(DEMO)，基于cocos2d-x 3.17.2。 Qt和Cocos-x 都能跨平台，理论上该编辑器是能够跨平台的。名字是 Qt 和 Cocos2d-x 的首字母缩写。
